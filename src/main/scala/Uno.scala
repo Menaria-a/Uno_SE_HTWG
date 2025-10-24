@@ -1,4 +1,4 @@
-object Uno: //mau
+object Uno: //hallo
   def main(args: Array[String]): Unit =
 
     enum Coulor:
