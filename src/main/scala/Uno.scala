@@ -1,4 +1,10 @@
+<<<<<<< Updated upstream
 object Uno: //mau
+=======
+package de.htwg.uno
+
+object Uno: //ratte
+>>>>>>> Stashed changes
   def main(args: Array[String]): Unit =
 
     enum Coulor:
