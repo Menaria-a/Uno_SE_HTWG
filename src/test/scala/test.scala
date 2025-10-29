@@ -1,7 +1,8 @@
 
-package de.htwg.uno
+package de.htwg.Uno
 
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers._
 import Uno._
 
@@ -12,6 +13,22 @@ class UnoSpec extends AnyWordSpec with Matchers{
       val card = Card(Coulor.red, Symbol.One)
       card.colour shouldBe Coulor.red
       card.symbol shouldBe Symbol.One
+    }
+  }
+
+  "A Symbol" should {
+    "extend its value correctly" in {
+      Symbol.Zero.value shouldBe 0
+      Symbol.One.value shouldBe 1
+      Symbol.Two.value shouldBe 2
+      Symbol.Three.value shouldBe 3
+      Symbol.Four.value shouldBe 4
+      Symbol.Five.value shouldBe 5
+      Symbol.Six.value shouldBe 6
+      Symbol.Seven.value shouldBe 7
+      Symbol.Eight.value shouldBe 8
+      Symbol.Nine.value shouldBe 9
+      
     }
   }
 
@@ -40,7 +57,16 @@ class UnoSpec extends AnyWordSpec with Matchers{
     "render multiple cards correctly" in {
       val hand = List(
         Card(Coulor.red, Symbol.One),
-        Card(Coulor.blue, Symbol.Two)
+        Card(Coulor.blue, Symbol.Two),
+        Card(Coulor.yellow, Symbol.Six),
+        Card(Coulor.yellow, Symbol.Nine),
+        Card(Coulor.yellow, Symbol.Plus_4),
+        Card(Coulor.yellow, Symbol.Block),
+        Card(Coulor.yellow, Symbol.Wish),
+        Card(Coulor.yellow, Symbol.Three),
+        Card(Coulor.yellow, Symbol.Four),
+        Card(Coulor.yellow, Symbol.Eight)
+
       )
       val output = handrenderer(hand)
       output should include ("r")
@@ -65,8 +91,8 @@ class UnoSpec extends AnyWordSpec with Matchers{
   "The gamerenderer" should {
     "render a game with two players and a table" in {
       val players = List(
-        Player("Melissa", List(Card(Coulor.red, Symbol.One))),
-        Player("Joud", List(Card(Coulor.blue, Symbol.Two)))
+        Player("Melissa"),
+        Player("Joud")
       )
       val table = List(Card(Coulor.green, Symbol.Five))
       val game = Game(players, Nil, table)
