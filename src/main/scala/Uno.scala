@@ -1,6 +1,4 @@
-<<<<<<< Updated upstream
-object Uno: //mau
-=======
+
 package de.htwg.uno
 
 object Uno: //ratte
