@@ -1,8 +1,8 @@
 
 package de.htwg.uno
 
-object Uno: //ratte
->>>>>>> Stashed changes
+object Uno: 
+
   def main(args: Array[String]): Unit =
 
     enum Coulor:
