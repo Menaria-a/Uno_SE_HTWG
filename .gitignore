@@ -1,32 +1,61 @@
-# macOS
+*.class
+*.log
+
+hs_err_pid*
+
+# === Scala / sbt ===
+target/
+project/target/
+project/project/
+
+# === Metals / Bloop / VSCode ===
+.metals/
+.bloop/
+.vscode/
+.idea/
+.history/
+.cache/
+.classpath
+.project
+.settings/
+
+# === Log- & Temp-Dateien ===
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
 .DS_Store
 
-# sbt specific
-dist/*
-target/
+# === System- & OS-spezifisch ===
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# === Scala REPL / ammonite ===
+.amm_history
+ammonite-scripts/
+out/
+
+# === IntelliJ IDEA ===
+*.iml
+.idea_modules/
+.idea/
+
+# === sbt Script Files ===
+dist/
 lib_managed/
 src_managed/
-project/boot/
-project/plugins/project/
-project/local-plugins.sbt
-.history
-.ensime
-.ensime_cache/
-.sbt-scripted/
-local.sbt
+boot/
+project/metals.sbt
 
-# Bloop
-.bsp
+# === Test / Coverage ===
+coverage/
+test-reports/
+target/test-classes/
 
-# VS Code
-.vscode/
+# === Build caches ===
+.coursier/
+.ivy2/
+.sbt/
 
-# Metals
-.bloop/
-.metals/
-metals.sbt
-
-# IDEA
-.idea
-.idea_modules
-/.worksheet/
