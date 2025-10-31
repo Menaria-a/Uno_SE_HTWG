@@ -65,7 +65,9 @@ class UnoSpec extends AnyWordSpec with Matchers{
         Card(Coulor.yellow, Symbol.Wish),
         Card(Coulor.yellow, Symbol.Three),
         Card(Coulor.yellow, Symbol.Four),
-        Card(Coulor.yellow, Symbol.Eight)
+        Card(Coulor.yellow, Symbol.Eight),
+        Card(Coulor.yellow, Symbol.Zero),
+        Card(Coulor.yellow, Symbol.Seven)
 
       )
       val output = handrenderer(hand)
