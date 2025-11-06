@@ -1,7 +1,7 @@
 
 package de.htwg.Uno
 
-object Uno: 
+object Tui:
 
 
     def creator(card: Card): List[String] =
@@ -41,12 +41,10 @@ object Uno:
             val combined = lines.transpose.map(_.mkString(" "))
             combined.mkString("\n")
 
-    def tablerenderer(table: List[Card]): String =
-          if table.isEmpty then "hilfe"
-          else 
-            val lines = table.map(creator)
-            val combined = lines.transpose.map(_.mkString(" "))
-            combined.mkString("\n")
+    def tablerenderer(table: Card): String =
+      creator(table).mkString("\n")
+
+
         
     def gamerenderer(game: Game): String =
       val playerStr = game.player
