@@ -3,6 +3,9 @@ import de.htwg.Uno.Tui
 import scala.io.StdIn.readLine
 
 
+object game :
+
+
     def main(args: Array[String]): Unit =
         val startGame = initGame()
         gameLoop(startGame, startGame.table, 0)
@@ -219,7 +222,7 @@ import scala.io.StdIn.readLine
 // zum nächsten speiler skippen
     def skipNextPlayer(currentIndex: Int, playerCount: Int): Int =
     (currentIndex + 2) % playerCount
-    
+
 
 
 
