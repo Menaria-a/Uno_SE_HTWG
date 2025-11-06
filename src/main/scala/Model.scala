@@ -22,9 +22,10 @@ package de.htwg.Uno
         case Wish extends Symbol(15)
 
 case class Card (colour: Coulor, symbol: Symbol)
-case class Player (name: String, hand: List[Card] = List())
+case class Player (name: String, hand: List[Card] = List(), index: Int)
 case class Game(
         player : List[Player],
         deck: List[Card],
-        table: List[Card] 
+        table: Card
     )
+    
