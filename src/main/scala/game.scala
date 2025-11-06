@@ -1,89 +1,120 @@
 package de.htwg.Uno
 import de.htwg.Uno.Tui
-import de.htwg.Uno
 import scala.io.StdIn.readLine
-import scala.compiletime.ops.boolean
-    import de.htwg.Uno.Tui.handrenderer
+
 
     def main(args: Array[String]): Unit =
-        println(" Ersten Namen eingeben dannach dem Zweiten :")
+        val startGame = initGame()
+        gameLoop(startGame, startGame.table, 0)
 
+
+//initialiesiert das spiel
+    def initGame(): Game =
+        println("Ersten Namen eingeben, dann den Zweiten:")
         val game = deckmacher()
         println(Tui.gamerenderer(game))
+        game
 
-        //print("Choose Card by Index :")
-        //val index = readLine().toInt
-        //val cardToPlay = ersteHand(index)
+//loop
+    def gameLoop(game: Game, tableCard: Card, currentPlayerIndex: Int): Unit =
+        val currentPlayer = game.player(currentPlayerIndex)
+        println(s"\n${currentPlayer.name} ist am Zug.")
+        println(s"Aktuelle Karte: ${tableCard.colour} ${tableCard.symbol}")
+        print("Wähle Kartenindex oder drücke Enter zum Ziehen: ")
 
-        //if (isPlayable(tableCards,cardToPlay) == true) {
-            //println("gut")
-        //} else {
-            //println("schlecht")
-        //}
+        val input = readLine()
+        val (updatedGame, newTable, skipNext, playerWon) = handleTurn(game, tableCard, currentPlayerIndex, input)
+        println(Tui.gamerenderer(updatedGame))
 
-        //println("mau")
-        //val game2 = zug(cardToPlay,game,0)
-        //println(Tui.gamerenderer(game2))
-
-            // ===== MAIN LOOP =====
-        var currentPlayerIndex = 0
-        var tableCardVar = game.table
-        var activeGame = game
-        var running = true
-
-        while (running) {
-            val currentPlayer = activeGame.player(currentPlayerIndex)
-            println(s"\n${currentPlayer.name} ist am Zug.")
-            //println(Tui.handrenderer(currentPlayer.hand))
-            println(s"Aktuelle Karte: ${tableCardVar.colour} ${tableCardVar.symbol}")
-            print("Wähle Kartenindex oder drücke Enter zum Ziehen: ")
-
-            val input = readLine()
-            if (input.trim.isEmpty) {
-            // Karte ziehen
-                val (newPlayer, newDeck) = dealCardsToHand(currentPlayer, activeGame.deck, 1)
-                val updatedPlayers = activeGame.player.updated(currentPlayerIndex, newPlayer)
-                activeGame = activeGame.copy(player = updatedPlayers, deck = newDeck)
-                println(s"${currentPlayer.name} zieht eine Karte.")
-            } else {
-                try {
-                    val index = input.toInt
-                    if (index >= 0 && index < currentPlayer.hand.length) {
-                        val cardToPlay = currentPlayer.hand(index)
-                        if (isPlayable(tableCardVar, cardToPlay)) {
-                            println(s"${currentPlayer.name} spielt ${cardToPlay.colour} ${cardToPlay.symbol}")
-                            activeGame = zug(cardToPlay, activeGame, currentPlayerIndex)
-                            tableCardVar = cardToPlay
-                            val updatedPlayer = activeGame.player(currentPlayerIndex)
-                            if (updatedPlayer.hand.isEmpty) {
-                                println(s"🎉 ${updatedPlayer.name} hat gewonnen! 🎉")
-                                running = false
-                            }
-                        } else {
-                            println("❌ Karte kann nicht gespielt werden.")
-                        }
-                    } else {
-                        println("❌ Ungültiger Index.")
-                    }
-                } catch {
-                    case _: NumberFormatException =>
-                        println("❌ Bitte eine Zahl eingeben oder Enter drücken.")
-                }
-            }
-
-            if (running) {
-                currentPlayerIndex = (currentPlayerIndex + 1) % activeGame.player.length
-            }
-
-            println(Tui.gamerenderer(activeGame))
+        if (playerWon) {
+            println(s"${updatedGame.player(currentPlayerIndex).name} hat gewonnen!")
+            println("Spiel beendet.")
+        } else {
+            val nextIndex = nextPlayerIndex(currentPlayerIndex, updatedGame.player.length, skipNext)
+            gameLoop(updatedGame, newTable, nextIndex) // <== Rekursion statt while/var
         }
 
-        println("Spiel beendet.")
+// spielzug wird gehandelt
+    def handleTurn(
+        game: Game,
+        tableCard: Card,
+        currentPlayerIndex: Int,
+        input: String
+    ): (Game, Card, Boolean, Boolean) = {
 
+        val currentPlayer = game.player(currentPlayerIndex)
 
-            
+        if (input.trim.isEmpty) {
+            drawCardIfEmptyInput(currentPlayer, game, tableCard, currentPlayerIndex)
+        } else {
+        parseCardIndex(input, currentPlayer, game, tableCard, currentPlayerIndex)
+        }
+}
 
-        
+// karte ziehen
+    def drawCardIfEmptyInput(
+        player: Player,
+        game: Game,
+        tableCard: Card,
+        currentPlayerIndex: Int
+    ): (Game, Card, Boolean, Boolean) = {
+        val (newPlayer, newDeck) = dealCardsToHand(player, game.deck, 1)
+        val updatedPlayers = game.player.updated(currentPlayerIndex, newPlayer)
+        val newGame = game.copy(player = updatedPlayers, deck = newDeck)
+        println(s"${player.name} zieht eine Karte.")
+        (newGame, tableCard, false, false)
+    }
+
+    def parseCardIndex(
+        input: String,
+        player: Player,
+        game: Game,
+        tableCard: Card,
+        currentPlayerIndex: Int
+    ): (Game, Card, Boolean, Boolean) = {
+    try {
+        val index = input.toInt
+        if (index >= 0 && index < player.hand.length) {
+        val cardToPlay = player.hand(index)
+        playCardIfValid(cardToPlay, game, tableCard, currentPlayerIndex)
+        } else handleInvalidInput(game, tableCard, "Ungültiger Index.")
+        } catch {
+            case _: NumberFormatException =>
+            handleInvalidInput(game, tableCard, "Bitte eine Zahl eingeben oder Enter drücken.")
+        }
+    }      
+
+    def playCardIfValid(
+        card: Card,
+        game: Game,
+        tableCard: Card,
+        currentPlayerIndex: Int
+    ): (Game, Card, Boolean, Boolean) = {
+    if (isPlayable(tableCard, card)) {
+        println(s"${game.player(currentPlayerIndex).name} spielt ${card.colour} ${card.symbol}")
+        val (newGame, skipNext) = zug(card, game, currentPlayerIndex)
+        val playerWon = newGame.player(currentPlayerIndex).hand.isEmpty
+        (newGame, newGame.table, skipNext, playerWon)
+    } else {
+        handleInvalidInput(game, tableCard, "Karte kann nicht gespielt werden.")
+    }
+}
+
+    def handleInvalidInput(
+        game: Game,
+        tableCard: Card,
+        message: String
+    ): (Game, Card, Boolean, Boolean) = {
+        println(message)
+        (game, tableCard, false, false)
+    }
+
+// spielerwechsel
+    def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean): Int =
+        if skipNext then skipNextPlayer(currentIndex, playerCount)
+        else (currentIndex + 1) % playerCount
+
+//karten auf hände austeilen
     def dealCardsToHand(
         player: Player,
         deck: List[Card],
@@ -95,62 +126,47 @@ import scala.compiletime.ops.boolean
         (updatedPlayer, remainingDeck)
         }   
 
-    def isPlayable(table : Card, hand : Card) : Boolean =
-
-        if (hand.colour == table.colour || hand.symbol == table.symbol || hand.symbol == Symbol.Wish ) {
-            return true
-        }
-        else {
-            return false
-            }
-
-    def zug(hand: Card, game: Game, currentPlayerIndex: Int): Game = {
-    var players = game.player
-    var deck = game.deck
-    var tableCard = hand
-
-  // Aktuellen Spieler aktualisieren (Karte aus Hand entfernen)
-    val currentPlayer = players(currentPlayerIndex)
-    val updatedHand = currentPlayer.hand.filterNot(_ == hand)
-    players = players.updated(currentPlayerIndex, currentPlayer.copy(hand = updatedHand))
-
-    hand.symbol match {
-    case Symbol.Plus_2 =>
-      // Nächster Spieler zieht 2 Karten und überspringt seinen Zug
-        val nextIndex = (currentPlayerIndex + 1) % players.length
-        val (newPlayer, newDeck) = dealCardsToHand(players(nextIndex), deck, 2)
-        players = players.updated(nextIndex, newPlayer)
-        deck = newDeck
-
-    case Symbol.Plus_4 =>
-      // Nächster Spieler zieht 4 Karten und überspringt seinen Zug
-        val nextIndex = (currentPlayerIndex + 1) % players.length
-        val (newPlayer, newDeck) = dealCardsToHand(players(nextIndex), deck, 4)
-        players = players.updated(nextIndex, newPlayer)
-        deck = newDeck
-      // TODO: Spieler wählt neue Farbe (hier noch festgelegt als rot z.B.)
-        tableCard = hand.copy(colour = Coulor.red)
-
-    case Symbol.Reverse =>
-      // Bei 2 Spielern wirkt Reverse wie Skip (nächster Spieler überspringen)
-      // Wir behandeln das im main loop beim nächsten Spieler
-
-    case Symbol.Block =>
-      // Nächster Spieler wird übersprungen
-      // Wir behandeln das im main loop beim nächsten Spieler
-
-    case Symbol.Wish =>
-      // Spieler wählt neue Farbe (hier Beispiel: rot)
-        tableCard = hand.copy(colour = Coulor.red)
-
-    case _ =>
-
-    }
+//kann man die karte spiele
+    def isPlayable(table: Card, hand: Card): Boolean =
+        hand.colour == table.colour || hand.symbol == table.symbol || hand.symbol == Symbol.Wish
 
 
-  // Aktualisiertes Spiel zurückgeben
-    game.copy(player = players, deck = deck, table = tableCard)
-}
+//welche karten art
+    def zug(hand: Card, game: Game, currentPlayerIndex: Int): (Game, Boolean) =
+        val currentPlayer = game.player(currentPlayerIndex)
+        val updatedHand = currentPlayer.hand.filterNot(_ == hand)
+        val updatedPlayerList = game.player.updated(currentPlayerIndex, currentPlayer.copy(hand = updatedHand))
+
+        val baseGame = game.copy(player = updatedPlayerList)
+        val nextIndex = (currentPlayerIndex + 1) % game.player.length
+
+        hand.symbol match
+        case Symbol.Plus_2 =>
+            plusN(baseGame, nextIndex, hand, 2)
+
+        case Symbol.Plus_4 =>
+            val (gameAfterDraw, skip) = plusN(baseGame, nextIndex, hand, 4)
+            val (wishedCard, finalGame) = chooseColourForCard(hand, gameAfterDraw)
+            (finalGame, skip)
+
+        case Symbol.Block =>
+            println("Nächster Spieler wird übersprungen!")
+            val newGame = baseGame.copy(table = hand)
+            (newGame, true)
+
+        case Symbol.Wish =>
+            val (wishedCard, newGame) = chooseColourForCard(hand, baseGame)
+            (newGame, false)
+
+        case Symbol.Reverse =>
+            val newGame = baseGame.copy(table = hand)
+            (newGame, true)
+
+        case _ =>
+            val newGame = baseGame.copy(table = hand)
+            (newGame, false)
+
+// deck wird gemacht
     def deckmacher(): Game =
         val deck = for {
         coulor <- Coulor.values
@@ -158,8 +174,6 @@ import scala.compiletime.ops.boolean
         } yield Card(coulor, symbol)
 
         val shuffledDeck = scala.util.Random.shuffle(deck.toList)
-        
-
         // Spieler mit Beispielkarten füllen (je 5 Karten)
         val ersteHand = shuffledDeck.take(5)
         val zweiteHand = shuffledDeck.slice(5, 10)
@@ -167,15 +181,50 @@ import scala.compiletime.ops.boolean
         val name1 = readLine()
         val name2 = readLine()
 
-
         val players = List(
         Player(name1, ersteHand, 0),
         Player(name2, zweiteHand,1)
         )
-
         val tableCards = shuffledDeck(10)
-
         Game(players,remainingDeck,tableCards)
+
+// wunsch wird überpruft
+    def wisher(input: String): Coulor =
+
+        if(input == "r") {
+            Coulor.red
+        } else if(input == "g") {
+            Coulor.green
+        } else if(input == "y") {
+            Coulor.yellow
+        } else {
+            Coulor.blue
+        }
+
+//gewüschte farbe wird übertragen
+    def chooseColourForCard(hand: Card, baseGame: Game): (Card, Game) = {
+        println("Bitte gewünschte Farbe eingeben: ")
+        val wishedColour = wisher(readLine())
+        val wishedCard = hand.copy(colour = wishedColour)
+        (wishedCard, baseGame.copy(table = wishedCard))
+    }
+
+// n karten werden addiert
+    def plusN(game: Game, nextPlayerIndex: Int, hand: Card, n: Int): (Game, Boolean) = {
+        val (newPlayer, newDeck) = dealCardsToHand(game.player(nextPlayerIndex), game.deck, n)
+        val newPlayers = game.player.updated(nextPlayerIndex, newPlayer)
+        val newGame = game.copy(player = newPlayers, deck = newDeck, table = hand)
+        (newGame, true) // Nächster Spieler wird übersprungen
+}
+// zum nächsten speiler skippen
+    def skipNextPlayer(currentIndex: Int, playerCount: Int): Int =
+    (currentIndex + 2) % playerCount
+    
+
+
+
+
+
 
 
 
