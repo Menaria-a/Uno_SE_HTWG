@@ -4,7 +4,7 @@ import scala.io.StdIn.readLine
 
 
 object game :
-
+//test
 
     def main(args: Array[String]): Unit =
         val startGame = initGame()
