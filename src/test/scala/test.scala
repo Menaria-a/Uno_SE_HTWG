@@ -15,6 +15,13 @@ class UnoSpec extends AnyWordSpec with Matchers{
       card.symbol shouldBe Symbol.One
     }
   }
+  "A Player" should{
+    "get an empty list" in {
+      val player = Player("Melissa",index = 1)
+      player.name shouldBe "Melissa"
+      player.index shouldBe 1
+    }
+  }
 
   "A Symbol" should {
     "extend its value correctly" in {
