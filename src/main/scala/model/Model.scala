@@ -1,6 +1,8 @@
-package de.htwg.Uno
+package de.htwg.Uno.modell
 
+object Model:
 
+    
     enum Coulor:
         case red, yellow, blue, green
 
@@ -21,9 +23,9 @@ package de.htwg.Uno
         case Block extends Symbol(14)
         case Wish extends Symbol(15)
 
-case class Card (colour: Coulor, symbol: Symbol)
-case class Player (name: String, hand: List[Card] = List(), index: Int)
-case class Game(
+    case class Card (colour: Coulor, symbol: Symbol)
+    case class Player (name: String, hand: List[Card] = List(), index: Int)
+    case class Game(
         player : List[Player],
         deck: List[Card],
         table: Card

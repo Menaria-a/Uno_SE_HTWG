@@ -1,37 +1,55 @@
-package de.htwg.Uno
-import de.htwg.Uno.Tui
-import scala.io.StdIn.readLine
+package de.htwg.Uno.controller
+import de.htwg.Uno.aView.Tui
+import de.htwg.Uno.aView.Tui.inputManager
+import de.htwg.Uno.aView.Tui.inputManagerG
+import de.htwg.Uno.aView.Tui.inputManagerD
+import de.htwg.Uno.aView.Tui.inputManagerR
+import de.htwg.Uno.modell.Model
+import de.htwg.Uno.modell.Model.Card
+import de.htwg.Uno.modell.Model.Coulor
+import de.htwg.Uno.modell.Model.Symbol
+import de.htwg.Uno.modell.Model.Game
+import de.htwg.Uno.modell.Model.Player
+
+
 
 
 object game :
 //test
 
-    def main(args: Array[String]): Unit =
-        val startGame = initGame()
-        gameLoop(startGame, startGame.table, 0)
+//    def main(args: Array[String]): Unit =
+//        val startGame = initGame()
+//        gameLoop(startGame, startGame.table, 0)
 
 
 //initialiesiert das spiel
     def initGame(): Game =
-        println("Ersten Namen eingeben, dann den Zweiten:")
-        val game = deckmacher()
-        println(Tui.gamerenderer(game))
-        game
+        //inputManager("a")
+        //println("Ersten Namen eingeben, dann den Zweiten:")
+        //val game = deckmacher()
+        inputManagerG("c")
+        //println(Tui.gamerenderer(game))
+        //game
 
 //loop
     def gameLoop(game: Game, tableCard: Card, currentPlayerIndex: Int): Unit =
         val currentPlayer = game.player(currentPlayerIndex)
-        println(s"\n${currentPlayer.name} ist am Zug.")
-        println(s"Aktuelle Karte: ${tableCard.colour} ${tableCard.symbol}")
-        print("Wähle Kartenindex oder drücke Enter zum Ziehen: ")
+        inputManagerD("a", currentPlayer)
+        //println(s"\n${currentPlayer.name} ist am Zug.")
+        //println(s"Aktuelle Karte: ${tableCard.colour} ${tableCard.symbol}")
+        inputManager("c",game,"no")
+        //print("Wähle Kartenindex oder drücke Enter zum Ziehen: ")
 
-        val input = readLine()
+        val input = inputManagerR("b")
         val (updatedGame, newTable, skipNext, playerWon) = handleTurn(game, tableCard, currentPlayerIndex, input)
-        println(Tui.gamerenderer(updatedGame))
+        //println(Tui.gamerenderer(updatedGame))
+        inputManager("d", updatedGame, "no")
 
         if (playerWon) {
-            println(s"${updatedGame.player(currentPlayerIndex).name} hat gewonnen!")
-            println("Spiel beendet.")
+            val winner = updatedGame.player(currentPlayerIndex)
+            inputManagerD("b", winner)
+            //println(s"${winner.name} hat gewonnen!")
+            //println("Spiel beendet.")
         } else {
             val nextIndex = nextPlayerIndex(currentPlayerIndex, updatedGame.player.length, skipNext)
             gameLoop(updatedGame, newTable, nextIndex) // <== Rekursion statt while/var
@@ -64,7 +82,8 @@ object game :
         val (newPlayer, newDeck) = dealCardsToHand(player, game.deck, 1)
         val updatedPlayers = game.player.updated(currentPlayerIndex, newPlayer)
         val newGame = game.copy(player = updatedPlayers, deck = newDeck)
-        println(s"${player.name} zieht eine Karte.")
+        inputManagerD("c", player)
+        //println(s"${player.name} zieht eine Karte.")
         (newGame, tableCard, false, false)
     }
 
@@ -94,7 +113,7 @@ object game :
         currentPlayerIndex: Int
     ): (Game, Card, Boolean, Boolean) = {
     if (isPlayable(tableCard, card)) {
-        println(s"${game.player(currentPlayerIndex).name} spielt ${card.colour} ${card.symbol}")
+        //println(s"${game.player(currentPlayerIndex).name} spielt ${card.colour} ${card.symbol}")
         val (newGame, skipNext) = zug(card, game, currentPlayerIndex)
         val playerWon = newGame.player(currentPlayerIndex).hand.isEmpty
         (newGame, newGame.table, skipNext, playerWon)
@@ -108,7 +127,8 @@ object game :
         tableCard: Card,
         message: String
     ): (Game, Card, Boolean, Boolean) = {
-        println(message)
+        inputManager("b", game, message)
+        //println(message)
         (game, tableCard, false, false)
     }
 
@@ -153,7 +173,8 @@ object game :
             (finalGame, skip)
 
         case Symbol.Block =>
-            println("Nächster Spieler wird übersprungen!")
+            //println("Nächster Spieler wird übersprungen!")
+            inputManager("e", game, "no")
             val newGame = baseGame.copy(table = hand)
             (newGame, true)
 
@@ -181,8 +202,8 @@ object game :
         val ersteHand = shuffledDeck.take(5)
         val zweiteHand = shuffledDeck.slice(5, 10)
         val remainingDeck = shuffledDeck.drop(10)
-        val name1 = readLine()
-        val name2 = readLine()
+        val name1 = inputManagerR("b")
+        val name2 = inputManagerR("b")
 
         val players = List(
         Player(name1, ersteHand, 0),
@@ -206,8 +227,9 @@ object game :
 
 //gewüschte farbe wird übertragen
     def chooseColourForCard(hand: Card, baseGame: Game): (Card, Game) = {
-        println("Bitte gewünschte Farbe eingeben: ")
-        val wishedColour = wisher(readLine())
+        //println("Bitte gewünschte Farbe eingeben: ")
+        inputManager("f", baseGame, "no")
+        val wishedColour = wisher(inputManagerR("b"))
         val wishedCard = hand.copy(colour = wishedColour)
         (wishedCard, baseGame.copy(table = wishedCard))
     }
@@ -222,6 +244,12 @@ object game :
 // zum nächsten speiler skippen
     def skipNextPlayer(currentIndex: Int, playerCount: Int): Int =
     (currentIndex + 2) % playerCount
+
+    def currentPlayerFinder(game : Game, currentPlayerIndex : Int ): Player = 
+        val currentPlayer = game.player(currentPlayerIndex)
+        currentPlayer
+
+
 
 
 
