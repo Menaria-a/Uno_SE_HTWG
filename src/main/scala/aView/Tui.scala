@@ -1,18 +1,18 @@
 
 package de.htwg.Uno.aView
-import de.htwg.Uno.controller.game
-import de.htwg.Uno.controller.game.initGame
-import de.htwg.Uno.controller.game.gameLoop
+import de.htwg.Uno.controller.Controler
 import de.htwg.Uno.modell.Model.Card
 import de.htwg.Uno.modell.Model.Coulor
 import de.htwg.Uno.modell.Model.Symbol
 import de.htwg.Uno.modell.Model.Game
 import scala.io.StdIn.readLine
-import de.htwg.Uno.controller.game.deckmacher
 import de.htwg.Uno.modell.Model.Player
-import de.htwg.Uno.controller.game.currentPlayerFinder
+import de.htwg.Uno.util.Observer
+import de.htwg.Uno.controller.PlayerInput
 
-object Tui:
+
+  class Tui(controller : Controler) extends Observer with PlayerInput {
+  
 
 
     def creator(card: Card): List[String] =
@@ -65,60 +65,21 @@ object Tui:
       s"$tableStr\n\n$playerStr"
 
 
-    def inputManager (input: String, game : Game, message : String) : String = {
-        
-      input match {
-        case "a" =>
-          println("Ersten Namen eingeben, dann den Zweiten:")
-          "a"
 
-        case "b" =>
-          println(message)
-          "b"
-          
-        case "c" =>
-          print("Wähle Kartenindex oder drücke Enter zum Ziehen: ")
-          "c"
-        case "d" =>
-          val updatedGame = game
-          println(Tui.gamerenderer(updatedGame))
-          "d"
-        case "e" =>
-          println("Nächster Spieler wird übersprungen!")
-          "e"
-        case "f" =>
-          println("Bitte gewünschte Farbe eingeben: ")
-          "f"
-      }
-    }
-    def inputManagerG(input : String) : Game = {
-      input match {
-        case "c" =>
-          println("Ersten Namen eingeben, dann den Zweiten:")
-          val game = deckmacher()
-          println(Tui.gamerenderer(game))
-          game
-      }
-    }
-    def inputManagerD (input : String, currentPlayer : Player) : String = {
-      input match {
-        case "a" =>
-          println(s"\n${currentPlayer.name} ist am Zug.")
-          "a"
-        case "b" =>
-          println(s"${currentPlayer.name} hat gewonnen!")
-          println("Spiel beendet.")
-          "b"
-        case "c" =>
-          println(s"${currentPlayer.name} zieht eine Karte.")
-          "c"
-      }
-    }
-    def inputManagerR (input : String) : String = {
-      input match {
-          case "b" =>
-          val n1 = readLine()
-          n1
-      }
-    }
+
+    override def update: Unit =
+      val clear = "\u001b[2J\u001b[H" // Bildschirm löschen (ANSI)
+      println(clear)
+      val render = gamerenderer(controller.game)
+      println(render)
+      println(controller.person)
+      println(controller.status)
+
+    override def getInput(): String =
+      readLine();
+        
+    def fake(print: String): String =
+      println(print)
+      "s"
+  }
 
