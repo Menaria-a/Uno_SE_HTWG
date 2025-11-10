@@ -131,7 +131,7 @@ object game :
 
 //kann man die karte spiele
     def isPlayable(table: Card, hand: Card): Boolean =
-        hand.colour == table.colour || hand.symbol == table.symbol || hand.symbol == Symbol.Wish
+        hand.colour == table.colour || hand.symbol == table.symbol || hand.symbol == Symbol.Wish || hand.symbol == Symbol.Plus_4
 
 
 //welche karten art
