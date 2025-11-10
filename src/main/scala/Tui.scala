@@ -53,30 +53,3 @@ object Tui:
       val tableStr = s"Table:\n${tablerenderer(game.table)}"
       s"$tableStr\n\n$playerStr"
 
-    //def main(args: Array[String]): Unit =
-      //val deck = for {
-      //coulor <- Coulor.values
-      //} yield Card(coulor, symbol)
-
-      //val shuffledDeck = scala.util.Random.shuffle(deck.toList)
-        
-
-        // Spieler mit Beispielkarten füllen (je 5 Karten)
-      //val melissaHand = shuffledDeck.take(5)
-      //val joudHand = shuffledDeck.slice(5, 10)
-      //val remainingDeck = shuffledDeck.drop(10)
-
-      //val players = List(
-        //Player("Melissa", melissaHand),
-        //Player("Joud", joudHand)
-      //)
-
-      //val tableCards = List(
-        //shuffledDeck(10)
-    
-      //) // Beispielhafte Karten auf dem Tisch
-
-      //val game = Game(players, remainingDeck, tableCards)
-
-
-      //println(gamerenderer(game))
