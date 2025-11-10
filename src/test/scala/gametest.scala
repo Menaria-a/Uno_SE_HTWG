@@ -3,7 +3,7 @@ package de.htwg.Uno
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers._
-import game._
+import de.htwg.Uno.controller.Controler
 
 class UnoSpecAll extends AnyWordSpec with Matchers {
 

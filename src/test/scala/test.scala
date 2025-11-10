@@ -4,7 +4,16 @@ package de.htwg.Uno
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers._
-import Tui._
+import de.htwg.Uno.aView.Tui
+import de.htwg.Uno.modell.Model.Card
+import de.htwg.Uno.modell.Model.Coulor
+import de.htwg.Uno.modell.Model.Symbol
+import de.htwg.Uno.modell.Model.Player
+import de.htwg.Uno.modell.Model.Game
+import de.htwg.Uno.aView.Tui
+
+
+
 
 class UnoSpec extends AnyWordSpec with Matchers{
 
@@ -25,7 +34,7 @@ class UnoSpec extends AnyWordSpec with Matchers{
 
   "A Symbol" should {
     "extend its value correctly" in {
-      Symbol.Zero.value shouldBe 0
+      Symbol.Zero.value shouldBe 0 
       Symbol.One.value shouldBe 1
       Symbol.Two.value shouldBe 2
       Symbol.Three.value shouldBe 3
