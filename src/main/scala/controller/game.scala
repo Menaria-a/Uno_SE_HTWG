@@ -23,12 +23,12 @@ case class Controler() extends Observable {
     def status: String = _status
     def person: String = _person
 
-    private def setGameAndNotify(gs: Game, st: String, pe: String): Unit =
+    def setGameAndNotify(gs: Game, st: String, pe: String): Unit =
         _game = gs
         _status = st
         _person = pe
         notifyObservers
-        def safeToInt(s: String): Option[Int] =
+    def safeToInt(s: String): Option[Int] =
         Try(s.trim.toInt).toOption
 
 //test
