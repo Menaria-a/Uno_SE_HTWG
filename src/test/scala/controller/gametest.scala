@@ -1,4 +1,4 @@
-package de.htwg.Uno
+package de.htwg.Uno.controller
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
@@ -106,8 +106,8 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
                 )
 
         // --- Assert ---
-        card.colour shouldBe Coulor.red
-        newGame.table.colour shouldBe Coulor.red
+                card.colour shouldBe Coulor.red
+                newGame.table.colour shouldBe Coulor.red
             }
         }   
     }

@@ -21,10 +21,10 @@ object main:
     def main (args: Array[String]): Unit =
         val controller = Controler()
         val tui = new Tui(controller)
-        controller.add(tui) // 🔥 wichtig: Tui beim Controller registrieren!
+        controller.add(tui) 
 
         
     
         tui.fake("Ersten und Zweiten Namen eingeben: ")
         val startGame = controller.initGame(tui)
-        controller.gameLoop(startGame,startGame.table,0,tui) // löst notifyObservers aus → update() wird aufgerufen
+        controller.gameLoop(startGame,startGame.table,0,tui) 

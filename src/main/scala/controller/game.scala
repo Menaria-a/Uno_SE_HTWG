@@ -4,7 +4,6 @@ import de.htwg.Uno.modell.Model.Card
 import de.htwg.Uno.modell.Model.Coulor
 import de.htwg.Uno.modell.Model.Symbol
 import de.htwg.Uno.controller.PlayerInput
-import scala.io.StdIn.readLine
 import de.htwg.Uno.modell.Model.Game
 import de.htwg.Uno.modell.Model.Player
 import de.htwg.Uno.util.Observable
