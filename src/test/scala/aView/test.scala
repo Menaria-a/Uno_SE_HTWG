@@ -1,5 +1,5 @@
 
-package de.htwg.Uno
+package de.htwg.Uno.aView
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
@@ -101,36 +101,9 @@ class UnoSpec extends AnyWordSpec with Matchers{
     }
   }
 
-  //   "return 'hilfe' when the table is empty" in {
-//      tablerenderer(Nil) shouldBe "hilfe"
-//    }
 
-//    "render cards correctly on the table" in {
-//      val table = List(Card(Coulor.yellow, Symbol.Reverse))
-//      val output = tablerenderer(table)
-//      output should include ("↺")
-//    }
-//  }
 
-//  "The gamerenderer" should {
-//    "render a game with two players and a table" in {
-//      val players = List(
-//        Player("Melissa"),
-//        Player("Joud")
-//      )
-//      val table = List(Card(Coulor.green, Symbol.Five))
-//      val game = Game(players, Nil, table)
-//      val output = gamerenderer(game)
-
-//      output should include ("Melissa")
-//      output should include ("Joud")
-//      output should include ("Table:")
-//      output should include ("g")
-//      output should include ("5")
-//    }
-//  }
-
-"The tablerenderer function" should {
+  "The tablerenderer function" should {
     "render a card as a multi-line string" in {
       val card = Card(Coulor.red, Symbol.One)
       val result = TuiInstance.tablerenderer(card)
