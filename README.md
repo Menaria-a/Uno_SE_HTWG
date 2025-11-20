@@ -1,4 +1,4 @@
-![CI](https://github.com/Menaria-a/Uno_SE_HTWG/actions/workflows/scala.yml/badge.svg)
+![CI](https://github.com/Menaria-a/Uno_SE_HTWG/actions/workflows/ci.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/Menaria-a/Uno_SE_HTWG/badge.svg?branch=main)](https://coveralls.io/github/Menaria-a/Uno_SE_HTWG?branch=main)
 
 
