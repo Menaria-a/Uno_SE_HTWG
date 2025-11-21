@@ -431,32 +431,32 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
     }
 
 
-    //"setGameAndNotify" should {
-    //"set game, status and person and notify observers" in {
-      // FakeController mit Observer
-        //class TestController extends FakeController {
-            //var notified = false
-            //override def notifyObservers: Unit = notified = true
-            //def callSetGame(gs: Game, st: String, pe: String): Unit = 
-            //setGameAndNotify(gs, st, pe)  // Aufruf der privaten Methode über Wrapper
-        //}
+    "setGameAndNotify" should {
+    "set game, status and person and notify observers" in {
+       //FakeController mit Observer
+        class TestController extends FakeController {
+            var notified = false
+            override def notifyObservers: Unit = notified = true
+            def callSetGame(gs: Game, st: String, pe: String): Unit = 
+            setGameAndNotify(gs, st, pe)  // Aufruf der privaten Methode über Wrapper
+        }
 
-        //val ctrl = new TestController
-        //val game = Game(List(Player("X", Nil, 0)), Nil, Card(Coulor.red, Symbol.One))
-        //val status = "ready"
-        //val person = "Alice"
+        val ctrl = new TestController
+        val game = Game(List(), Nil, Card(Coulor.red, Symbol.One))
+        val status = "ready"
+        val person = "Alice"
 
-        //ctrl.callSetGame(game, status, person)
+        ctrl.callSetGame(game, status, person)
 
-      // Prüfen, dass die Werte gesetzt wurden
-        //ctrl.game shouldBe game
-        //ctrl.status shouldBe status
-        //ctrl.person shouldBe person
+        //Prüfen, dass die Werte gesetzt wurden
+        ctrl.game shouldBe game
+        ctrl.status shouldBe status
+        ctrl.person shouldBe person
 
       // Prüfen, dass notifyObservers aufgerufen wurde
-        //ctrl.notified shouldBe true
-        //}
-    //}
+        ctrl.notified shouldBe true
+        }
+    }
 
 
     "safeToInt" should {
