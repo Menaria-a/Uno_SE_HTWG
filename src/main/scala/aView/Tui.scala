@@ -1,6 +1,6 @@
 
 package de.htwg.Uno.aView
-import de.htwg.Uno.controller.Controler
+import de.htwg.Uno.controller.Controller
 import de.htwg.Uno.modell.Model.Card
 import de.htwg.Uno.modell.Model.Coulor
 import de.htwg.Uno.modell.Model.Symbol
@@ -11,7 +11,7 @@ import de.htwg.Uno.util.Observer
 import de.htwg.Uno.controller.PlayerInput
 
 
-  class Tui(controller : Controler) extends Observer with PlayerInput {
+  class Tui(controller : Controller) extends Observer with PlayerInput {
   
 
 

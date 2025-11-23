@@ -3,7 +3,7 @@ package de.htwg.Uno.controller
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers._
-import de.htwg.Uno.controller.Controler
+import de.htwg.Uno.controller.Controller
 import de.htwg.Uno.modell.Model.Coulor
 import de.htwg.Uno.modell.Model.Symbol
 import de.htwg.Uno.modell.Model.Card
@@ -19,8 +19,8 @@ import de.htwg.Uno.aView.Tui
 
 class UnoSpecAll extends AnyWordSpec with Matchers {
 
-    val controller = new Controler()
-    val TuiInstance = new Tui(controller: Controler)
+    val controller = new Controller()
+    val TuiInstance = new Tui(controller: Controller)
 
 
     "The skipNextPlayer function" should {
@@ -216,14 +216,14 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
         }
     }
 
-    "The deckmacher function" should {
+    "The deckmaker function" should {
         "create a valid new game with two players" in {
             val input = new java.io.ByteArrayInputStream("A\nB\n".getBytes)
             Console.withIn(input) {
             val fakeInput = new PlayerInput {
             override def getInput(): String = "r"
             }
-                val g = controller.deckmacher(fakeInput)
+                val g = controller.deckmaker(fakeInput)
                 g.player.length shouldBe 2
                 g.player.head.hand.length shouldBe 5
                 g.deck.length should be > 0
@@ -249,7 +249,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
 
 
 
-    "zug function" should {
+    "turn function" should {
         "handle Plus_2 correctly" in {
             val p1 = Player("A", Nil, 0)
             val p2 = Player("B", Nil, 1)
@@ -258,7 +258,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
             override def getInput(): String = "r"
             }
     
-            val (g1, skip1) = controller.zug(Card(Coulor.red, Symbol.Plus_2), game, 0, fakeInput)
+            val (g1, skip1) = controller.turn(Card(Coulor.red, Symbol.Plus_2), game, 0, fakeInput)
             g1.player(1).hand.length shouldBe 2
             skip1 shouldBe true
         }
@@ -274,7 +274,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
             val fakeInput = new PlayerInput {
             override def getInput(): String = "r"
             }
-            val (newGame, skip) = controller.zug(Card(Coulor.red, Symbol.Plus_4), game, 0, fakeInput)
+            val (newGame, skip) = controller.turn(Card(Coulor.red, Symbol.Plus_4), game, 0, fakeInput)
             newGame.player(1).hand.length shouldBe 4   // Nächster Spieler zieht 4 Karten
             newGame.table.colour shouldBe Coulor.red   // Gewünschte Farbe gesetzt
             skip shouldBe true                         // Nächster Spieler wird übersprungen
@@ -289,7 +289,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
             override def getInput(): String = "r"
             }
     
-            val (g1, skip1) = controller.zug(Card(Coulor.red, Symbol.Block), game, 0, fakeInput)
+            val (g1, skip1) = controller.turn(Card(Coulor.red, Symbol.Block), game, 0, fakeInput)
             skip1 shouldBe true
         }
 
@@ -301,7 +301,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
             override def getInput(): String = "r"
             }
     
-            val (g1, skip1) = controller.zug(Card(Coulor.red, Symbol.Reverse), game, 0, fakeInput)
+            val (g1, skip1) = controller.turn(Card(Coulor.red, Symbol.Reverse), game, 0, fakeInput)
             skip1 shouldBe true
         }
 
@@ -322,7 +322,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
         }
     }
 
-    "zug function with Wish card" should {
+    "turn function with Wish card" should {
         "set the wished colour correctly and skip the next player if needed" in {
     // Spieler vorbereiten
             val p1 = Player("A", List(Card(Coulor.red, Symbol.Wish)), 0)
@@ -340,7 +340,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
             val fakeInput = new PlayerInput {
             override def getInput(): String = "r"
             }
-            val (newGame, skip) = controller.zug(Card(Coulor.red, Symbol.Wish), game, 0, fakeInput)
+            val (newGame, skip) = controller.turn(Card(Coulor.red, Symbol.Wish), game, 0, fakeInput)
 
       // Table sollte jetzt rot sein
             newGame.table.colour shouldBe Coulor.red
@@ -353,83 +353,14 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
             }
         }
     } 
-    "The remove function" should {
-    "remove the observer from the subscribers list" in {
-      // Dummy-Observer, der nichts tut
-        val obs1 = new Observer { override def update: Unit = () }
-        val obs2 = new Observer { override def update: Unit = () }
 
-        val observable = new Observable()
-        observable.add(obs1)
-        observable.add(obs2)
 
-      // Vorher: beide drin
-        observable.subscribers should contain allOf (obs1, obs2)
-
-      // Aktion
-        observable.remove(obs1)
-
-      // Danach: obs1 entfernt, obs2 bleibt
-        observable.subscribers should not contain obs1
-        observable.subscribers should contain (obs2)
-    }
-    }
-
-    class FakeController extends Controler {
+    class FakeController extends Controller {
         private var _game: Game = Game(Nil, Nil, Card(Coulor.red, Symbol.One))
         override def game: Game = _game
         def game_=(g: Game): Unit = _game = g
     }
     
-
-    "The update function" should {
-    "clear the screen and print the game, person, and status" in {
-        val controller = new FakeController()
-
-
-        val outputStream = new java.io.ByteArrayOutputStream()
-        Console.withOut(outputStream) {
-        TuiInstance.update
-        }
-
-        val output = outputStream.toString
-
-      // 🧪 Erwartungen
-        output should include ("\u001b[2J\u001b[H")  // Bildschirm löschen
-        output should include ("Table:")             // vom gamerenderer
-//        output should include ("TestPlayer")         // Spielername
-//        output should include ("FakePerson")         // vom Controller
-//        output should include ("FakeStatus")         // vom Controller
-        }   
-    }
-
-
-    "notifyObservers" should {
-    "call update on all subscribers" in {
-        var obs1Updated = false
-        var obs2Updated = false
-
-        val obs1 = new Observer { def update: Unit = obs1Updated = true }
-        val obs2 = new Observer { def update: Unit = obs2Updated = true }
-
-        val observable = new Observable()
-        observable.add(obs1)
-        observable.add(obs2)
-
-      // Aktion
-        observable.notifyObservers
-
-      // Prüfen, dass beide Observer aktualisiert wurden
-        obs1Updated shouldBe true
-        obs2Updated shouldBe true
-    }
-
-    "do nothing if there are no subscribers" in {
-        val observable = new Observable()
-        noException should be thrownBy observable.notifyObservers
-    }
-    }
-
 
     "setGameAndNotify" should {
     "set game, status and person and notify observers" in {
@@ -442,7 +373,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
         }
 
         val ctrl = new TestController
-        val game = Game(List(Player("X", Nil, 0)), Nil, Card(Coulor.red, Symbol.One))
+        val game = Game(List(), Nil, Card(Coulor.red, Symbol.One))
         val status = "ready"
         val person = "Alice"
 

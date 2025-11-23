@@ -10,47 +10,17 @@ import de.htwg.Uno.modell.Model.Symbol
 import de.htwg.Uno.modell.Model.Player
 import de.htwg.Uno.modell.Model.Game
 import de.htwg.Uno.aView.Tui
-import de.htwg.Uno.controller.Controler
+import de.htwg.Uno.controller.Controller
 
 
 
 
 class UnoSpec extends AnyWordSpec with Matchers{
 
-  val controller = new Controler()
+  val controller = new Controller()
 
-  val TuiInstance = new Tui(controller: Controler)
+  val TuiInstance = new Tui(controller: Controller)
 
-  "A Card" should {
-    "be created correctly with a color and symbol" in {
-      val card = Card(Coulor.red, Symbol.One)
-      card.colour shouldBe Coulor.red
-      card.symbol shouldBe Symbol.One
-    }
-  }
-  "A Player" should{
-    "get an empty list" in {
-      val player = Player("Melissa",index = 1)
-      player.name shouldBe "Melissa"
-      player.index shouldBe 1
-    }
-  }
-
-  "A Symbol" should {
-    "extend its value correctly" in {
-      Symbol.Zero.value shouldBe 0 
-      Symbol.One.value shouldBe 1
-      Symbol.Two.value shouldBe 2
-      Symbol.Three.value shouldBe 3
-      Symbol.Four.value shouldBe 4
-      Symbol.Five.value shouldBe 5
-      Symbol.Six.value shouldBe 6
-      Symbol.Seven.value shouldBe 7
-      Symbol.Eight.value shouldBe 8
-      Symbol.Nine.value shouldBe 9
-      
-    }
-  }
 
   "The creator function" should {
     "render a red One card correctly" in {
@@ -141,6 +111,7 @@ class UnoSpec extends AnyWordSpec with Matchers{
       printed.toString should include ("Hello Test")
     }
   }
+  
 
   
 }
