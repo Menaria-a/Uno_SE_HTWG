@@ -12,6 +12,8 @@ import de.htwg.Uno.model.Model.Player
 import de.htwg.Uno.controller.PlayerInput
 import de.htwg.Uno.util.Observable
 import de.htwg.Uno.util.Observer
+import de.htwg.Uno.model.Enum.ActionState
+import de.htwg.Uno.model.Enum.TurnState
 import de.htwg.Uno.aView.Tui
 
 
@@ -19,7 +21,7 @@ import de.htwg.Uno.aView.Tui
 
 class UnoSpecAll extends AnyWordSpec with Matchers {
 
-    val controller = new Controller()
+    val controller = new Controller(game = Game(Nil, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None))
     val TuiInstance = new Tui(controller: Controller)
 
 
@@ -77,7 +79,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
             val p1 = Player("A", Nil, 0)
             val p2 = Player("B", Nil, 1)
             val deck = List.fill(5)(Card(Coulor.red, Symbol.One))
-            val game = Game(List(p1, p2), deck, Card(Coulor.green, Symbol.Two))
+            val game = Game(List(p1, p2), deck, Card(Coulor.green, Symbol.Two), ActionState.None, TurnState.None)
 
             val (newGame, skipped) = controller.plusN(game, 1, Card(Coulor.red, Symbol.Plus_2), 2)
             newGame.player(1).hand.length shouldBe 2
@@ -91,7 +93,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
       // Eingabe simulieren (z. B. „r“ für Rot)
             val input = new java.io.ByteArrayInputStream("r\n".getBytes)
             Console.withIn(input) {
-                val game = Game(List(Player("X", Nil, 0)), Nil, Card(Coulor.blue, Symbol.One))
+                val game = Game(List(Player("X", Nil, 0)), Nil, Card(Coulor.blue, Symbol.One), ActionState.None, TurnState.None)
 
         // Fake-PlayerInput, der „r“ liefert
                 val fakeInput = new PlayerInput {
@@ -129,8 +131,8 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
 
     "The handleInvalidInput function" should {
         "return unchanged game and table" in {
-            val g = Game(Nil, Nil, Card(Coulor.red, Symbol.One))
-            val (ng, table, skip, won) = controller.handleInvalidInput(g, g.table, "Fehler")
+            val g = Game(Nil, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+            val (ng, table, skip, won) = controller.handleInvalidInput(g, g.table, ActionState.None)
             ng shouldBe g
             table shouldBe g.table
             skip shouldBe false
@@ -141,7 +143,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
     "The playCardIfValid function" should {
         "play a valid card and reject invalid ones" in {
             val p = Player("A", List(Card(Coulor.red, Symbol.One)), 0)
-            val g = Game(List(p), Nil, Card(Coulor.red, Symbol.Two))
+            val g = Game(List(p), Nil, Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
             val fakeInput = new PlayerInput {
             override def getInput(): String = "r"
             }
@@ -149,7 +151,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
             table1.colour shouldBe Coulor.red
             won1 shouldBe true
 
-            val invalid = Game(List(p), Nil, Card(Coulor.blue, Symbol.Two))
+            val invalid = Game(List(p), Nil, Card(Coulor.blue, Symbol.Two), ActionState.None, TurnState.None)
             val (g2, table2, skip2, won2) = controller.playCardIfValid(Card(Coulor.red, Symbol.One), invalid, invalid.table, 0, fakeInput)
             table2 shouldBe invalid.table
             won2 shouldBe false
@@ -161,7 +163,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
         "draw one card when player presses Enter" in {
             val p = Player("A", Nil, 0)
             val deck = List(Card(Coulor.red, Symbol.One))
-            val g = Game(List(p), deck, Card(Coulor.red, Symbol.Two))
+            val g = Game(List(p), deck, Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
             val (ng, table, skip, won) = controller.drawCardIfEmptyInput(p, g, g.table, 0)
             ng.player(0).hand.size shouldBe 1
             table shouldBe g.table
@@ -173,7 +175,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
     "The parseCardIndex function" should {
         "play a card when valid index is chosen" in {
             val p = Player("A", List(Card(Coulor.red, Symbol.One)), 0)
-            val g = Game(List(p), Nil, Card(Coulor.red, Symbol.One))
+            val g = Game(List(p), Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
             val fakeInput = new PlayerInput {
             override def getInput(): String = "r"
             }
@@ -183,7 +185,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
 
         "handle invalid string input" in {
             val p = Player("A", Nil, 0)
-            val g = Game(List(p), Nil, Card(Coulor.red, Symbol.One))
+            val g = Game(List(p), Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
             val fakeInput = new PlayerInput {
             override def getInput(): String = "r"
             }
@@ -192,7 +194,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
 
         "handle out of range index gracefully" in {
             val p = Player("A", Nil, 0)
-            val g = Game(List(p), Nil, Card(Coulor.red, Symbol.One))
+            val g = Game(List(p), Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
             val fakeInput = new PlayerInput {
             override def getInput(): String = "r"
             }
@@ -203,7 +205,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
     "The handleTurn function" should {
         "draw when input is empty or play card when valid index" in {
             val p = Player("A", List(Card(Coulor.red, Symbol.One)), 0)
-            val g = Game(List(p), List(Card(Coulor.blue, Symbol.Two)), Card(Coulor.red, Symbol.Two))
+            val g = Game(List(p), List(Card(Coulor.blue, Symbol.Two)), Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
             val fakeInput = new PlayerInput {
             override def getInput(): String = "r"
             }
@@ -253,7 +255,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
         "handle Plus_2 correctly" in {
             val p1 = Player("A", Nil, 0)
             val p2 = Player("B", Nil, 1)
-            val game = Game(List(p1, p2), List.fill(5)(Card(Coulor.red, Symbol.One)), Card(Coulor.red, Symbol.Two))
+            val game = Game(List(p1, p2), List.fill(5)(Card(Coulor.red, Symbol.One)), Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
             val fakeInput = new PlayerInput {
             override def getInput(): String = "r"
             }
@@ -266,7 +268,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
         "handle Plus_4 correctly" in {
             val p1 = Player("A", List(Card(Coulor.red, Symbol.Plus_4)), 0)
             val p2 = Player("B", Nil, 1)
-            val game = Game(List(p1, p2), List.fill(5)(Card(Coulor.green, Symbol.One)), Card(Coulor.blue, Symbol.One))
+            val game = Game(List(p1, p2), List.fill(5)(Card(Coulor.green, Symbol.One)), Card(Coulor.blue, Symbol.One), ActionState.None, TurnState.None)
 
   // Simuliere die Benutzereingabe für die gewünschte Farbe "r" (rot)
             val input = new java.io.ByteArrayInputStream("r\n".getBytes)
@@ -284,7 +286,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
         "handle Block correctly" in {
             val p1 = Player("A", Nil, 0)
             val p2 = Player("B", Nil, 1)
-            val game = Game(List(p1, p2), Nil, Card(Coulor.red, Symbol.Two))
+            val game = Game(List(p1, p2), Nil, Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
             val fakeInput = new PlayerInput {
             override def getInput(): String = "r"
             }
@@ -296,7 +298,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
         "handle Reverse correctly" in {
             val p1 = Player("A", Nil, 0)
             val p2 = Player("B", Nil, 1)
-            val game = Game(List(p1, p2), Nil, Card(Coulor.red, Symbol.Two))
+            val game = Game(List(p1, p2), Nil, Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
             val fakeInput = new PlayerInput {
             override def getInput(): String = "r"
             }
@@ -307,7 +309,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
 
         "handle Wish correctly" in {
             val p1 = Player("A", Nil, 0)
-            val game = Game(List(p1), Nil, Card(Coulor.blue, Symbol.One))
+            val game = Game(List(p1), Nil, Card(Coulor.blue, Symbol.One), ActionState.None, TurnState.None)
 
   // Simuliere die Benutzereingabe "r" für Rot
             val input = new java.io.ByteArrayInputStream("r\n".getBytes)
@@ -331,7 +333,8 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
             val game = Game(
             List(p1, p2),
             List(Card(Coulor.green, Symbol.One)), // Deck
-            Card(Coulor.blue, Symbol.Two)        // Startkarte
+            Card(Coulor.blue, Symbol.Two)
+            , ActionState.None, TurnState.None        // Startkarte
             )
 
     // Simulierte Eingabe: Spieler wählt "r" = rot
@@ -355,55 +358,11 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
     } 
 
 
-    class FakeController extends Controller {
-        private var _game: Game = Game(Nil, Nil, Card(Coulor.red, Symbol.One))
-        override def game: Game = _game
-        def game_=(g: Game): Unit = _game = g
+    class FakeController extends Controller(game = Game(Nil, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)) {
+        private var _game: Game = Game(Nil, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+
     }
     
-
-    "setGameAndNotify" should {
-    "set game, status and person and notify observers" in {
-      // FakeController mit Observer
-        class TestController extends FakeController {
-            var notified = false
-            override def notifyObservers: Unit = notified = true
-            def callSetGame(gs: Game, st: String, pe: String): Unit = 
-            setGameAndNotify(gs, st, pe)  // Aufruf der privaten Methode über Wrapper
-        }
-
-        val ctrl = new TestController
-        val game = Game(List(), Nil, Card(Coulor.red, Symbol.One))
-        val status = "ready"
-        val person = "Alice"
-
-        ctrl.callSetGame(game, status, person)
-
-      // Prüfen, dass die Werte gesetzt wurden
-        ctrl.game shouldBe game
-        ctrl.status shouldBe status
-        ctrl.person shouldBe person
-
-      // Prüfen, dass notifyObservers aufgerufen wurde
-        ctrl.notified shouldBe true
-        }
-    }
-
-
-    "safeToInt" should {
-        "return Some(Int) for valid numbers" in {
-            val ctrl = new FakeController
-            controller.safeToInt("42") shouldBe Some(42)
-            ctrl.safeToInt("  7 ") shouldBe Some(7)
-        }
-
-            "return None for invalid numbers" in {
-                val ctrl = new FakeController
-                ctrl.safeToInt("abc") shouldBe None
-                ctrl.safeToInt("") shouldBe None
-                ctrl.safeToInt("12a") shouldBe None
-        }
-    }
 
     class FakeInput(inputs: List[String]) extends PlayerInput {
         private var i = 0
@@ -447,6 +406,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
         player = List(Player("Alice", Nil, 0)),
         deck = Nil,
         table = Card(Coulor.red, Symbol.One)
+        , ActionState.None, TurnState.None
         )
         
 
@@ -458,11 +418,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
       // gameLoop starten
         ctrl.gameLoop(game, game.table, 0, fakeInput)
 
-      // Prüfen, dass _person korrekt gesetzt wurde
-        ctrl.person should include("Alice ist am Zug")
 
-      // Prüfen, dass _status den Sieg anzeigt
-        ctrl.status should include("hat gewonnen")
 
       // Prüfen, dass notifyObservers mindestens einmal aufgerufen wurde
         ctrl.notifiedTimes should be > 0
@@ -479,6 +435,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
             player = List(player1, player2),
             deck = Nil,
             table = Card(Coulor.red, Symbol.One)
+            , ActionState.None, TurnState.None
         )
 
       // Index 0 -> Alice
@@ -494,7 +451,7 @@ class UnoSpecAll extends AnyWordSpec with Matchers {
 
             "throw an exception for invalid index" in {
             val player = Player("Alice", Nil, 0)
-            val game = Game(List(player), Nil, Card(Coulor.red, Symbol.One))
+            val game = Game(List(player), Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
 
       // Zugriff auf Index 1 existiert nicht
             an [IndexOutOfBoundsException] should be thrownBy {

@@ -4,57 +4,57 @@ import de.htwg.Uno.model.Model.Card
 import de.htwg.Uno.model.Model.Coulor
 import de.htwg.Uno.model.Model.Symbol
 import de.htwg.Uno.controller.PlayerInput
+import de.htwg.Uno.model.Enum.ActionState
+import de.htwg.Uno.model.Enum.TurnState
+
 import de.htwg.Uno.model.Model.Game
 import de.htwg.Uno.model.Model.Player
 import de.htwg.Uno.util.Observable
 import scala.util.Try
 
-case class Controller() extends Observable {
 
-    private var _status = ""
-    private var _person = ""
-    private var _game = Game(Nil, Nil, Card(Coulor.red, Symbol.One))
+case class Controller(
+    var game: Game
+) extends Observable {
 
-    def game: Game = _game
-    def status: String = _status
-    def person: String = _person
 
-    def setGameAndNotify(gs: Game, st: String, pe: String): Unit =
-        _game = gs
-        _status = st
-        _person = pe
+
+
+    def updateAll(g: Game): Game =
+        game = g
         notifyObservers
-    def safeToInt(s: String): Option[Int] =
-        Try(s.trim.toInt).toOption
+        //print("mau")
+        game
 
     def initGame(inputs: PlayerInput): Game =
 
         val newGame = deckmaker(inputs)
-        _game = newGame              
-        notifyObservers
-        newGame
+        val first = newGame.player.head
+        updateAll(newGame)
+
+
 
     def gameLoop(game: Game, tableCard: Card, currentPlayerIndex: Int, inputs: PlayerInput): Unit =
         val currentPlayer = game.player(currentPlayerIndex)
-        _person = s"\n${currentPlayer.name} ist am Zug."
-        notifyObservers
-        _status = "Wähle Kartenindex oder drücke Enter zum Ziehen: "
-        notifyObservers
+        val newgame = game.copy(ActionState = ActionState.ChooseCard, TurnState = TurnState.PlayerTurn(currentPlayer))
+        val controller1 =
+            this.updateAll(newgame)
+
 
         val input = inputs.getInput()
         val (updatedGame, newTable, skipNext, playerWon) = handleTurn(game, tableCard, currentPlayerIndex, input, inputs)
 
-        _game = updatedGame
-        notifyObservers
+            val controller2 =
+                updateAll(updatedGame)
 
         if (playerWon) {
             val winner = updatedGame.player(currentPlayerIndex)
-            _status = s"${winner.name} hat gewonnen!"
-            notifyObservers
+            val newgame2 = game.copy(TurnState = TurnState.GameWon(winner))
+            updateAll(newgame2)
 
         } else {
             val nextIndex = nextPlayerIndex(currentPlayerIndex, updatedGame.player.length, skipNext)
-            gameLoop(updatedGame, newTable, nextIndex, inputs) // <== Rekursion statt while/var
+            gameLoop(updatedGame, newTable, nextIndex, inputs) 
         }
 
     def handleTurn(
@@ -100,10 +100,10 @@ case class Controller() extends Observable {
         if (index >= 0 && index < player.hand.length) {
         val cardToPlay = player.hand(index)
         playCardIfValid(cardToPlay, game, tableCard, currentPlayerIndex, inputs)
-        } else handleInvalidInput(game, tableCard, "Ungültiger Index.")
+        } else handleInvalidInput(game, tableCard, ActionState.OutOfRange)
         } catch {
             case _: NumberFormatException =>
-            handleInvalidInput(game, tableCard, "Bitte eine Zahl eingeben oder Enter drücken.")
+            handleInvalidInput(game, tableCard, ActionState.NotANumber)
         }
     }      
 
@@ -120,19 +120,18 @@ case class Controller() extends Observable {
         val playerWon = newGame.player(currentPlayerIndex).hand.isEmpty
         (newGame, newGame.table, skipNext, playerWon)
     } else {
-        handleInvalidInput(game, tableCard, "Karte kann nicht gespielt werden.")
+        handleInvalidInput(game, tableCard, ActionState.CardNotPlayable)
     }
 }
 
     def handleInvalidInput(
         game: Game,
         tableCard: Card,
-        message: String
+        message: ActionState
     ): (Game, Card, Boolean, Boolean) = {
-        _status = message
-        notifyObservers
-
-        (game, tableCard, false, false)
+        val newgame3 = game.copy(ActionState = message)
+        updateAll(newgame3)
+        (newgame3, tableCard, false, false)
     }
 
     def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean): Int =
@@ -206,7 +205,7 @@ case class Controller() extends Observable {
         Player(name2, zweiteHand,1)
         )
         val tableCards = shuffledDeck(10)
-        Game(players,remainingDeck,tableCards)
+        Game(players,remainingDeck,tableCards,ActionState.None,TurnState.None)
 
 
     def wisher(input: String): Coulor =
@@ -223,8 +222,10 @@ case class Controller() extends Observable {
 
     def chooseColourForCard(hand: Card, baseGame: Game,  inputs: PlayerInput): (Card, Game) = {
 
-        _status = "Bitte gewünschte Farbe eingeben: "
-        notifyObservers
+
+        val newgame = baseGame.copy(ActionState = ActionState.ChooseColour)
+        updateAll(newgame)
+
         val wishedColour = wisher(inputs.getInput())
         val wishedCard = hand.copy(colour = wishedColour)
         (wishedCard, baseGame.copy(table = wishedCard))
