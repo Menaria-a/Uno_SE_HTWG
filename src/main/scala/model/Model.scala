@@ -1,4 +1,4 @@
-package de.htwg.Uno.modell
+package de.htwg.Uno.model
 
 object Model:
 

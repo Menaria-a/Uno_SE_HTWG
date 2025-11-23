@@ -3,10 +3,10 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers._
 import de.htwg.Uno.controller.Controller
-import de.htwg.Uno.modell.Model.Coulor
-import de.htwg.Uno.modell.Model.Symbol
-import de.htwg.Uno.modell.Model.Card
-import de.htwg.Uno.modell.Model.Game
+import de.htwg.Uno.model.Model.Coulor
+import de.htwg.Uno.model.Model.Symbol
+import de.htwg.Uno.model.Model.Card
+import de.htwg.Uno.model.Model.Game
 import de.htwg.Uno.aView.Tui
 
 class UtilSpec extends AnyWordSpec with Matchers {
