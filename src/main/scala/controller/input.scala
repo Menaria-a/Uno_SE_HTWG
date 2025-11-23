@@ -1,8 +1,8 @@
 package de.htwg.Uno.controller
 
-import de.htwg.Uno.modell.Model.Player
-import de.htwg.Uno.modell.Model.Card
-import de.htwg.Uno.modell.Model.Game
+import de.htwg.Uno.model.Model.Player
+import de.htwg.Uno.model.Model.Card
+import de.htwg.Uno.model.Model.Game
 
 
 trait PlayerInput:

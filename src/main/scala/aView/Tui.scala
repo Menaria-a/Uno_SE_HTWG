@@ -1,12 +1,12 @@
 
 package de.htwg.Uno.aView
 import de.htwg.Uno.controller.Controller
-import de.htwg.Uno.modell.Model.Card
-import de.htwg.Uno.modell.Model.Coulor
-import de.htwg.Uno.modell.Model.Symbol
-import de.htwg.Uno.modell.Model.Game
+import de.htwg.Uno.model.Model.Card
+import de.htwg.Uno.model.Model.Coulor
+import de.htwg.Uno.model.Model.Symbol
+import de.htwg.Uno.model.Model.Game
 import scala.io.StdIn.readLine
-import de.htwg.Uno.modell.Model.Player
+import de.htwg.Uno.model.Model.Player
 import de.htwg.Uno.util.Observer
 import de.htwg.Uno.controller.PlayerInput
 
