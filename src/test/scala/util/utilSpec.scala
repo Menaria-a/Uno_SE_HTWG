@@ -7,12 +7,14 @@ import de.htwg.Uno.model.Model.Coulor
 import de.htwg.Uno.model.Model.Symbol
 import de.htwg.Uno.model.Model.Card
 import de.htwg.Uno.model.Model.Game
+import de.htwg.Uno.model.Enum.ActionState
+import de.htwg.Uno.model.Enum.TurnState
 import de.htwg.Uno.aView.Tui
 
 class UtilSpec extends AnyWordSpec with Matchers {
 
 
-    val controller = new Controller()
+    val controller = new Controller(game = Game(Nil, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None))
     val TuiInstance = new Tui(controller: Controller)
 
     "The remove function" should {
@@ -31,10 +33,9 @@ class UtilSpec extends AnyWordSpec with Matchers {
         }
     }
 
-    class FakeController extends Controller {
-        private var _game: Game = Game(Nil, Nil, Card(Coulor.red, Symbol.One))
-        override def game: Game = _game
-        def game_=(g: Game): Unit = _game = g
+    class FakeController extends Controller(game = Game(Nil, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)) {
+        private var _game: Game = Game(Nil, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+
     }
     
 

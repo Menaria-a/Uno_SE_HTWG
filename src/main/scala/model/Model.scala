@@ -1,5 +1,8 @@
 package de.htwg.Uno.model
 
+import de.htwg.Uno.model.Enum.TurnState
+import de.htwg.Uno.model.Enum.ActionState
+
 object Model:
 
     
@@ -28,6 +31,8 @@ object Model:
     case class Game(
         player : List[Player],
         deck: List[Card],
-        table: Card
+        table: Card, 
+        ActionState: ActionState,
+        TurnState: TurnState
     )
     
