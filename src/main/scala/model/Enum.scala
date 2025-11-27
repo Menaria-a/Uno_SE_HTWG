@@ -1,5 +1,5 @@
 package de.htwg.Uno.model
-import de.htwg.Uno.model.Model.Player
+import de.htwg.Uno.model.Player
 
 
 

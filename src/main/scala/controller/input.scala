@@ -1,10 +1,11 @@
 package de.htwg.Uno.controller
 
-import de.htwg.Uno.model.Model.Player
-import de.htwg.Uno.model.Model.Card
-import de.htwg.Uno.model.Model.Game
+import de.htwg.Uno.model.Player
+import de.htwg.Uno.model.Card
+import de.htwg.Uno.model.Game
 
 
 trait PlayerInput:
-    def getInput (): String
-    //def chooseDefenseCard(defender: Player, attackCard: Card, game: GameState): String
+    def getInput (): Integer
+
+    def getInputs (): String

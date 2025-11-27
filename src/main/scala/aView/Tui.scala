@@ -1,12 +1,12 @@
 
 package de.htwg.Uno.aView
 import de.htwg.Uno.controller.Controller
-import de.htwg.Uno.model.Model.Card
+import de.htwg.Uno.model.Card
 import de.htwg.Uno.model.Model.Coulor
 import de.htwg.Uno.model.Model.Symbol
-import de.htwg.Uno.model.Model.Game
+import de.htwg.Uno.model.Game
 import scala.io.StdIn.readLine
-import de.htwg.Uno.model.Model.Player
+import de.htwg.Uno.model.Player
 import de.htwg.Uno.util.Observer
 import de.htwg.Uno.controller.PlayerInput
 import de.htwg.Uno.model.Enum.ActionState
@@ -98,7 +98,7 @@ import de.htwg.Uno.model.Enum.TurnState
 
     override def update: Unit =
       val clear = "\u001b[2J\u001b[H" // Bildschirm löschen (ANSI)
-      println(clear)
+      //println(clear)
       val status  = (renderAction(controller.game))
       val turn = (renderTurn(controller.game))
       val render = gamerenderer(controller.game)
@@ -108,11 +108,44 @@ import de.htwg.Uno.model.Enum.TurnState
 
 
 
-    override def getInput(): String =
-      readLine();
+    override def getInput(): Integer =
+      val input = readLine()
+      val hand = "f"
+
+      if ( input.trim.isEmpty()){
+        val number = 500
+        number
+      }
+      else if(input.matches("\\d+")) {
+        input.toInt
+      }
+      else {
+        ChangeToInt(input) }
+
+    override def getInputs(): String =
+      readLine()
+
+
         
     def fake(print: String): String =
       println(print)
       "s"
+
+    def ChangeToInt(input: String): Integer =
+      input match
+        case "y" =>
+          val Number = 1
+          Number
+        case "r" =>
+          val Number = 2
+          Number
+        case "g" =>
+          val Number = 3
+          Number
+        case "b" =>
+          val Number = 4
+          Number
+
+      
   }
 
