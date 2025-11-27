@@ -27,9 +27,8 @@ case class Controller(
             val p2 = Player(input.getInputs(), Nil, 0)
             val initState = InitState(p1, p2)
             val game = initState.start(p1, p2)
-            val melgame = game.copy(TurnState = PlayerTurn(p1), ActionState = ActionState.ChooseCard)
-            updateAll(melgame)
-            melgame
+            updateAll(game)
+            game
 
         def gameloop(input: PlayerInput) : Unit = 
             val index = game.index
