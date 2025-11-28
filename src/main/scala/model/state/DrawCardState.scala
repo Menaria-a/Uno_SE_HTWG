@@ -18,12 +18,12 @@ case object  DrawCardState extends GameState:
         game.copy(player = updatedPlayers, deck = newDeck, index = newDex)
 
 
-    private def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) =
+    def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) =
         val (dealtCards, remainingDeck) = deck.splitAt(n)
         (player.copy(hand = player.hand ::: dealtCards), remainingDeck)
 
 
-    private def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean): Int =
+    def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean): Int =
         if (skipNext) {
             val mau =(currentIndex + 2) % 2
             mau} else {val mau = (currentIndex + 1) % 2

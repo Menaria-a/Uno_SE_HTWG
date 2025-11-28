@@ -15,7 +15,7 @@ import de.htwg.Uno.model.Game
       news
     
 
-    private def chooseColourForCard(hand: Card, baseGame: Game, input: Integer): (Card, Game) =
+    def chooseColourForCard(hand: Card, baseGame: Game, input: Integer): (Card, Game) =
 
         val newGame = baseGame.copy(ActionState = ActionState.ChooseColour)
         val wishedColour = wisher(input)
@@ -23,7 +23,7 @@ import de.htwg.Uno.model.Game
         (wishedCard, newGame.copy(table = wishedCard))
 
 
-    private def wisher(input: Integer): Coulor =
+    def wisher(input: Integer): Coulor =
     input match
         case 2 => Coulor.red
         case 3 => Coulor.green

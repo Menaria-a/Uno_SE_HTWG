@@ -12,7 +12,7 @@ case class InitState(p1: Player, p2: Player) extends GameState {
     override def start(p1: Player, p2: Player): Game = deckmaker(p1, p2)
 
 
-    private def deckmaker(p1: Player, p2: Player): Game =
+    def deckmaker(p1: Player, p2: Player): Game =
         val deck = for {
         coulor <- Coulor.values
         symbol <- Symbol.values

@@ -98,7 +98,7 @@ import de.htwg.Uno.model.Enum.TurnState
 
     override def update: Unit =
       val clear = "\u001b[2J\u001b[H" // Bildschirm löschen (ANSI)
-      //println(clear)
+      println(clear)
       val status  = (renderAction(controller.game))
       val turn = (renderTurn(controller.game))
       val render = gamerenderer(controller.game)

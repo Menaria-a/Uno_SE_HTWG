@@ -16,7 +16,7 @@ case object PlayCardState extends GameState:
     override def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer) =
         handleTurn(game, playerIdx,cardIdx)
 
-    private def handleTurn(
+    def handleTurn(
         game: Game,
         currentPlayerIndex: Int,
         chosenCardIndex: Int,
@@ -29,7 +29,7 @@ case object PlayCardState extends GameState:
         case _ => parseCardIndex(chosenCardIndex, currentPlayer, game, game.table, currentPlayerIndex)
 
 
-    private def parseCardIndex(
+    def parseCardIndex(
         index: Int,
         player: Player,
         game: Game,
@@ -42,7 +42,7 @@ case object PlayCardState extends GameState:
             val cardToPlay = player.hand(index)
             playCardIfValid(cardToPlay, game, tableCard, currentPlayerIndex)
 
-    private def playCardIfValid(
+    def playCardIfValid(
         card: Card,
         game: Game,
         tableCard: Card,
@@ -53,7 +53,7 @@ case object PlayCardState extends GameState:
             (newGame, wishdex)
         else handleInvalidInput(game, tableCard, ActionState.CardNotPlayable)
 
-    private def handleInvalidInput(
+    def handleInvalidInput(
         game: Game,
         tableCard: Card,
         message: ActionState
@@ -61,7 +61,7 @@ case object PlayCardState extends GameState:
         val g = game.copy(ActionState = message)
         (g,0)
 
-    private def turn(
+    def turn(
         card: Card,
         game: Game,
         currentPlayerIndex: Int,
@@ -111,23 +111,23 @@ case object PlayCardState extends GameState:
                 (games, 0)
 
 
-    private def isPlayable(table: Card, hand: Card): Boolean =
+    def isPlayable(table: Card, hand: Card): Boolean =
         hand.colour == table.colour || hand.symbol == table.symbol || hand.symbol == Symbol.Wish || hand.symbol == Symbol.Plus_4
 
-    private def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean): Int =
+    def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean): Int =
         if (skipNext) {
             val mau =(currentIndex + 2) % 2
             mau} else {val mau = (currentIndex + 1) % 2
             mau}
 
 
-    private def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int): Game =
+    def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int): Game =
         val player = game.player(nextPlayerIndex)
         val (newPlayer, newDeck) = dealCardsToHand(player, game.deck, n)
         val updatedPlayers = game.player.updated(nextPlayerIndex, newPlayer)
         game.copy(player = updatedPlayers, deck = newDeck)
 
-    private def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) =
+    def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) =
         val (dealtCards, remainingDeck) = deck.splitAt(n)
         (player.copy(hand = player.hand ::: dealtCards), remainingDeck)
 

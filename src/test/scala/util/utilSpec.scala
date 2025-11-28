@@ -5,8 +5,8 @@ import org.scalatest.matchers.should.Matchers._
 import de.htwg.Uno.controller.Controller
 import de.htwg.Uno.model.Model.Coulor
 import de.htwg.Uno.model.Model.Symbol
-import de.htwg.Uno.model.Model.Card
-import de.htwg.Uno.model.Model.Game
+import de.htwg.Uno.model.Card
+import de.htwg.Uno.model.Game
 import de.htwg.Uno.model.Enum.ActionState
 import de.htwg.Uno.model.Enum.TurnState
 import de.htwg.Uno.aView.Tui
@@ -14,7 +14,7 @@ import de.htwg.Uno.aView.Tui
 class UtilSpec extends AnyWordSpec with Matchers {
 
 
-    val controller = new Controller(game = Game(Nil, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None))
+    val controller = new Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None))
     val TuiInstance = new Tui(controller: Controller)
 
     "The remove function" should {
@@ -33,8 +33,8 @@ class UtilSpec extends AnyWordSpec with Matchers {
         }
     }
 
-    class FakeController extends Controller(game = Game(Nil, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)) {
-        private var _game: Game = Game(Nil, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+    class FakeController extends Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)) {
+        private var _game: Game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
 
     }
     

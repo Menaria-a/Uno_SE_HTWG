@@ -4,11 +4,11 @@ package de.htwg.Uno.aView
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers._
-import de.htwg.Uno.model.Model.Card
+import de.htwg.Uno.model.Card
 import de.htwg.Uno.model.Model.Coulor
 import de.htwg.Uno.model.Model.Symbol
-import de.htwg.Uno.model.Model.Player
-import de.htwg.Uno.model.Model.Game
+import de.htwg.Uno.model.Player
+import de.htwg.Uno.model.Game
 import de.htwg.Uno.aView.Tui
 import de.htwg.Uno.controller.Controller
 import de.htwg.Uno.model.Enum.ActionState
@@ -19,7 +19,7 @@ import de.htwg.Uno.model.Enum.TurnState
 
 class UnoSpec extends AnyWordSpec with Matchers{
 
-  val controller = new Controller(game = Game(Nil, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None))
+  val controller = new Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None))
 
   val TuiInstance = new Tui(controller: Controller)
 
@@ -91,7 +91,7 @@ class UnoSpec extends AnyWordSpec with Matchers{
     "render the table and player hands" in {
       val p1 = Player("Alice", List(Card(Coulor.green, Symbol.Five)), 0)
       val p2 = Player("Bob", List(Card(Coulor.blue, Symbol.Two)), 1)
-      val game = Game(List(p1, p2), Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+      val game = Game(List(p1, p2),0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
 
       val result = TuiInstance.gamerenderer(game)
 
