@@ -116,17 +116,16 @@ import de.htwg.Uno.model.Enum.TurnState
 
       if (action._1 == DrawAction) {
         val ind = 500
-        println(ind)
+        //println(ind)
         ind
       }
       else if (action._1 == InvalidAction) {
-        val ind = 66
-        println(ind)
-        ind
+        //print("fehler")
+        -1
       }
       else 
         val ind = action._2
-        println(ind)
+        //println(ind)
         ind
       
 
@@ -155,16 +154,12 @@ import de.htwg.Uno.model.Enum.TurnState
           val Number = 4
           Number
 
-    
-    private val chooseCardHandler: InputHandler = new ChooseCardHandler()
-    private val DrawCardHandler: InputHandler = new DrawCardHandler()
-    private val chooseColourHandler: InputHandler = new ChooseColourHandler()
-    private val fallbackHandler: InputHandler = new FallbackHandler()
+    val fallbackHandler = new FallbackHandler()
+    val chooseColourHandler = new ChooseColourHandler().setNext(fallbackHandler)
+    val drawCardHandler = new DrawCardHandler().setNext(chooseColourHandler)
+    val chooseCardHandler = new ChooseCardHandler().setNext(drawCardHandler)
 
-  // Chain-of-Responsibility aufbauen
-    chooseCardHandler.setNext(DrawCardHandler)
-    DrawCardHandler.setNext(chooseColourHandler)
-    chooseColourHandler.setNext(fallbackHandler)
+
 
     private val rootHandler: InputHandler = chooseCardHandler
 

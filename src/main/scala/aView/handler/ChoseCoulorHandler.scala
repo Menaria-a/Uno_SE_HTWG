@@ -5,7 +5,7 @@ import de.htwg.Uno.model.Game
 import de.htwg.Uno.model.Enum.ActionState
 import de.htwg.Uno.model.Model.Coulor
 
-class ChooseColourHandler extends InputHandler:
+class ChooseColourHandler(val next: Option[InputHandler] = None) extends InputHandler:
 
     override def handleRequest(input: String, game: Game): (PlayerAction, Integer) =
         if game.ActionState != ActionState.ChooseColour then
@@ -17,5 +17,9 @@ class ChooseColourHandler extends InputHandler:
             case "b" => (ChooseColourAction (Coulor.blue),4)
             case "y" => (ChooseColourAction (Coulor.yellow),1)
             case _   => (InvalidAction,0)
+
+    override def setNext(handler: InputHandler): InputHandler =
+        new ChooseColourHandler(Some(handler))
+    
 
 

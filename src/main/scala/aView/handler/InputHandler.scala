@@ -4,17 +4,18 @@ import de.htwg.Uno.model.Game
 
 
 trait InputHandler {
-    var next: Option[InputHandler] = None
+    def next: Option[InputHandler]
 
     def handleRequest(input: String, game: Game): (PlayerAction, Integer)
 
 
-    def setNext(handler: InputHandler): InputHandler = {
-        next = Some(handler)
-        handler
-    }
+    def setNext(handler: InputHandler): InputHandler 
 
 
     protected def nextHandler(input: String, game: Game): (PlayerAction, Integer) =
         next.map(_.handleRequest(input, game)).getOrElse((InvalidAction,0))
 }
+
+
+
+

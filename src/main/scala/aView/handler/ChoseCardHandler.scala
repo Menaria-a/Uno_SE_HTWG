@@ -6,7 +6,7 @@ import de.htwg.Uno.model.GameExtention.*
 
 import de.htwg.Uno.model.Enum.ActionState
 
-class ChooseCardHandler extends InputHandler:
+class ChooseCardHandler(val next: Option[InputHandler] = None) extends InputHandler:
 
     override def handleRequest(input: String, game: Game): (PlayerAction, Integer) =
         if game.ActionState != ActionState.ChooseCard then
@@ -28,3 +28,7 @@ class ChooseCardHandler extends InputHandler:
             else
 
                 (nextHandler(input, game))
+
+
+    override def setNext(handler: InputHandler): InputHandler =
+    new ChooseCardHandler(Some(handler))
