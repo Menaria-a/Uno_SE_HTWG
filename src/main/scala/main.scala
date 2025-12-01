@@ -8,12 +8,14 @@ import de.htwg.Uno.model.Card
 import de.htwg.Uno.model.Game
 import de.htwg.Uno.model.Enum.ActionState
 import de.htwg.Uno.model.Enum.TurnState
+import de.htwg.Uno.util.Undo.CommandManager
 
 
 object main:
 
     def main (args: Array[String]): Unit =
-        val controller = Controller( game = Game(Nil,0, Nil,Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None))
+        val manager = CommandManager()
+        val controller = (Controller( game = Game(Nil,0, Nil,Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None),manager))
         val tui = new Tui(controller)
         controller.add(tui) 
 

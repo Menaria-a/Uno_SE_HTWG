@@ -9,9 +9,8 @@ import de.htwg.Uno.model.Enum.TurnState.PlayerTurn
 import de.htwg.Uno.controller.PlayerInput
 
 
-case class PlayCardCommand(playerIdx: Int, cardIdx: Int, input: PlayerInput) extends Command:
+case class PlayCardCommand(playerIdx: Int, cardIdx: Int, input: Int) extends Command:
     override def execute(game: Game): (Game, Integer) = 
         val newGame = game.copy(TurnState = PlayerTurn(game.player((playerIdx +1) % 2)), ActionState = ActionState.ChooseCard)
-            val inputs = input.getInput(game)
-            val idx = inputs
+            val idx = input
             PlayCardState.playCard(newGame, playerIdx, idx)

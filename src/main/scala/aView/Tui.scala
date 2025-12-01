@@ -111,23 +111,33 @@ import de.htwg.Uno.model.Enum.TurnState
       print(status)
     override def getInput(game: Game): (Integer) =
       val input = readLine()
-      val action = processInput(input, game)
-      val ind = 0
+      if (input == "undo" || input == "redo") {
+        if (input == "undo") {
+          val und = 20
+          und }
+        else {
+          val und = 30
+          und
+        }
+        
+      } else {
+          val action = processInput(input, game)
+          val ind = 0
 
-      if (action._1 == DrawAction) {
-        val ind = 500
+          if (action._1 == DrawAction) {
+            val ind = 500
         //println(ind)
-        ind
-      }
-      else if (action._1 == InvalidAction) {
+            ind
+        }
+          else if (action._1 == InvalidAction) {
         //print("fehler")
-        -1
-      }
-      else 
-        val ind = action._2
+            -1
+        }
+          else 
+            val ind = action._2
         //println(ind)
-        ind
-      
+            ind
+      }
 
 
     override def getInputs(): String =
@@ -139,20 +149,6 @@ import de.htwg.Uno.model.Enum.TurnState
       println(print)
       "s"
 
-    def ChangeToInt(input: String): Integer =
-      input match
-        case "y" =>
-          val Number = 1
-          Number
-        case "r" =>
-          val Number = 2
-          Number
-        case "g" =>
-          val Number = 3
-          Number
-        case "b" =>
-          val Number = 4
-          Number
 
     val fallbackHandler = new FallbackHandler()
     val chooseColourHandler = new ChooseColourHandler().setNext(fallbackHandler)
