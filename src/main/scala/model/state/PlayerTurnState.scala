@@ -36,7 +36,7 @@ case object PlayCardState extends GameState:
         tableCard: Card,
         currentPlayerIndex: Int,
     ): (Game, Integer) =
-        if index < 0 || index >= player.hand.size then
+        if index < 0 || index >= player.hand.size || index == 66 then
             handleInvalidInput(game, tableCard, ActionState.OutOfRange)
         else
             val cardToPlay = player.hand(index)

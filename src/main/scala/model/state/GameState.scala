@@ -3,6 +3,7 @@ import de.htwg.Uno.model.Game
 import de.htwg.Uno.model.Card
 import de.htwg.Uno.model.Model.Coulor
 import de.htwg.Uno.model.Player
+import de.htwg.Uno.controller.PlayerAction
 
 trait GameState:
     def start( p1: Player, p2: Player): Game 

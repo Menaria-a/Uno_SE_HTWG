@@ -10,6 +10,7 @@ import de.htwg.Uno.controller.Command.ChooseColourCommand
 import de.htwg.Uno.controller.Command.DrawCardCommand
 import de.htwg.Uno.model.Enum.TurnState.PlayerTurn
 import de.htwg.Uno.model.Enum.TurnState.GameWon
+import javax.swing.Action
 
 
 case class Controller(
@@ -39,7 +40,8 @@ case class Controller(
                 val new2Game = newGame.copy(ActionState = ActionState.ChooseColour, TurnState = PlayerTurn(game.player(index)))
                 updateAll(new2Game)
                 val (newerGame, notUsed) = com.execute(new2Game)
-                updateAll(newerGame)}
+                val newestGame = newerGame.copy(ActionState = ActionState.ChooseCard)
+                updateAll(newestGame)}
             else if (int == 5) {
                 System.exit(0)
             }
@@ -49,9 +51,10 @@ case class Controller(
                 updateAll(newerGame)
             }
             else {
-                val newerGame = newGame
+                val newerGame = newGame.copy(ActionState = ActionState.ChooseCard)
                 updateAll(newerGame)
             }
+                
                 gameloop(input: PlayerInput)
 
 }

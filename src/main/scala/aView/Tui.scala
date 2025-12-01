@@ -1,6 +1,8 @@
 
 package de.htwg.Uno.aView
 import de.htwg.Uno.controller.Controller
+import de.htwg.Uno.controller.PlayerAction
+import de.htwg.Uno.aView.handler.*
 import de.htwg.Uno.model.Card
 import de.htwg.Uno.model.Model.Coulor
 import de.htwg.Uno.model.Model.Symbol
@@ -12,6 +14,8 @@ import de.htwg.Uno.controller.PlayerInput
 import de.htwg.Uno.model.Enum.ActionState
 
 import de.htwg.Uno.model.Enum.TurnState
+  import de.htwg.Uno.controller.DrawAction
+  import de.htwg.Uno.controller.InvalidAction
 
 
   class Tui(controller : Controller) extends Observer with PlayerInput {
@@ -98,29 +102,34 @@ import de.htwg.Uno.model.Enum.TurnState
 
     override def update: Unit =
       val clear = "\u001b[2J\u001b[H" // Bildschirm löschen (ANSI)
-      println(clear)
+      //println(clear)
       val status  = (renderAction(controller.game))
       val turn = (renderTurn(controller.game))
       val render = gamerenderer(controller.game)
       println(render)
       println(turn)
       print(status)
-
-
-
-    override def getInput(): Integer =
+    override def getInput(game: Game): (Integer) =
       val input = readLine()
-      val hand = "f"
+      val action = processInput(input, game)
+      val ind = 0
 
-      if ( input.trim.isEmpty()){
-        val number = 500
-        number
+      if (action._1 == DrawAction) {
+        val ind = 500
+        println(ind)
+        ind
       }
-      else if(input.matches("\\d+")) {
-        input.toInt
+      else if (action._1 == InvalidAction) {
+        val ind = 66
+        println(ind)
+        ind
       }
-      else {
-        ChangeToInt(input) }
+      else 
+        val ind = action._2
+        println(ind)
+        ind
+      
+
 
     override def getInputs(): String =
       readLine()
@@ -146,6 +155,23 @@ import de.htwg.Uno.model.Enum.TurnState
           val Number = 4
           Number
 
-      
+    
+    private val chooseCardHandler: InputHandler = new ChooseCardHandler()
+    private val DrawCardHandler: InputHandler = new DrawCardHandler()
+    private val chooseColourHandler: InputHandler = new ChooseColourHandler()
+    private val fallbackHandler: InputHandler = new FallbackHandler()
+
+  // Chain-of-Responsibility aufbauen
+    chooseCardHandler.setNext(DrawCardHandler)
+    DrawCardHandler.setNext(chooseColourHandler)
+    chooseColourHandler.setNext(fallbackHandler)
+
+    private val rootHandler: InputHandler = chooseCardHandler
+
+  // --- Hier ist die processInput-Funktion ---
+    def processInput(input: String, game: Game): (PlayerAction, Integer) =
+    // Eingabe geht durch die Handler-Kette
+      val action  = rootHandler.handleRequest(input, game)
+      action
   }
 
