@@ -45,6 +45,10 @@ case class Controller(
             else if (int == 5) {
                 System.exit(0)
             }
+            else if (int == 6) {
+                val newgame = newGame.copy(TurnState = PlayerTurn(newGame.player(index + 1 % 2)))
+                updateAll(newgame)
+            }
             else if (int == 3){
                 val con = DrawCardCommand(index)
                 val (newerGame , notUsed) = con.execute(newGame)

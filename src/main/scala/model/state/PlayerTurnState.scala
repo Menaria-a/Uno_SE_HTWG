@@ -83,9 +83,10 @@ case object PlayCardState extends GameState:
         card.symbol match
             case Symbol.Plus_2 =>
                 val nextIndex = nextPlayerIndex(currentPlayerIndex, game.player.size, true)
-                val games = plusN(baseGame, (nextIndex + 1) % 2, card, 2)
-                val indexy = games.copy(index = nextIndex)
-                (indexy , 0)
+                val games = plusN(baseGame, (nextIndex + 1) % 2 , card, 2)
+                val indexy = games.copy(index = nextIndex, table = card)
+                val gameee = indexy
+                (gameee , 6)
             case Symbol.Plus_4 =>
                 val nextIndex = nextPlayerIndex(currentPlayerIndex, game.player.size, true)
                 val afterDraw = plusN(baseGame, (nextIndex + 1) % 2, card, 4)
@@ -95,11 +96,11 @@ case object PlayCardState extends GameState:
             case Symbol.Block =>
                 val nextIndex = nextPlayerIndex(currentPlayerIndex, game.player.size, true)
                 val games  = baseGame.copy(table = card, index = nextIndex)
-                (games, 0)
+                (games, 6)
             case Symbol.Reverse =>
                 val nextIndex = nextPlayerIndex(currentPlayerIndex, game.player.size, true)
                 val games = baseGame.copy(table = card, index = nextIndex)
-                (games, 0)
+                (games, 6)
             case Symbol.Wish =>
                 val nextIndex = nextPlayerIndex(currentPlayerIndex, game.player.size, false)
                 val Indexy = baseGame.copy(index = nextIndex)
