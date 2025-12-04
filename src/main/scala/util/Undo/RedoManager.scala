@@ -14,28 +14,33 @@ case class CommandManager(
         undoStack = (cmd, game) :: undoStack,
         redoStack = Nil
         )
+        println(redoStack)
+
         (newManager, games, int)
 
     def undo(game: Game): Option[(CommandManager, Game)] =
         undoStack match
         case (cmd, oldGame) :: rest =>
-            val reverted = cmd.undo(game)
+            val reverted = cmd.undo(game, oldGame)
             val newManager = this.copy(
             undoStack = rest,
             redoStack = (cmd, game) :: redoStack
             )
+            println(undoStack)
             Some(newManager, reverted)
+
         case Nil => None
 
     def redo(game: Game): Option[(CommandManager, Game)] =
         redoStack match
         case (cmd, lastGame) :: rest =>
-            val redone = cmd.execute(game)
+            val redone = cmd.execute(lastGame)
             val (games, int) = redone
             val newManager = this.copy(
             redoStack = rest,
             undoStack = (cmd, game) :: undoStack
             )
+            println(undoStack)
             Some(newManager, games)
         case Nil => None
 

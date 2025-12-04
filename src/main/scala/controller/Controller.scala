@@ -34,17 +34,16 @@ case class Controller(
             updateAll(game)
             game
 
-        @scala.annotation.tailrec
+        //@scala.annotation.tailrec
         final def gameloop(input: PlayerInput) : Unit = 
             val index = game.index
             val inputs = input.getInput(game)
             if ( inputs == 20) { undo() 
-                //gameloop(input)
-                updateAll(game)
+                    gameloop(input)
                 }
-            if (inputs == 30 ) {redo()
-                //gameloop(input) 
-                return}
+            if (inputs == 30 ) { redo()
+                    gameloop(input)
+                }
             val Cmd = PlayCardCommand(playerIdx = index, cardIdx = 0, inputs)
             val (newManager, newGame, value) = cmdManager.executeCommand(Cmd,game)
             cmdManager = newManager
@@ -76,8 +75,6 @@ case class Controller(
             }
                 
                 gameloop(input: PlayerInput)
-
-
 
         def undo(): Unit =
             cmdManager.undo(game) match

@@ -5,7 +5,6 @@ import de.htwg.Uno.model.Enum._
 import de.htwg.Uno.model.Game
 import de.htwg.Uno.model.Player
 import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.state.WishCardState
 import de.htwg.Uno.model.Card
 import de.htwg.Uno.model.Game
 
