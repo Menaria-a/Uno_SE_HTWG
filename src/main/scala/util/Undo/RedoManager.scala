@@ -7,14 +7,14 @@ case class CommandManager(
     redoStack: List[(Command, Game)] = Nil
 ):
 
-    def executeCommand(cmd: Command, game: Game): (CommandManager, Game) =
+    def executeCommand(cmd: Command, game: Game): (CommandManager, Game, Integer) =
         val newGame = cmd.execute(game)
         val (games, int) = newGame
         val newManager = this.copy(
         undoStack = (cmd, game) :: undoStack,
         redoStack = Nil
         )
-        (newManager, games)
+        (newManager, games, int)
 
     def undo(game: Game): Option[(CommandManager, Game)] =
         undoStack match
