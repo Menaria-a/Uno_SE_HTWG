@@ -102,25 +102,16 @@ import de.htwg.Uno.model.Enum.TurnState
 
     override def update: Unit =
       val clear = "\u001b[2J\u001b[H" // Bildschirm löschen (ANSI)
-      //println(clear)
+      //
+      println(clear)
       val status  = (renderAction(controller.game))
       val turn = (renderTurn(controller.game))
       val render = gamerenderer(controller.game)
       println(render)
       println(turn)
       print(status)
-    override def getInput(game: Game): (Integer) =
+    override def getInput(game: Game, who: PlayerInput): (Integer) =
       val input = readLine()
-      if (input == "undo" || input == "redo") {
-        if (input == "undo") {
-          val und = 20
-          und }
-        else {
-          val und = 30
-          und
-        }
-        
-      } else {
           val action = processInput(input, game)
           val ind = 0
 
@@ -130,10 +121,22 @@ import de.htwg.Uno.model.Enum.TurnState
             ind
         }
           else if (action._1 == InvalidAction) {
-        //print("fehler")
+        print("fehler")
             -1
         }
-          else 
+          else if (action._2 == 20){
+            println("AAAAA")
+            controller.undo()
+            controller.gameloop(who)
+            20
+          }
+          else if (action._2 == 30){
+            controller.redo()
+            controller.gameloop(who)
+            30
+          }
+
+          else {
             val ind = action._2
         //println(ind)
             ind
@@ -154,10 +157,12 @@ import de.htwg.Uno.model.Enum.TurnState
     val chooseColourHandler = new ChooseColourHandler().setNext(fallbackHandler)
     val drawCardHandler = new DrawCardHandler().setNext(chooseColourHandler)
     val chooseCardHandler = new ChooseCardHandler().setNext(drawCardHandler)
+    val UndoRedoHandler = new UndoRedoHandler().setNext(chooseCardHandler)
 
 
 
-    private val rootHandler: InputHandler = chooseCardHandler
+
+    private val rootHandler: InputHandler = UndoRedoHandler
 
   // --- Hier ist die processInput-Funktion ---
     def processInput(input: String, game: Game): (PlayerAction, Integer) =

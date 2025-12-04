@@ -10,11 +10,15 @@ import de.htwg.Uno.model.Game
 import de.htwg.Uno.model.Enum.ActionState
 import de.htwg.Uno.model.Enum.TurnState
 import de.htwg.Uno.aView.Tui
+import de.htwg.Uno.util.Undo.CommandManager
 
 class UtilSpec extends AnyWordSpec with Matchers {
 
 
-    val controller = new Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None))
+    val manager = CommandManager()
+
+
+    val controller = new Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None), manager)
     val TuiInstance = new Tui(controller: Controller)
 
     "The remove function" should {
@@ -33,7 +37,7 @@ class UtilSpec extends AnyWordSpec with Matchers {
         }
     }
 
-    class FakeController extends Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)) {
+    class FakeController extends Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None), manager) {
         private var _game: Game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
 
     }

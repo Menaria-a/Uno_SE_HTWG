@@ -7,6 +7,6 @@ import scala.collection.mutable.ArraySeq.ofUnit
 
 
 trait PlayerInput:
-    def getInput (game: Game): Integer
+    def getInput (game: Game, input: PlayerInput): Integer
 
     def getInputs (): String
