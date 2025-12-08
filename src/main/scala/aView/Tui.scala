@@ -123,12 +123,12 @@ import de.htwg.Uno.model.Enum.TurnState
             -1
         }
           else if (action._2 == 20){
-            controller.undo()
+            //controller.undo()
             controller.gameloop(who)
             20
           }
           else if (action._2 == 30){
-            controller.redo()
+            //controller.redo()
             controller.gameloop(who)
             30
           }
