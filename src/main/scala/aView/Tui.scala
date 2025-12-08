@@ -117,15 +117,12 @@ import de.htwg.Uno.model.Enum.TurnState
 
           if (action._1 == DrawAction) {
             val ind = 500
-        //println(ind)
             ind
         }
           else if (action._1 == InvalidAction) {
-        print("fehler")
             -1
         }
           else if (action._2 == 20){
-            println("AAAAA")
             controller.undo()
             controller.gameloop(who)
             20
@@ -138,7 +135,6 @@ import de.htwg.Uno.model.Enum.TurnState
 
           else {
             val ind = action._2
-        //println(ind)
             ind
       }
 
@@ -164,9 +160,9 @@ import de.htwg.Uno.model.Enum.TurnState
 
     private val rootHandler: InputHandler = UndoRedoHandler
 
-  // --- Hier ist die processInput-Funktion ---
+
     def processInput(input: String, game: Game): (PlayerAction, Integer) =
-    // Eingabe geht durch die Handler-Kette
+
       val action  = rootHandler.handleRequest(input, game)
       action
   }

@@ -2,56 +2,79 @@ package de.htwg.Uno.model.state
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.matchers.should.Matchers._
-import de.htwg.Uno.model.state.DrawCardState
-import de.htwg.Uno.model.Model.*
+
+import de.htwg.Uno.model.Model._
+import de.htwg.Uno.model.Enum._
+import de.htwg.Uno.model.Player
 import de.htwg.Uno.model.Card
 import de.htwg.Uno.model.Game
-import de.htwg.Uno.model.Player
-import de.htwg.Uno.controller.PlayerInput
-import de.htwg.Uno.model.Enum.*
 
+class DrawCardStateSpec extends AnyWordSpec with Matchers {
 
-class DrawCardSpecsSpecs extends AnyWordSpec with Matchers{
+  "DrawCardState" should {
 
+    "draw a card and update the player hand and deck" in {
+      val player1 = Player("Alice", hand = List.empty,0)
+      val player2 = Player("Bob", hand = List.empty,1)
+      val deck = List(Card(Coulor.red, Symbol.One), Card(Coulor.blue, Symbol.Two))
+      val game = Game(List(player1, player2), index = 0, deck = deck, table = deck.head, ActionState.None, TurnState.None)
 
+      val newGame = DrawCardState.drawCard(game, playerIdx = 0)
 
-    "The nextPlayerIndex function" should {
-        "return the correct next player index" in {
-            DrawCardState.nextPlayerIndex(0, 2, false) shouldBe 1
-            DrawCardState.nextPlayerIndex(1, 2, false) shouldBe 0
-            DrawCardState.nextPlayerIndex(0, 3, true) shouldBe 0
-        }
+      // Spieler 1 bekommt eine Karte
+      newGame.player(0).hand.size shouldBe 1
+      newGame.player(0).hand.head shouldBe deck.head
+
+      // Deck wird um die gezogene Karte verkleinert
+      newGame.deck shouldBe List(deck(1))
+
+      // Index wechselt zum nächsten Spieler
+      newGame.index shouldBe 1
     }
 
+    "draw a card with skipNext = true" in {
+      val player1 = Player("Alice", hand = List.empty,0)
+      val player2 = Player("Bob", hand = List.empty,1)
+      val deck = List(Card(Coulor.red, Symbol.One))
+      val game = Game(List(player1, player2), index = 0, deck = deck, table = deck.head, ActionState.None, TurnState.None)
 
-        "The dealCardsToHand function" should {
-        "add the correct number of cards to a player's hand" in {
-            val p = Player("Tester", Nil, 0)
-            val deck = List(Card(Coulor.red, Symbol.One), Card(Coulor.green, Symbol.Two))
-            val (newPlayer, newDeck) = DrawCardState.dealCardsToHand(p, deck, 1)
-            newPlayer.hand.length shouldBe 1
-            newDeck.length shouldBe 1
-        }
+      val nextIndex = DrawCardState.nextPlayerIndex(currentIndex = 0, playerCount = 2, skipNext = true)
+      nextIndex shouldBe 0  // (0 + 2) % 2 == 0
     }
 
+    "dealCardsToHand correctly deals n cards and updates deck" in {
+      val player = Player("Alice", hand = List(Card(Coulor.red, Symbol.One)),0)
+      val deck = List(Card(Coulor.green, Symbol.Two), Card(Coulor.blue, Symbol.Three))
 
-        "The start function" should {
+      val (newPlayer, newDeck) = DrawCardState.dealCardsToHand(player, deck, 2)
 
-        "create a new game with the expected default values" in {
-        val p1 = Player("Alice", Nil, 0)
-        val p2 = Player("Bob", Nil, 0)
-
-        val game = WishCardState.start(p1, p2)
-
-        game.player shouldBe empty
-        game.index shouldBe 0
-        game.table shouldBe Card(Coulor.red, Symbol.One)
-        game.ActionState shouldBe ActionState.None
-        game.TurnState shouldBe TurnState.None
-        }
+      newPlayer.hand.size shouldBe 3
+      newPlayer.hand.last shouldBe Card(Coulor.blue, Symbol.Three)
+      newDeck shouldBe empty
     }
 
+    "start returns dummy game" in {
+      val game = DrawCardState.start(Player("P1", hand = Nil, 0), Player("P2", hand = Nil, 1))
+      game.player shouldBe Nil
+      game.index shouldBe 0
+    }
 
+    "chooseColour returns dummy card and game" in {
+      val card = Card(Coulor.red, Symbol.One)
+      val dummyGame = Game(Nil,0, Nil, card, ActionState.None, TurnState.None)
+      val (resultCard, resultGame) = DrawCardState.chooseColour(dummyGame, Coulor.blue, card, 1)
 
+      resultCard shouldBe card
+      resultGame.player shouldBe Nil
+    }
+
+    "playCard returns dummy game and index 2" in {
+      val card = Card(Coulor.red, Symbol.One)
+      val dummyGame = Game(Nil,0, Nil, card, ActionState.None, TurnState.None)
+      val (resultGame, index) = DrawCardState.playCard(dummyGame, 0, 0)
+
+      resultGame.player shouldBe Nil
+      index shouldBe 2
+    }
+  }
 }
