@@ -6,12 +6,10 @@ import scalafx.scene.Scene
 import scalafx.scene.control.*
 import scalafx.scene.layout.*
 import scalafx.stage.{Stage, Modality}
-
 import scala.concurrent.{Promise, Await}
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.util.concurrent.atomic.AtomicReference
-
 import de.htwg.Uno.controller.{Controller, PlayerInput}
 import de.htwg.Uno.model.{Card, Player, Game}
 import de.htwg.Uno.model.Enum.*
@@ -19,18 +17,14 @@ import de.htwg.Uno.model.Model.*
 
 class Gui(controller: Controller):
 
-  // ============================================================
-  // Callback + Promise (kein var)
-  // ============================================================
+
   private val turnCallbackRef = new AtomicReference[Int => Unit](_ => ())
   private val promiseRef = new AtomicReference[Promise[Int]]()
 
   def setTurnCallback(cb: Int => Unit): Unit =
     turnCallbackRef.set(cb)
 
-  // ============================================================
-  // Start
-  // ============================================================
+
   def start(): Unit = showPlayerNameInput()
 
   private def showPlayerNameInput(): Unit =
@@ -70,9 +64,7 @@ class Gui(controller: Controller):
 
     stage.show()
 
-  // ============================================================
-  // Main Game GUI
-  // ============================================================
+
   private var colorChooserOpen = false
   private def showMainGameGUI(players: Array[Player]): Unit =
     val tableBox = new HBox:
@@ -91,10 +83,9 @@ class Gui(controller: Controller):
       padding = Insets(20)
 
     val stage = new Stage:
-      title = "ScalaFX UNO"
+      title = "UNO"
       scene = Scene(root, 900, 600)
 
-    // UI Update
     def updateUI(): Unit =
       Platform.runLater {
 
@@ -102,10 +93,8 @@ class Gui(controller: Controller):
           showColorChooser()
         }
 
-        // Tisch-Karte
         tableBox.children.setAll(renderCard(controller.game.table, clickable = false))
 
-        // Spieler-Hand
         playersBox.children.clear()
         controller.game.player.zipWithIndex.foreach { (pl, idx) =>
           val label = new Label(s"${pl.name}'s Hand:") { style = "-fx-font-size: 16px;" }
@@ -115,7 +104,7 @@ class Gui(controller: Controller):
             handBox.children.add(renderCard(card, clickable = true, playerIdx = idx, cardIdx = cIdx))
           }
 
-          // Draw-Button nur für aktuellen Spieler
+
           if idx == controller.game.index then
             handBox.children.add(
               new Button("Karte ziehen") { onAction = _ => handleDrawButton() }
@@ -125,7 +114,7 @@ class Gui(controller: Controller):
         }
       }
 
-    // Observer für Controller
+
     controller.add(new de.htwg.Uno.util.Observer:
       override def update: Unit = updateUI()
     )
@@ -133,16 +122,9 @@ class Gui(controller: Controller):
     updateUI()
     stage.show()
 
-  // ============================================================
-  // Draw-Button Handler
-  // ============================================================
   private def handleDrawButton(): Unit =
-    // Controller interpretiert 3 als Draw
     turnCallbackRef.get().apply(500)
 
-  // ============================================================
-  // Karte rendern
-  // ============================================================
   private def renderCard(card: Card, clickable: Boolean,
                         playerIdx: Int = 0, cardIdx: Int = 0): Button =
 
@@ -178,15 +160,9 @@ class Gui(controller: Controller):
 
     btn
 
-  // ============================================================
-  // Kartenklick
-  // ============================================================
   private def handleCardClick(card: Card, cardIdx: Int): Unit =
     turnCallbackRef.get().apply(cardIdx)
 
-  // ============================================================
-  // Farbwahl (wie gewünscht)
-  // ============================================================
   private def showColorChooser(): Unit =
     if (colorChooserOpen) return
 
@@ -215,9 +191,6 @@ class Gui(controller: Controller):
 
     dialog.show()
 
-  // ============================================================
-  // PlayerInput (Promise ohne var)
-  // ============================================================
   class GuiPlayerInput(gui: Gui, players: Array[Player]) extends PlayerInput:
 
     override def getInput(game: Game, input: PlayerInput): Integer =
