@@ -7,10 +7,9 @@ import scalafx.scene.control.*
 import scalafx.scene.layout.*
 import scalafx.stage.{Stage, Modality}
 
-import scala.concurrent.{Future, Promise, Await}
+import scala.concurrent.{Promise, Await}
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import java.util.concurrent.atomic.AtomicReference
 
 import de.htwg.Uno.controller.{Controller, PlayerInput}
@@ -21,32 +20,22 @@ import de.htwg.Uno.model.Model.*
 class Gui(controller: Controller):
 
   // ============================================================
-  // Kein var: Callback + Promise als AtomicReference
+  // Callback + Promise (kein var)
   // ============================================================
-
-  private val turnCallbackRef =
-    new AtomicReference[Int => Unit](_ => ())
-
-  private val promiseRef =
-    new AtomicReference[Promise[Int]]()
+  private val turnCallbackRef = new AtomicReference[Int => Unit](_ => ())
+  private val promiseRef = new AtomicReference[Promise[Int]]()
 
   def setTurnCallback(cb: Int => Unit): Unit =
     turnCallbackRef.set(cb)
 
   // ============================================================
-  // Start GUI
+  // Start
   // ============================================================
-
-  def start(): Unit =
-    showPlayerNameInput()
+  def start(): Unit = showPlayerNameInput()
 
   private def showPlayerNameInput(): Unit =
-    val name1 = new TextField:
-      promptText = "Spieler 1"
-
-    val name2 = new TextField:
-      promptText = "Spieler 2"
-
+    val name1 = new TextField { promptText = "Spieler 1" }
+    val name2 = new TextField { promptText = "Spieler 2" }
     val startBtn = new Button("Start")
 
     val root = new VBox(10,
@@ -60,7 +49,7 @@ class Gui(controller: Controller):
 
     val stage = new Stage:
       title = "Spieler Auswahl"
-      scene = new Scene(root, 300, 200)
+      scene = Scene(root, 300, 200)
 
     startBtn.onAction = _ =>
       val players = Array(
@@ -75,16 +64,15 @@ class Gui(controller: Controller):
       stage.close()
       showMainGameGUI(players)
 
-      Future {
+      scala.concurrent.Future {
         controller.gameloop(new GuiPlayerInput(this, players))
       }
 
     stage.show()
 
   // ============================================================
-  // MAIN GAME GUI
+  // Main Game GUI
   // ============================================================
-
   private def showMainGameGUI(players: Array[Player]): Unit =
     val tableBox = new HBox:
       alignment = Pos.Center
@@ -103,64 +91,55 @@ class Gui(controller: Controller):
 
     val stage = new Stage:
       title = "ScalaFX UNO"
-      scene = new Scene(root, 900, 600)
+      scene = Scene(root, 900, 600)
 
-    // ======================================
-    // UI UPDATE
-    // ======================================
-
+    // UI Update
     def updateUI(): Unit =
       Platform.runLater {
 
-        // Tischkarte
-        tableBox.children.setAll(
-          renderCard(controller.game.table, clickable = false)
-        )
+        // Tisch-Karte
+        tableBox.children.setAll(renderCard(controller.game.table, clickable = false))
 
-        // Spieler
+        // Spieler-Hand
         playersBox.children.clear()
-
         controller.game.player.zipWithIndex.foreach { (pl, idx) =>
-          val label = new Label(s"${pl.name}'s Hand:"):
-            style = "-fx-font-size: 16px;"
+          val label = new Label(s"${pl.name}'s Hand:") { style = "-fx-font-size: 16px;" }
+          val handBox = new HBox(10) { alignment = Pos.Center }
 
-          val handBox = new HBox(10):
-            alignment = Pos.Center
-
-          // Handkarten
           pl.hand.zipWithIndex.foreach { (card, cIdx) =>
-            handBox.children.add(
-              renderCard(card, clickable = true, playerIdx = idx, cardIdx = cIdx)
-            )
+            handBox.children.add(renderCard(card, clickable = true, playerIdx = idx, cardIdx = cIdx))
           }
 
-          // Draw-Button nur beim aktiven Spieler
+          // Draw-Button nur für aktuellen Spieler
           if idx == controller.game.index then
             handBox.children.add(
-              new Button("Karte ziehen"):
-                onAction = _ =>
-                  // -1 = Draw Signal (führt zu Hint=3 → DrawCardCommand)
-                  turnCallbackRef.get().apply(-1)
+              new Button("Karte ziehen") { onAction = _ => handleDrawButton() }
             )
 
           playersBox.children.addAll(label, handBox)
         }
       }
 
-    // Observer registrieren
-    controller.add(new de.htwg.Uno.util.Observer {
+    // Observer für Controller
+    controller.add(new de.htwg.Uno.util.Observer:
       override def update: Unit = updateUI()
-    })
+    )
 
     updateUI()
     stage.show()
 
   // ============================================================
+  // Draw-Button Handler
+  // ============================================================
+  private def handleDrawButton(): Unit =
+    // Controller interpretiert 3 als Draw
+    turnCallbackRef.get().apply(500)
+
+  // ============================================================
   // Karte rendern
   // ============================================================
-
   private def renderCard(card: Card, clickable: Boolean,
-                         playerIdx: Int = 0, cardIdx: Int = 0): Button =
+                        playerIdx: Int = 0, cardIdx: Int = 0): Button =
 
     val colorStr = card.colour match
       case Coulor.red    => "red"
@@ -190,60 +169,47 @@ class Gui(controller: Controller):
       prefWidth = 60
       prefHeight = 90
 
-    if clickable then
-      btn.onAction = _ =>
-        handleCardClick(card, cardIdx)
+    if clickable then btn.onAction = _ => handleCardClick(card, cardIdx)
 
     btn
 
   // ============================================================
   // Kartenklick
   // ============================================================
-
   private def handleCardClick(card: Card, cardIdx: Int): Unit =
     card.symbol match
-      case Symbol.Plus_4 | Symbol.Wish =>
-        showColorChooser(cardIdx)
-      case _ =>
-        turnCallbackRef.get().apply(cardIdx)
+      case Symbol.Plus_4 | Symbol.Wish => showColorChooser(cardIdx)
+      case _ => turnCallbackRef.get().apply(cardIdx)
 
   // ============================================================
-  // Farbwahl
+  // Farbwahl (wie gewünscht)
   // ============================================================
-
   private def showColorChooser(cardIdx: Int): Unit =
     val dialog = new Stage:
       title = "Farbe auswählen"
       initModality(Modality.ApplicationModal)
 
     val colors = List("red", "yellow", "blue", "green")
+    val colorMapping = Map("red" -> 2, "yellow" -> 1, "blue" -> 4, "green" -> 3)
 
     val buttons = colors.map { c =>
       new Button(c.capitalize):
         prefWidth = 120
         onAction = _ =>
-          val col = c match
-            case "red"    => 0
-            case "yellow" => 1
-            case "blue"   => 2
-            case "green"  => 3
-
-          turnCallbackRef.get().apply(col)
+          turnCallbackRef.get().apply(colorMapping(c))
           dialog.close()
     }
 
-    dialog.scene = new Scene(
-      new VBox(10, buttons*):
-        alignment = Pos.Center
-        padding = Insets(20)
+    dialog.scene = Scene(new VBox(10, buttons*):
+      alignment = Pos.Center
+      padding = Insets(20)
     )
 
     dialog.show()
 
   // ============================================================
-  // PlayerInput (Controller erwartet dieses Verhalten!)
+  // PlayerInput (Promise ohne var)
   // ============================================================
-
   class GuiPlayerInput(gui: Gui, players: Array[Player]) extends PlayerInput:
 
     override def getInput(game: Game, input: PlayerInput): Integer =
@@ -252,12 +218,13 @@ class Gui(controller: Controller):
 
       gui.setTurnCallback(value => p.success(value))
 
-      // Future[Int] → Future[java.lang.Integer]
       Await.result(p.future.map(Int.box), Duration.Inf)
 
     override def getInputs(): String =
       val idx = controller.game.index
       players(idx).name
+
+
 
 
 
