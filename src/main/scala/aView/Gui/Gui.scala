@@ -73,6 +73,7 @@ class Gui(controller: Controller):
   // ============================================================
   // Main Game GUI
   // ============================================================
+  private var colorChooserOpen = false
   private def showMainGameGUI(players: Array[Player]): Unit =
     val tableBox = new HBox:
       alignment = Pos.Center
@@ -96,6 +97,10 @@ class Gui(controller: Controller):
     // UI Update
     def updateUI(): Unit =
       Platform.runLater {
+
+        if (controller.game.ActionState == ActionState.ChooseColour) {
+          showColorChooser()
+        }
 
         // Tisch-Karte
         tableBox.children.setAll(renderCard(controller.game.table, clickable = false))
@@ -177,17 +182,19 @@ class Gui(controller: Controller):
   // Kartenklick
   // ============================================================
   private def handleCardClick(card: Card, cardIdx: Int): Unit =
-    card.symbol match
-      case Symbol.Plus_4 | Symbol.Wish => showColorChooser(cardIdx)
-      case _ => turnCallbackRef.get().apply(cardIdx)
+    turnCallbackRef.get().apply(cardIdx)
 
   // ============================================================
   // Farbwahl (wie gewünscht)
   // ============================================================
-  private def showColorChooser(cardIdx: Int): Unit =
+  private def showColorChooser(): Unit =
+    if (colorChooserOpen) return
+
+    colorChooserOpen = true
     val dialog = new Stage:
       title = "Farbe auswählen"
       initModality(Modality.ApplicationModal)
+      onCloseRequest = (_: javafx.stage.WindowEvent) => colorChooserOpen = false
 
     val colors = List("red", "yellow", "blue", "green")
     val colorMapping = Map("red" -> 2, "yellow" -> 1, "blue" -> 4, "green" -> 3)
@@ -197,6 +204,7 @@ class Gui(controller: Controller):
         prefWidth = 120
         onAction = _ =>
           turnCallbackRef.get().apply(colorMapping(c))
+          colorChooserOpen = false
           dialog.close()
     }
 
@@ -223,24 +231,3 @@ class Gui(controller: Controller):
     override def getInputs(): String =
       val idx = controller.game.index
       players(idx).name
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
