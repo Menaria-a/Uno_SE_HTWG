@@ -1,3 +1,4 @@
+
 val scala3Version = "3.7.3"
 
 lazy val root = project
@@ -7,9 +8,27 @@ lazy val root = project
     version := "0.1.0-SNAPSHOT",
 
     scalaVersion := scala3Version,
+    fork := true,
 
-    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.14",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test",
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
-    libraryDependencies += "org.scalafx" %% "scalafx" % "23.0.1-R34",
+    libraryDependencies ++= {
+      // Determine OS
+      val os = sys.props("os.name").toLowerCase
+      val classifier = os match {
+        case x if x.contains("win") => "win"
+        case x if x.contains("mac") => "mac"
+        case x if x.contains("nux") => "linux"
+        case _ => ""
+      }
+      val javafxVersion = "23.0.1"
+      Seq(
+        "org.scalactic" %% "scalactic" % "3.2.14",
+        "org.scalatest" %% "scalatest" % "3.2.14" % "test",
+        "org.scalameta" %% "munit" % "1.0.0" % Test,
+        "org.scalafx" %% "scalafx" % "23.0.1-R34",
+        "org.openjfx" % "javafx-base" % javafxVersion classifier classifier,
+        "org.openjfx" % "javafx-controls" % javafxVersion classifier classifier,
+        "org.openjfx" % "javafx-graphics" % javafxVersion classifier classifier,
+        "org.openjfx" % "javafx-media" % javafxVersion classifier classifier
+      )
+    }
   )

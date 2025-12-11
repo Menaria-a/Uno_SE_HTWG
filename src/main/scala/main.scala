@@ -17,7 +17,7 @@ object main:
 
     def main (args: Array[String]): Unit =
         val manager = CommandManager()
-        val controller = (Controller( game = Game(Nil,0, Nil,Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)))
+        val controller = (Controller( game = Game(Nil,0, Nil,Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None), manager))
         val tui = new Tui(controller)
         controller.add(tui) 
 
