@@ -3,123 +3,165 @@ package de.htwg.Uno.aView.Gui
 import scalafx.application.Platform
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
-import scalafx.scene.control._
-import scalafx.scene.layout._
-import scalafx.stage.Stage
-import scala.concurrent.{Future, Promise}
+import scalafx.scene.control.*
+import scalafx.scene.layout.*
+import scalafx.stage.{Stage, Modality}
+
+import scala.concurrent.{Future, Promise, Await}
+import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
+
+import java.util.concurrent.atomic.AtomicReference
 
 import de.htwg.Uno.controller.{Controller, PlayerInput}
 import de.htwg.Uno.model.{Card, Player, Game}
 import de.htwg.Uno.model.Enum.*
 import de.htwg.Uno.model.Model.*
 
-class Gui(controller: Controller) {
+class Gui(controller: Controller):
 
-  /** Startet die GUI */
-  def start(): Unit = showPlayerNameInput()
+  // ============================================================
+  // Kein var: Callback + Promise als AtomicReference
+  // ============================================================
 
-  /** Spielername-Abfrage */
-  private def showPlayerNameInput(): Unit = {
-    val nameField1 = new TextField() { promptText = "Spieler 1 Name" }
-    val nameField2 = new TextField() { promptText = "Spieler 2 Name" }
-    val startButton = new Button("Spiel starten")
+  private val turnCallbackRef =
+    new AtomicReference[Int => Unit](_ => ())
 
-    val root = new VBox(10) {
-      padding = Insets(20)
+  private val promiseRef =
+    new AtomicReference[Promise[Int]]()
+
+  def setTurnCallback(cb: Int => Unit): Unit =
+    turnCallbackRef.set(cb)
+
+  // ============================================================
+  // Start GUI
+  // ============================================================
+
+  def start(): Unit =
+    showPlayerNameInput()
+
+  private def showPlayerNameInput(): Unit =
+    val name1 = new TextField:
+      promptText = "Spieler 1"
+
+    val name2 = new TextField:
+      promptText = "Spieler 2"
+
+    val startBtn = new Button("Start")
+
+    val root = new VBox(10,
+      new Label("Spielernamen:"),
+      name1,
+      name2,
+      startBtn
+    ):
       alignment = Pos.Center
-      children = Seq(
-        new Label("Gib die Spielernamen ein:"),
-        nameField1,
-        nameField2,
-        startButton
-      )
-    }
+      padding = Insets(20)
 
-    val stage = new Stage {
-      title = "Uno Spieler Auswahl"
+    val stage = new Stage:
+      title = "Spieler Auswahl"
       scene = new Scene(root, 300, 200)
-    }
 
-    startButton.onAction = _ => {
+    startBtn.onAction = _ =>
       val players = Array(
-        Player(nameField1.text.value, Nil, 0),
-        Player(nameField2.text.value, Nil, 0)
+        Player(name1.text.value, Nil, 0),
+        Player(name2.text.value, Nil, 0)
       )
 
-      val initState = de.htwg.Uno.model.state.InitState(players(0), players(1))
-      val game: Game = initState.start(players(0), players(1))
+      val init = de.htwg.Uno.model.state.InitState(players(0), players(1))
+      val game = init.start(players(0), players(1))
       controller.updateAll(game)
 
       stage.close()
       showMainGameGUI(players)
 
-      // GameLoop asynchron starten
-      Future { controller.gameloop(new GuiPlayerInput(this, players)) }
-    }
+      Future {
+        controller.gameloop(new GuiPlayerInput(this, players))
+      }
 
     stage.show()
-  }
 
-  /** Haupt-GUI */
-  private def showMainGameGUI(players: Array[Player]): Unit = {
-    val tableCardBox = new HBox { spacing = 10; alignment = Pos.Center }
-    val playersBox = new VBox { spacing = 15; alignment = Pos.TopCenter }
+  // ============================================================
+  // MAIN GAME GUI
+  // ============================================================
 
-    val tableLabel = new Label("Tisch:") { style = "-fx-font-size: 20px;" }
+  private def showMainGameGUI(players: Array[Player]): Unit =
+    val tableBox = new HBox:
+      alignment = Pos.Center
+      spacing = 20
 
-    val root = new VBox(20) {
+    val playersBox = new VBox:
+      alignment = Pos.TopCenter
+      spacing = 20
+
+    val root = new VBox(20,
+      new Label("Tisch:") { style = "-fx-font-size: 20px;" },
+      tableBox,
+      playersBox
+    ):
       padding = Insets(20)
-      children = Seq(tableLabel, tableCardBox, playersBox)
-    }
 
-    val stage = new Stage {
-      title = "Uno ScalaFX"
-      scene = new Scene(root, 800, 600)
-    }
+    val stage = new Stage:
+      title = "ScalaFX UNO"
+      scene = new Scene(root, 900, 600)
 
-    /** UI aktualisieren */
-    def updateUI(): Unit = Platform.runLater {
-      tableCardBox.children.clear()
-      tableCardBox.children.add(renderCard(controller.game.table, clickable = false))
+    // ======================================
+    // UI UPDATE
+    // ======================================
 
-      playersBox.children.clear()
-      controller.game.player.zipWithIndex.foreach { case (p, idx) =>
-        val labelBox = new Label(s"${p.name}'s Hand:") { style = "-fx-font-size: 16px;" }
-        val handBox = new HBox(5) { alignment = Pos.Center }
+    def updateUI(): Unit =
+      Platform.runLater {
 
-        p.hand.zipWithIndex.foreach { case (c, cIdx) =>
-          handBox.children.add(renderCard(c, clickable = true, idx, cIdx))
-        }
+        // Tischkarte
+        tableBox.children.setAll(
+          renderCard(controller.game.table, clickable = false)
+        )
 
-        if idx == controller.game.index then
-          val drawButton = new Button("Draw Card") {
-            style = "-fx-font-size: 16px; -fx-background-color: lightgray;"
-            onAction = _ =>
-              Future {
-                val drawCmd = de.htwg.Uno.controller.Command.DrawCardCommand(idx)
-                val (newManager, newGame, _) = controller.cmdManager.executeCommand(drawCmd, controller.game)
-                controller.cmdManager = newManager
-                controller.updateAll(newGame)
-              }
+        // Spieler
+        playersBox.children.clear()
+
+        controller.game.player.zipWithIndex.foreach { (pl, idx) =>
+          val label = new Label(s"${pl.name}'s Hand:"):
+            style = "-fx-font-size: 16px;"
+
+          val handBox = new HBox(10):
+            alignment = Pos.Center
+
+          // Handkarten
+          pl.hand.zipWithIndex.foreach { (card, cIdx) =>
+            handBox.children.add(
+              renderCard(card, clickable = true, playerIdx = idx, cardIdx = cIdx)
+            )
           }
-          handBox.children.add(drawButton)
 
-        playersBox.children.addAll(labelBox, handBox)
+          // Draw-Button nur beim aktiven Spieler
+          if idx == controller.game.index then
+            handBox.children.add(
+              new Button("Karte ziehen"):
+                onAction = _ =>
+                  // -1 = Draw Signal (führt zu Hint=3 → DrawCardCommand)
+                  turnCallbackRef.get().apply(-1)
+            )
+
+          playersBox.children.addAll(label, handBox)
+        }
       }
-    }
 
-    /** Controller Observer */
+    // Observer registrieren
     controller.add(new de.htwg.Uno.util.Observer {
       override def update: Unit = updateUI()
     })
 
     updateUI()
     stage.show()
-  }
 
-  /** Karte rendern */
-  private def renderCard(card: Card, clickable: Boolean, playerIdx: Int = 0, cardIdx: Int = 0): Button = {
+  // ============================================================
+  // Karte rendern
+  // ============================================================
+
+  private def renderCard(card: Card, clickable: Boolean,
+                         playerIdx: Int = 0, cardIdx: Int = 0): Button =
+
     val colorStr = card.colour match
       case Coulor.red    => "red"
       case Coulor.yellow => "yellow"
@@ -143,81 +185,82 @@ class Gui(controller: Controller) {
       case Symbol.Block   => "⯃"
       case Symbol.Wish    => "?"
 
-    val button = new Button(symbolStr) {
-      style = s"-fx-background-color: $colorStr; -fx-font-size: 18px; -fx-text-fill: black;"
+    val btn = new Button(symbolStr):
+      style = s"-fx-background-color: $colorStr; -fx-font-size: 18px;"
       prefWidth = 60
       prefHeight = 90
-    }
 
     if clickable then
-      button.onAction = _ => handleCardClick(playerIdx, cardIdx, card)
+      btn.onAction = _ =>
+        handleCardClick(card, cardIdx)
 
-    button
-  }
+    btn
 
-  /** Klick auf Karte */
-  private def handleCardClick(playerIdx: Int, cardIdx: Int, card: Card): Unit = {
-    if card.symbol == Symbol.Wish || card.symbol == Symbol.Plus_4 then
-      showColorChooser(playerIdx, cardIdx)
-    else
-      Future {
-        val cmd = de.htwg.Uno.controller.Command.PlayCardCommand(playerIdx, cardIdx, -1)
-        val (newManager, newGame, _) = controller.cmdManager.executeCommand(cmd, controller.game)
-        controller.cmdManager = newManager
-        controller.updateAll(newGame)
-      }
-  }
+  // ============================================================
+  // Kartenklick
+  // ============================================================
 
-  /** Farbwahl für Plus_4 / Wish */
-  private def showColorChooser(playerIdx: Int, cardIdx: Int): Unit = {
-    val dialog = new Stage {
-      initModality(scalafx.stage.Modality.ApplicationModal)
-      title = "Choose Color"
-    }
+  private def handleCardClick(card: Card, cardIdx: Int): Unit =
+    card.symbol match
+      case Symbol.Plus_4 | Symbol.Wish =>
+        showColorChooser(cardIdx)
+      case _ =>
+        turnCallbackRef.get().apply(cardIdx)
+
+  // ============================================================
+  // Farbwahl
+  // ============================================================
+
+  private def showColorChooser(cardIdx: Int): Unit =
+    val dialog = new Stage:
+      title = "Farbe auswählen"
+      initModality(Modality.ApplicationModal)
 
     val colors = List("red", "yellow", "blue", "green")
-    val colorButtons = colors.map { col =>
-      new Button(col.capitalize) {
-        onAction = _ => {
-          val colInt = col match
+
+    val buttons = colors.map { c =>
+      new Button(c.capitalize):
+        prefWidth = 120
+        onAction = _ =>
+          val col = c match
             case "red"    => 0
             case "yellow" => 1
             case "blue"   => 2
             case "green"  => 3
 
-          Future {
-            val cmd = de.htwg.Uno.controller.Command.PlayCardCommand(playerIdx, cardIdx, colInt)
-            val (newManager, newGame, _) = controller.cmdManager.executeCommand(cmd, controller.game)
-            controller.cmdManager = newManager
-            controller.updateAll(newGame)
-          }
-
+          turnCallbackRef.get().apply(col)
           dialog.close()
-        }
-      }
     }
 
     dialog.scene = new Scene(
-      new VBox(10) {
+      new VBox(10, buttons*):
         alignment = Pos.Center
         padding = Insets(20)
-        children = colorButtons
-      }
     )
 
     dialog.show()
-  }
 
-  /** GUI PlayerInput für GameLoop */
-  class GuiPlayerInput(gui: Gui, players: Array[Player]) extends PlayerInput {
-    override def getInput(game: Game, input: PlayerInput): Integer = {
-      // Hier kann man in Zukunft noch Promise/Future für echte Klicks verwenden
-      -1 // Platzhalter: GameLoop reagiert asynchron auf Klicks
-    }
+  // ============================================================
+  // PlayerInput (Controller erwartet dieses Verhalten!)
+  // ============================================================
 
-    override def getInputs(): String = players(controller.game.index).name
-  }
-}
+  class GuiPlayerInput(gui: Gui, players: Array[Player]) extends PlayerInput:
+
+    override def getInput(game: Game, input: PlayerInput): Integer =
+      val p = Promise[Int]()
+      promiseRef.set(p)
+
+      gui.setTurnCallback(value => p.success(value))
+
+      // Future[Int] → Future[java.lang.Integer]
+      Await.result(p.future.map(Int.box), Duration.Inf)
+
+    override def getInputs(): String =
+      val idx = controller.game.index
+      players(idx).name
+
+
+
 
 
 
