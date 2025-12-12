@@ -10,6 +10,6 @@ class FallbackHandler(val next: Option[InputHandler] = None) extends InputHandle
 
 
     override def setNext(handler: InputHandler): InputHandler =
-    this // keine weitere Weitergabe nötig
+    this 
 
 
