@@ -1,19 +1,15 @@
 package de.htwg.Uno.controller
-import de.htwg.Uno.model.Enum.ActionState
-import de.htwg.Uno.model.state.InitState
-import de.htwg.Uno.model.Game
-import de.htwg.Uno.model.Player
+import de.htwg.Uno.model.ModelInterface.*
 import de.htwg.Uno.util.Observable
 import de.htwg.Uno.controller.Command.PlayCardCommand
 import de.htwg.Uno.controller.Command.Command
 import de.htwg.Uno.controller.Command.ChooseColourCommand
 import de.htwg.Uno.controller.Command.DrawCardCommand
-import de.htwg.Uno.model.Enum.TurnState.PlayerTurn
-import de.htwg.Uno.model.Enum.TurnState.GameWon
 import de.htwg.Uno.util.Undo.CommandManager
 import javax.swing.Action
 import scala.collection.View.Updated
 import scala.annotation.tailrec
+import de.htwg.Uno.model.Enum.TurnState
 
 
 case class Controller(
@@ -46,7 +42,7 @@ case class Controller(
             print(Hint)
             if (Hint == 1){
                 val com = ChooseColourCommand(hand = newGame.table, input)
-                val new2Game = newGame.copy(ActionState = ActionState.ChooseColour, TurnState = PlayerTurn(game.player(index)))
+                val new2Game = newGame.copy(ActionState = ActionState.ChooseColour, TurnState = TurnState.PlayerTurn(game.player(index)))
                 updateAll(new2Game)
                 val (newerManager, newerGame, value) = newManager.executeCommand(com,new2Game)
                 val newestGame = newerGame.copy(ActionState = ActionState.ChooseCard)
@@ -56,7 +52,7 @@ case class Controller(
                 System.exit(0)
             }
             else if (Hint == 6) {
-                val newgame = newGame.copy(TurnState = PlayerTurn(newGame.player((index + 1) % 2)))
+                val newgame = newGame.copy(TurnState = TurnState.PlayerTurn(newGame.player((index + 1) % 2)))
                 updateAll(newgame)
             }
             else if (Hint == 3){
