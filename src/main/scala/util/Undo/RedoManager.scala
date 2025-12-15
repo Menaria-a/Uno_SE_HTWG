@@ -26,7 +26,6 @@ case class CommandManager(
             undoStack = rest,
             redoStack = (cmd, game) :: redoStack
             )
-            println(redoStack)
             Some(newManager, reverted)
 
         case Nil => None
@@ -40,7 +39,6 @@ case class CommandManager(
             redoStack = rest,
             undoStack = (cmd, game) :: undoStack
             )
-            println(redoStack)
             Some(newManager, games)
         case Nil => None
 

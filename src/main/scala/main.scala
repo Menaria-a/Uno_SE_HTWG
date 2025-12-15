@@ -21,16 +21,15 @@ object main:
         val tui = new Tui(controller)
         controller.add(tui) 
 
-        //tui.fake("Ersten und Zweiten Namen eingeben: ")
-        //controller.initloop(tui)
-        //controller.gameloop(tui)
-
-
         Platform.startup(()=> {
             val gui = new Gui(controller)
             gui.start()
 
-        })
+        }
+        
+        )
+        //controller.initloop(tui)
+        //controller.gameloop(tui)
 
 
 
