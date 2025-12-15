@@ -13,5 +13,5 @@ import de.htwg.Uno.model.Enum.TurnState.PlayerTurn
 case class ChooseColourCommand(hand: Card, input: PlayerInput) extends Command:
     override def execute(game: Game): (Game, Integer) =
         val chooseColour = input.getInput(game, input)
-        val (_, newGame) = WishCardState.chooseColour(game, hand.colour, hand, chooseColour)
+        val (_, newGame) = WishCardState.chooseColour(game, hand.coulor, hand, chooseColour)
         (newGame, 2)

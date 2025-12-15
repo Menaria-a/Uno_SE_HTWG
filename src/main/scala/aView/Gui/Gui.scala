@@ -11,9 +11,8 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.util.concurrent.atomic.AtomicReference
 import de.htwg.Uno.controller.{Controller, PlayerInput}
-import de.htwg.Uno.model.{Card, Player, Game}
-import de.htwg.Uno.model.Enum.*
-import de.htwg.Uno.model.Model.*
+import de.htwg.Uno.model.ModelInterface.*
+
 
 class Gui(controller: Controller):
 
@@ -51,8 +50,7 @@ class Gui(controller: Controller):
         Player(name2.text.value, Nil, 0)
       )
 
-      val init = de.htwg.Uno.model.state.InitState(players(0), players(1))
-      val game = init.start(players(0), players(1))
+      val game = de.htwg.Uno.model.state.InitState.start(players(0), players(1))
       controller.updateAll(game)
 
       stage.close()
@@ -128,7 +126,7 @@ class Gui(controller: Controller):
   private def renderCard(card: Card, clickable: Boolean,
                         playerIdx: Int = 0, cardIdx: Int = 0): Button =
 
-    val colorStr = card.colour match
+    val colorStr = card.coulor match
       case Coulor.red    => "red"
       case Coulor.yellow => "yellow"
       case Coulor.blue   => "blue"

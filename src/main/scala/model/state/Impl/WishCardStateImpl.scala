@@ -1,25 +1,20 @@
-package de.htwg.Uno.model.state
+package de.htwg.Uno.model.state.Impl
+import de.htwg.Uno.model.ModelInterface.*
+
+import de.htwg.Uno.model.state.GameState
 
 
-import de.htwg.Uno.model.Model._
-import de.htwg.Uno.model.Enum._
-import de.htwg.Uno.model.Player
-import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Game
-
-
-  case object WishCardState extends GameState:
-
+private[state] case object  WishCardStateImpl extends GameState {
     override def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer ): (Card, Game)= 
-      val news = chooseColourForCard(hand, game, input)
-      news
+        val news = chooseColourForCard(hand, game, input)
+        news
     
 
     def chooseColourForCard(hand: Card, baseGame: Game, input: Integer): (Card, Game) =
 
         val newGame = baseGame.copy(ActionState = ActionState.ChooseColour)
         val wishedColour = wisher(input)
-        val wishedCard = hand.copy(colour = wishedColour)
+        val wishedCard = hand.copy(coulor = wishedColour, symbol = hand.symbol)
         (wishedCard, newGame.copy(table = wishedCard))
 
 
@@ -38,12 +33,7 @@ import de.htwg.Uno.model.Game
 
 
     override def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer) =
-      val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
-      (game, 2)
+        val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+        (game, 2)
     
-
-
-
-
-
-
+}

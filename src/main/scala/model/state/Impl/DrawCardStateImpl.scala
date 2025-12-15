@@ -1,15 +1,8 @@
+package de.htwg.Uno.model.state.Impl
 
-package de.htwg.Uno.model.state
-import de.htwg.Uno.model.Player
-import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Game
-import de.htwg.Uno.model.Model._
-import de.htwg.Uno.model.Enum._
-import de.htwg.Uno.model.Game
-import de.htwg.Uno.model.Player
+import de.htwg.Uno.model.ModelInterface.*
 
-case object  DrawCardState extends GameState:
-
+private[state] case object DrawCardStateImpl extends GameState {
     override def drawCard(game: Game, playerIdx: Int): Game =
         val player = game.player(playerIdx)
         val (newPlayer, newDeck) = dealCardsToHand(player, game.deck, 1)
@@ -42,3 +35,4 @@ case object  DrawCardState extends GameState:
     override def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer) =
         val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
         (game, 2)
+}

@@ -1,16 +1,7 @@
-package de.htwg.Uno.model.state
+package de.htwg.Uno.model.state.Impl
+import de.htwg.Uno.model.ModelInterface.*
 
-import de.htwg.Uno.model.Model._
-import de.htwg.Uno.model.Enum._
-import de.htwg.Uno.model.Game
-import de.htwg.Uno.model.Player
-import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Game
-
-
-
-case object PlayCardState extends GameState:
+private[state] case object PlayCardStateImpl extends GameState:
 
     override def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer) =
         handleTurn(game, playerIdx,cardIdx)
@@ -112,7 +103,7 @@ case object PlayCardState extends GameState:
 
 
     def isPlayable(table: Card, hand: Card): Boolean =
-        hand.colour == table.colour || hand.symbol == table.symbol || hand.symbol == Symbol.Wish || hand.symbol == Symbol.Plus_4
+        hand.coulor == table.coulor || hand.symbol == table.symbol || hand.symbol == Symbol.Wish || hand.symbol == Symbol.Plus_4
 
     def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean): Int =
         if (skipNext) {
@@ -140,7 +131,3 @@ case object PlayCardState extends GameState:
         val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
         val card = Card(Coulor.red, Symbol.One)
         (card, game)
-
-
-
-

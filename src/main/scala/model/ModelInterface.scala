@@ -2,6 +2,11 @@ package de.htwg.Uno.model
 import de.htwg.Uno.model.Model.*
 import de.htwg.Uno.model.Enum.*
 
+import de.htwg.Uno.model.state.{
+    StateInterface as IntStateInterface,
+    GameState as IntGameState
+}
+
 
 
 object  ModelInterface:
@@ -12,12 +17,15 @@ object  ModelInterface:
     type Symbol = de.htwg.Uno.model.Model.Symbol
     type ActionState = de.htwg.Uno.model.Enum.ActionState
     type TurnState = de.htwg.Uno.model.Enum.TurnState
+    type GameState = IntGameState
+    type StateInterface = IntStateInterface.type
 
 
     val Coulor = de.htwg.Uno.model.Model.Coulor
     val Symbol = de.htwg.Uno.model.Model.Symbol
     val ActionState = de.htwg.Uno.model.Enum.ActionState
     val TurnState = de.htwg.Uno.model.Enum.TurnState
+    val StateInterface = IntStateInterface
 
     object GameBuilder:
         def apply(): de.htwg.Uno.model.builder.GameBuilder =

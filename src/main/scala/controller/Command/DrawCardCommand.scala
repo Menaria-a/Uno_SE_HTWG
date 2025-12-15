@@ -1,8 +1,8 @@
 
 package de.htwg.Uno.controller.Command
 
-import de.htwg.Uno.model.Game
-import de.htwg.Uno.model.state.DrawCardState
+import de.htwg.Uno.model.ModelInterface.*
+import de.htwg.Uno.model.ModelInterface.StateInterface.DrawCardState
 
 case class DrawCardCommand(playerIdx: Int) extends Command:
     override def execute(game: Game): (Game, Integer) =

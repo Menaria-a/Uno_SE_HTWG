@@ -1,13 +1,11 @@
-package de.htwg.Uno.model.state
-import de.htwg.Uno.model.Enum.*
-import de.htwg.Uno.model.Player
-import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Game
-import de.htwg.Uno.model.Model.*
-import de.htwg.Uno.model.builder.GameBuilder
-import de.htwg.Uno.model.Enum.TurnState.PlayerTurn
+package de.htwg.Uno.model.state.Impl
 
-case class InitState(p1: Player, p2: Player) extends GameState {
+import de.htwg.Uno.model.state.GameState
+import de.htwg.Uno.model.ModelInterface.*
+
+
+
+private [state] case object InitStateImpl extends GameState {
 
     override def start(p1: Player, p2: Player): Game = deckmaker(p1, p2)
 
@@ -17,7 +15,6 @@ case class InitState(p1: Player, p2: Player) extends GameState {
         coulor <- Coulor.values
         symbol <- Symbol.values
         } yield Card(coulor, symbol)
-
         val shuffledDeck = scala.util.Random.shuffle(deck.toList)
 
         val ersteHand = shuffledDeck.take(5)
@@ -35,7 +32,7 @@ case class InitState(p1: Player, p2: Player) extends GameState {
         .withDeck(remainingDeck)
         .withTable(tableCards)
         .withActionState(ActionState.ChooseCard)
-        .withTurnState(PlayerTurn(p1)).build()
+        .withTurnState(TurnState.PlayerTurn(p1)).build()
         finalState
 
 

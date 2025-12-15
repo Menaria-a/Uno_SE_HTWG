@@ -3,17 +3,10 @@ package de.htwg.Uno.aView
 import de.htwg.Uno.controller.Controller
 import de.htwg.Uno.controller.PlayerAction
 import de.htwg.Uno.aView.handler.*
-import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Model.Coulor
-import de.htwg.Uno.model.Model.Symbol
-import de.htwg.Uno.model.Game
+import de.htwg.Uno.model.ModelInterface.*
 import scala.io.StdIn.readLine
-import de.htwg.Uno.model.Player
 import de.htwg.Uno.util.Observer
 import de.htwg.Uno.controller.PlayerInput
-import de.htwg.Uno.model.Enum.ActionState
-
-import de.htwg.Uno.model.Enum.TurnState
   import de.htwg.Uno.controller.DrawAction
   import de.htwg.Uno.controller.InvalidAction
 
@@ -23,7 +16,7 @@ import de.htwg.Uno.model.Enum.TurnState
 
 
     def creator(card: Card): List[String] =
-      val coulorInd = card.colour match
+      val coulorInd = card.coulor match
         case Coulor.red => "r"
         case Coulor.yellow => "y"
         case Coulor.blue => "b"

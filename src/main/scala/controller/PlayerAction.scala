@@ -1,7 +1,6 @@
 package de.htwg.Uno.controller
 
-import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Model.Coulor
+import de.htwg.Uno.model.ModelInterface.*
 
 
 sealed trait PlayerAction

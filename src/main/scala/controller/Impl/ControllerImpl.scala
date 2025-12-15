@@ -1,8 +1,9 @@
-package de.htwg.Uno.controller
+package de.htwg.Uno.controller.Impl
 import de.htwg.Uno.model.ModelInterface.*
 import de.htwg.Uno.model.ModelInterface.StateInterface.InitState
 import de.htwg.Uno.util.Observable
 import de.htwg.Uno.controller.Command.PlayCardCommand
+import de.htwg.Uno.controller.PlayerInput
 import de.htwg.Uno.controller.Command.Command
 import de.htwg.Uno.controller.Command.ChooseColourCommand
 import de.htwg.Uno.controller.Command.DrawCardCommand
@@ -12,7 +13,7 @@ import scala.collection.View.Updated
 import scala.annotation.tailrec
 
 
-case class Controller(
+private[controller] class ControllerImpl(
     var game: Game, var cmdManager: CommandManager
     ) extends Observable {
 
@@ -85,37 +86,3 @@ case class Controller(
                     None
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
