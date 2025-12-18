@@ -23,8 +23,10 @@ object main:
         }
         
         )
-        //controller.initloop(tui)
-        //controller.gameloop(tui)
+        
+        tui.fake("Ersten und Zweiten Namen eingeben: ")
+        controller.initloop(tui)
+        controller.gameloop(tui)
 
 
 

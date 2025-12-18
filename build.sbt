@@ -9,6 +9,7 @@ lazy val root = project
 
     scalaVersion := scala3Version,
     fork := true,
+    connectInput := true,
 
     libraryDependencies ++= {
       // Determine OS
