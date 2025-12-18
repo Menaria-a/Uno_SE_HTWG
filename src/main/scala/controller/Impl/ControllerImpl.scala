@@ -3,19 +3,17 @@ import de.htwg.Uno.model.ModelInterface.*
 import de.htwg.Uno.model.ModelInterface.StateInterface.InitState
 import de.htwg.Uno.util.Observable
 import de.htwg.Uno.controller.Command.PlayCardCommand
-import de.htwg.Uno.controller.PlayerInput
-import de.htwg.Uno.controller.Command.Command
-import de.htwg.Uno.controller.Command.ChooseColourCommand
-import de.htwg.Uno.controller.Command.DrawCardCommand
+import de.htwg.Uno.controller.ControllerInterface.*
 import de.htwg.Uno.util.Undo.CommandManager
 import javax.swing.Action
 import scala.collection.View.Updated
 import scala.annotation.tailrec
+import de.htwg.Uno.controller.Controller
 
 
 private[controller] class ControllerImpl(
     var game: Game, var cmdManager: CommandManager
-    ) extends Observable {
+    ) extends Controller {
 
 
         def updateAll(g: Game): Game =

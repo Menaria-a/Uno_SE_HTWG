@@ -10,7 +10,7 @@ import scala.concurrent.{Promise, Await}
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.util.concurrent.atomic.AtomicReference
-import de.htwg.Uno.controller.{Controller, PlayerInput}
+import de.htwg.Uno.controller.ControllerInterface.*
 import de.htwg.Uno.model.ModelInterface.*
 
 

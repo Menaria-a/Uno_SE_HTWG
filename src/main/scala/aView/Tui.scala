@@ -1,12 +1,11 @@
 
 package de.htwg.Uno.aView
-import de.htwg.Uno.controller.Controller
 import de.htwg.Uno.controller.PlayerAction
 import de.htwg.Uno.aView.handler.*
 import de.htwg.Uno.model.ModelInterface.*
 import scala.io.StdIn.readLine
 import de.htwg.Uno.util.Observer
-import de.htwg.Uno.controller.PlayerInput
+import de.htwg.Uno.controller.ControllerInterface.*
   import de.htwg.Uno.controller.DrawAction
   import de.htwg.Uno.controller.InvalidAction
 
