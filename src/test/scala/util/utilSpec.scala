@@ -18,7 +18,7 @@ class UtilSpec extends AnyWordSpec with Matchers {
     val manager = CommandManager()
 
 
-    val controller = new Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None), manager)
+    val controller = Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None), manager)
     val TuiInstance = new Tui(controller: Controller)
 
     "The remove function" should {
@@ -37,15 +37,13 @@ class UtilSpec extends AnyWordSpec with Matchers {
         }
     }
 
-    class FakeController extends Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None), manager) {
-        private var _game: Game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
 
-    }
+
     
-
+    
     "The update function" should {
         "clear the screen and print the game, person, and status" in {
-            val controller = new FakeController()
+            val controller = (Controller( game = Game(Nil,0, Nil,Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None), manager))
             val outputStream = new java.io.ByteArrayOutputStream()
             Console.withOut(outputStream) {
             TuiInstance.update

@@ -3,11 +3,7 @@ package de.htwg.Uno.model.state
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
-import de.htwg.Uno.model.Model._
-import de.htwg.Uno.model.Enum._
-import de.htwg.Uno.model.Player
-import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Game
+import de.htwg.Uno.model.ModelInterface.*
 
 class WishCardStateSpec extends AnyWordSpec with Matchers {
 
@@ -27,8 +23,8 @@ class WishCardStateSpec extends AnyWordSpec with Matchers {
       testCases.foreach { case (input, expectedColour) =>
         val (newCard, newGame) = WishCardState.chooseColour(dummyGame, expectedColour, dummyCard, input)
 
-        newCard.colour shouldBe expectedColour
-        newGame.table.colour shouldBe expectedColour
+        newCard.coulor shouldBe expectedColour
+        newGame.table.coulor shouldBe expectedColour
         newGame.ActionState shouldBe ActionState.ChooseColour
       }
     }
@@ -54,7 +50,7 @@ class WishCardStateSpec extends AnyWordSpec with Matchers {
       resultGame.player shouldBe Nil
       resultGame.index shouldBe 0
       resultGame.deck shouldBe Nil
-      resultGame.table.colour shouldBe Coulor.red
+      resultGame.table.coulor shouldBe Coulor.red
       resultGame.table.symbol shouldBe Symbol.One
       resultGame.ActionState shouldBe ActionState.None
       resultGame.TurnState shouldBe TurnState.None

@@ -4,15 +4,10 @@ package de.htwg.Uno.aView
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers._
-import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Model.Coulor
-import de.htwg.Uno.model.Model.Symbol
-import de.htwg.Uno.model.Player
-import de.htwg.Uno.model.Game
+import de.htwg.Uno.model.ModelInterface.*
 import de.htwg.Uno.aView.Tui
-import de.htwg.Uno.controller.Controller
-import de.htwg.Uno.model.Enum.ActionState
-import de.htwg.Uno.model.Enum.TurnState
+import de.htwg.Uno.controller.ControllerInterface.*
+
 import de.htwg.Uno.util.Undo.CommandManager
 
 
@@ -21,7 +16,7 @@ import de.htwg.Uno.util.Undo.CommandManager
 class UnoSpec extends AnyWordSpec with Matchers{
   val manager = CommandManager()
 
-  val controller = new Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None),manager)
+  val controller = (Controller( game = Game(Nil,0, Nil,Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None), manager))
 
   val TuiInstance = new Tui(controller: Controller)
 

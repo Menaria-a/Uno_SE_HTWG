@@ -39,7 +39,7 @@ val dummyCard = Card(Coulor.red, Symbol.Wish)
     val command = ChooseColourCommand(dummyCard, dummyInput)
     val (newGame, resultValue) = command.execute(dummyGame)
 
-    newGame.table.colour shouldEqual Coulor.red
+    newGame.table.coulor shouldEqual Coulor.red
     resultValue shouldEqual 2
     }
 

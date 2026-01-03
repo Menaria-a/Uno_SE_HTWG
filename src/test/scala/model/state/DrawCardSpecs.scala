@@ -2,12 +2,8 @@ package de.htwg.Uno.model.state
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-
-import de.htwg.Uno.model.Model._
-import de.htwg.Uno.model.Enum._
-import de.htwg.Uno.model.Player
-import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Game
+import de.htwg.Uno.model.ModelInterface.StateInterface.DrawCardState.*
+import de.htwg.Uno.model.ModelInterface.*
 
 class DrawCardStateSpec extends AnyWordSpec with Matchers {
 

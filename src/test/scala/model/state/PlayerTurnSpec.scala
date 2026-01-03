@@ -3,13 +3,10 @@ package de.htwg.Uno.model.state
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers._
-import de.htwg.Uno.model.state.PlayCardState
-import de.htwg.Uno.model.Model.*
-import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Game
-import de.htwg.Uno.model.Player
-import de.htwg.Uno.controller.PlayerInput
-import de.htwg.Uno.model.Enum.*
+import de.htwg.Uno.model.ModelInterface.StateInterface.*
+import de.htwg.Uno.model.ModelInterface.*
+import de.htwg.Uno.controller.ControllerInterface.*
+
 
 
 class PlayCardSpecs extends AnyWordSpec with Matchers{
@@ -50,7 +47,7 @@ class PlayCardSpecs extends AnyWordSpec with Matchers{
             g1.player(0).hand.size shouldBe 1 // drew a card
 
             val (g2, int) = PlayCardState.handleTurn(g, 0, fakeInput)
-            g2.table.colour shouldBe Coulor.red
+            g2.table.coulor shouldBe Coulor.red
         }
     }
 
@@ -80,7 +77,7 @@ class PlayCardSpecs extends AnyWordSpec with Matchers{
             val g = Game(List(p),0, Nil, Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
 
             val (g1,int) = PlayCardState.playCardIfValid(Card(Coulor.red, Symbol.One), g, g.table, 0)
-            g1.table.colour shouldBe Coulor.red
+            g1.table.coulor shouldBe Coulor.red
             val invalid = Game(List(p),0, Nil, Card(Coulor.blue, Symbol.Two), ActionState.None, TurnState.None)
             val (g2, ints) = PlayCardState.playCardIfValid(Card(Coulor.red, Symbol.One), invalid, invalid.table, 0)
             g2.table shouldBe invalid.table
@@ -111,7 +108,7 @@ class PlayCardSpecs extends AnyWordSpec with Matchers{
 
             val (newGame, skip) = PlayCardState.turn(Card(Coulor.red, Symbol.Plus_4), game, 0)
             newGame.player(1).hand.length shouldBe 0  // Nächster Spieler zieht 4 Karten
-            newGame.table.colour shouldBe Coulor.red   // Gewünschte Farbe gesetzt
+            newGame.table.coulor shouldBe Coulor.red   // Gewünschte Farbe gesetzt
         }
     }
 

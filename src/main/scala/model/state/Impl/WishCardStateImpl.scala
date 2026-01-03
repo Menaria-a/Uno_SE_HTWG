@@ -18,7 +18,7 @@ private[state] case object  WishCardStateImpl extends GameState {
         (wishedCard, newGame.copy(table = wishedCard))
 
 
-    def wisher(input: Integer): Coulor =
+    override def wisher(input: Integer): Coulor =
     input match
         case 2 => Coulor.red
         case 3 => Coulor.green
@@ -35,5 +35,39 @@ private[state] case object  WishCardStateImpl extends GameState {
     override def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer) =
         val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
         (game, 2)
+
+
+    override def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) =
+        (player, deck)
     
+    override def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean): Int =
+        currentIndex
+
+
+    override def parseCardIndex(index: Int,player: Player,game: Game,tableCard: Card,currentPlayerIndex: Int): (Game, Integer) =
+        (game, currentPlayerIndex)
+
+
+    override def turn(card: Card,game: Game,currentPlayerIndex: Int): (Game, Integer) =
+        (game, currentPlayerIndex)
+
+
+    override def isPlayable(table: Card, hand: Card): Boolean =
+        true
+
+
+    override def handleTurn(game: Game,currentPlayerIndex: Int,chosenCardIndex: Int): (Game, Integer) =
+        (game, chosenCardIndex)
+
+
+    override def handleInvalidInput(game: Game,tableCard: Card,message: ActionState): (Game, Integer) =
+    (game, 1)
+
+
+    override def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int): Game =
+        (game)
+
+
+    override def playCardIfValid(card: Card,game: Game,tableCard: Card,currentPlayerIndex: Int): (Game, Integer) =
+        (game, currentPlayerIndex)
 }

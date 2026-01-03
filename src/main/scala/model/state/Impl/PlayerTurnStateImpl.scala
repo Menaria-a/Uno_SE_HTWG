@@ -131,3 +131,7 @@ private[state] case object PlayCardStateImpl extends GameState:
         val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
         val card = Card(Coulor.red, Symbol.One)
         (card, game)
+
+
+    override def wisher(int: Integer)=
+        Coulor.blue

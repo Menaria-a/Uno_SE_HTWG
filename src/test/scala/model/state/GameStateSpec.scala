@@ -4,8 +4,7 @@ package de.htwg.Uno.model.state
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import de.htwg.Uno.model.*
-import de.htwg.Uno.model.Model.*
+import de.htwg.Uno.model.ModelInterface.*
 import de.htwg.Uno.controller.PlayerAction
 
 class GameStateSpec extends AnyWordSpec with Matchers {
@@ -18,8 +17,8 @@ class GameStateSpec extends AnyWordSpec with Matchers {
     override def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer) =
       (game.copy(index = cardIdx), cardIdx)
 
-    override def chooseColour(game: Game, colour: Model.Coulor, hand: Card, input: Integer): (Card, Game) =
-      (hand.copy(colour = colour), game)
+    override def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) =
+      (hand.copy(coulor = colour, hand.symbol), game)
   }
 
   "A GameState" should {
@@ -58,7 +57,7 @@ class GameStateSpec extends AnyWordSpec with Matchers {
       val card = Card(Coulor.red, Symbol.One)
 
       val (newCard, newGame) = state.chooseColour(game, Coulor.blue, card, 0)
-      newCard.colour shouldBe Coulor.blue
+      newCard.coulor shouldBe Coulor.blue
       newGame shouldBe game
     }
   }
