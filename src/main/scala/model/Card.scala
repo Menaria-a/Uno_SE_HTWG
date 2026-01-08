@@ -9,8 +9,9 @@ trait Card:
     def copy(
         coulor: Coulor,
         symbol: Symbol
-    ): Card = Card(coulor,symbol)
+    ): Card 
 
-object Card: 
-    def apply(coulor: Coulor, symbol: Symbol): Card =
-        impl.CardImpl(coulor, symbol)
+
+trait CardFactory:
+    def apply(coulor: Coulor, symbol: Symbol): Card
+

@@ -4,50 +4,28 @@ import de.htwg.Uno.model.Player
 import de.htwg.Uno.model.Enum.ActionState
 import de.htwg.Uno.model.Enum.TurnState
 import de.htwg.Uno.model.Card
-import de.htwg.Uno.model.Game
+import de.htwg.Uno.model.*
 import de.htwg.Uno.model.Model.*
+import scala.util.Try
 
 
 
-object GameBuilder {
-    def apply(): GameBuilder = new GameBuilder()
-}
+trait  GameBuilder {
 
-case class GameBuilder(
-    player: List[Player] = List.empty,
-    index : Integer = 0,
-    deck: List[Card] = List.empty,
-    table: Card = Card(Coulor.red, Symbol.One),
-    ActionState: de.htwg.Uno.model.Enum.ActionState = de.htwg.Uno.model.Enum.ActionState.None,
-    TurnState: de.htwg.Uno.model.Enum.TurnState = de.htwg.Uno.model.Enum.TurnState.None
-) {
-    def withPlayers(newPlayers: List[Player]): GameBuilder =
-        copy(player = newPlayers)
+    def withPlayers(newPlayers: List[Player]): GameBuilder 
 
-    def withIndex(newIndex: Integer): GameBuilder =
-        copy(index = newIndex )
+    def withIndex(newIndex: Integer): GameBuilder 
 
-    def withDeck(newDeck: List[Card]): GameBuilder =
-        copy(deck = newDeck)
+    def withDeck(newDeck: List[Card]): GameBuilder 
 
-    def withTable(newTable: Card): GameBuilder =
-        copy(table = newTable)
+    def withTable(newTable: Card): GameBuilder 
 
-    def withActionState(newActionState: de.htwg.Uno.model.Enum.ActionState): GameBuilder =
-        copy(ActionState = newActionState)
+    def withActionState(newActionState: de.htwg.Uno.model.Enum.ActionState): GameBuilder 
 
-    def withTurnState(newTurnState: de.htwg.Uno.model.Enum.TurnState): GameBuilder =
-        copy(TurnState = newTurnState)
+    def withTurnState(newTurnState: de.htwg.Uno.model.Enum.TurnState): GameBuilder 
 
-    def build(): Game = {
-        Game(
-            player = player,
-            index  = index,
-            deck = deck,
-            table = table,
-            ActionState = ActionState,
-            TurnState = TurnState
-        )
-    }
+    def withGameFactory(factory: GameFactory): GameBuilder
+
+    def build(): Try[Game]
 
 }

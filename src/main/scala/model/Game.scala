@@ -20,20 +20,16 @@ trait Game:
         table: Card = this.table,
         ActionState: ActionState = this.ActionState,
         TurnState: TurnState = this.TurnState
-    ): Game = Game(
-        player,index,deck,table,ActionState,TurnState
-    )
+    ): Game 
 
 
-object Game:
+trait GameFactory:
     def apply(
         player: List[Player],
         index: Integer,
         deck: List[Card],
         table: Card,
         ActionState: ActionState,
-        TurnState: TurnState 
-    ): Game =
-        impl.GameImpl(
-            player,index,deck,table,ActionState,TurnState
-        )
+        TurnState: TurnState,
+        toBuilder: GameBuilder
+    ): Game

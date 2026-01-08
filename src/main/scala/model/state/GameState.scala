@@ -19,8 +19,4 @@ trait GameState:
     def playCardIfValid(card: Card,game: Game,tableCard: Card,currentPlayerIndex: Int): (Game, Integer) 
 
 
-val WishCardState: GameState = Impl.WishCardStateImpl
-val DrawCardState: GameState = Impl.DrawCardStateImpl
-val InitState: GameState = Impl.InitStateImpl
-val PlayCardState: GameState = Impl.PlayCardStateImpl
 

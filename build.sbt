@@ -26,6 +26,8 @@ lazy val root = project
         "org.scalatest" %% "scalatest" % "3.2.14" % "test",
         "org.scalameta" %% "munit" % "1.0.0" % Test,
         "org.scalafx" %% "scalafx" % "23.0.1-R34",
+        "com.google.inject" % "guice" % "7.0.0",
+        "net.codingwell" %% "scala-guice" % "7.0.0",
         "org.openjfx" % "javafx-base" % javafxVersion classifier classifier,
         "org.openjfx" % "javafx-controls" % javafxVersion classifier classifier,
         "org.openjfx" % "javafx-graphics" % javafxVersion classifier classifier,

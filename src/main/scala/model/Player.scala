@@ -12,13 +12,9 @@ trait Player:
         name: String = this.name,
         hand: List[Card] = this.hand,
         index: Int = this.index
-    ): Player = Player(name,hand,index)
+    ): Player 
 
-object Player:
-    def apply(
-        name: String,
-        hand: List[Card] = List(),
-        index: Int = 0
-    ): Player = 
-        impl.PlayerImpl(name,hand,index)
 
+
+trait PlayerFactory:
+    def apply(name: String, hand: List[Card]= List(), index: Int = 0): Player
