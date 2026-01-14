@@ -8,7 +8,7 @@ class DrawCardHandler(val next: Option[InputHandler] = None) extends InputHandle
 
     override def handleRequest(input: String, game: Game): (PlayerAction, Integer) =
         if game.ActionState == ActionState.ChooseCard && input.trim.isEmpty then
-            (DrawAction, 500)
+            (DrawAction(0), 500)
         else
             (nextHandler(input, game))
 

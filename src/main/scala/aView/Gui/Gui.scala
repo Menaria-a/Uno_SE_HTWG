@@ -10,15 +10,20 @@ import scala.concurrent.{Promise, Await}
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.util.concurrent.atomic.AtomicReference
-import de.htwg.Uno.controller.ControllerInterface.*
-import de.htwg.Uno.model.ModelInterface.*
+import de.htwg.Uno.model.*
+import de.htwg.Uno.model.Model.*
+import de.htwg.Uno.model.Enum.*
+import de.htwg.Uno.controller.*
+import de.htwg.Uno.model.state.GameStates
+import com.google.inject.Inject
 
 
-class Gui(controller: Controller):
+class Gui @Inject()(controller: Controller, gameStates: GameStates):
 
 
   private val turnCallbackRef = new AtomicReference[Int => Unit](_ => ())
   private val promiseRef = new AtomicReference[Promise[Int]]()
+
 
   def setTurnCallback(cb: Int => Unit): Unit =
     turnCallbackRef.set(cb)
@@ -50,7 +55,7 @@ class Gui(controller: Controller):
         Player(name2.text.value, Nil, 0)
       )
 
-      val game = de.htwg.Uno.model.state.InitState.start(players(0), players(1))
+      val game = gameStates.InitState.start(players(0), players(1), gameStates)
       controller.updateAll(game)
 
       stage.close()
@@ -91,7 +96,7 @@ class Gui(controller: Controller):
           showColorChooser()
         }
 
-        tableBox.children.setAll(renderCard(controller.game.table, clickable = false))
+        tableBox.children.setAll(renderCard(controller.game.table.get, clickable = false))
 
         playersBox.children.clear()
         controller.game.player.zipWithIndex.foreach { (pl, idx) =>
@@ -126,7 +131,7 @@ class Gui(controller: Controller):
   private def renderCard(card: Card, clickable: Boolean,
                         playerIdx: Int = 0, cardIdx: Int = 0): Button =
 
-    val colorStr = card.coulor match
+    val colorStr = card.colour match
       case Coulor.red    => "red"
       case Coulor.yellow => "yellow"
       case Coulor.blue   => "blue"

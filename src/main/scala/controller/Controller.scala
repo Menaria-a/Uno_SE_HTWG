@@ -1,8 +1,9 @@
 package de.htwg.Uno.controller
 
-import de.htwg.Uno.model.ModelInterface.*
+import de.htwg.Uno.model.Game
 import de.htwg.Uno.util.{Observable, Observer}
 import de.htwg.Uno.util.Undo.CommandManager
+import de.htwg.Uno.model.state.GameStates
 
 /** Controller trait for managing the Uno game flow and state transitions.
   *
@@ -63,22 +64,8 @@ trait Controller extends Observable:
     */
   def game: Game
 
-object Controller:
 
-  /** Creates a new Controller instance.
-    *
-    * @param game
-    *   Initial game state
-    * @param commandManager
-    *   Command manager for undo/redo functionality
-    * @return
-    *   A Controller instance
-    */
-  def apply(
-      game: Game,
-      commandManager: CommandManager
-  ): Controller =
-    Impl.ControllerImpl(game, commandManager)
+
 
 
 

@@ -39,8 +39,8 @@ private[model] case class GameBuilderImpl(
     def withDeck(newDeck: List[Card]): GameBuilder =
         copy(deck = newDeck)
 
-    def withTable(newTable: Card): GameBuilder =
-        copy(table = Some(newTable))
+    def withTable(newTable: Option[Card]): GameBuilder =
+        copy(table = Some(Card(Coulor.red, Symbol.One)))
 
     def withActionState(newActionState: de.htwg.Uno.model.Enum.ActionState): GameBuilder =
         copy(ActionState = newActionState)
@@ -49,23 +49,16 @@ private[model] case class GameBuilderImpl(
         copy(TurnState = newTurnState)
 
     override def build(): Try[Game] =
-        table match {
-            case Some(t) =>
-                Success(
-                    Game(
+
+                    Success(Game(
                     player = player,
                     index = index,
                     deck = deck,
-                    table = t,              
+                    table = table,              
                     ActionState = ActionState,
                     TurnState = TurnState
                 )
-            )
+                    )
 
-            case None =>
-                Failure(new IllegalStateException("Table card must be set before building Game"))
-            }
-
-            }
-
+}
 

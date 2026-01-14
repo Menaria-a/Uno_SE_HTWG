@@ -18,7 +18,7 @@ trait  GameBuilder {
 
     def withDeck(newDeck: List[Card]): GameBuilder 
 
-    def withTable(newTable: Card): GameBuilder 
+    def withTable(newTable: Option[Card]): GameBuilder 
 
     def withActionState(newActionState: de.htwg.Uno.model.Enum.ActionState): GameBuilder 
 

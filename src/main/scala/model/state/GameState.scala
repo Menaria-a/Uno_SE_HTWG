@@ -5,7 +5,7 @@ import de.htwg.Uno.model.Model.*
 
 
 trait GameState:
-    def start( p1: Player, p2: Player): Game 
+    def start( p1: Player, p2: Player, gameStates: GameStates): Game 
     def drawCard(game: Game, playerIdx: Int): Game = game
     def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer)
     def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer ): (Card, Game)

@@ -1,21 +1,24 @@
 package de.htwg.Uno.controller.Impl
 import de.htwg.Uno.util.Observable
-import de.htwg.Uno.controller.Command.PlayCardCommand
-import de.htwg.Uno.controller.ControllerInterface.*
+import de.htwg.Uno.controller.Command.*
 import de.htwg.Uno.util.Undo.CommandManager
 import javax.swing.Action
+import com.google.inject.Inject
 import scala.collection.View.Updated
 import scala.annotation.tailrec
 import de.htwg.Uno.controller.Controller
+import de.htwg.Uno.controller.PlayerInput
 import de.htwg.Uno.model.*
 import de.htwg.Uno.model.Model.*
 import de.htwg.Uno.model.Enum.*
 import de.htwg.Uno.model.state.Impl.InitStateImpl
+import de.htwg.Uno.model.state.GameStates
 
 
-private[controller] class ControllerImpl(
-    var game: Game, var cmdManager: CommandManager
+class ControllerImpl @Inject()(
+    var game: Game, var cmdManager: CommandManager,  gameStates: GameStates
     ) extends Controller {
+
 
 
         def updateAll(g: Game): Game =
@@ -26,7 +29,7 @@ private[controller] class ControllerImpl(
         def initloop(input: PlayerInput) : Game =
             val p1 = Player(input.getInputs(), Nil, 0)
             val p2 = Player(input.getInputs(), Nil, 0)
-            val game = InitStateImpl.start(p1, p2)
+            val game = gameStates.InitState.start(p1, p2, gameStates)
             updateAll(game)
             game
 
@@ -35,13 +38,13 @@ private[controller] class ControllerImpl(
             val index = game.index
             val inputs = input.getInput(game, input)
 
-            val Cmd = PlayCardCommand(playerIdx = index, cardIdx = 0, inputs)
+            val Cmd = PlayCardCommand(playerIdx = index, cardIdx = 0, inputs,gameStates)
             val (newManager, newGame, value) = cmdManager.executeCommand(Cmd,game)
             cmdManager = newManager
             val Hint = value
             print(Hint)
             if (Hint == 1){
-                val com = ChooseColourCommand(hand = newGame.table, input)
+                val com = ChooseColourCommand(hand = newGame.table.get, input, gameStates)
                 val new2Game = newGame.copy(ActionState = ActionState.ChooseColour, TurnState = TurnState.PlayerTurn(game.player(index)))
                 updateAll(new2Game)
                 val (newerManager, newerGame, value) = newManager.executeCommand(com,new2Game)
@@ -56,7 +59,7 @@ private[controller] class ControllerImpl(
                 updateAll(newgame)
             }
             else if (Hint == 3){
-                val con = DrawCardCommand(index)
+                val con = DrawCardCommand(index, gameStates.drawCardState)
                 val (newerManager , newerGame, value) = cmdManager.executeCommand(con,newGame)
                 updateAll(newerGame)
             }

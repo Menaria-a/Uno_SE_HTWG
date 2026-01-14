@@ -2,10 +2,12 @@
 package de.htwg.Uno.aView
 import de.htwg.Uno.controller.PlayerAction
 import de.htwg.Uno.aView.handler.*
-import de.htwg.Uno.model.ModelInterface.*
+import de.htwg.Uno.model.Model.*
+import de.htwg.Uno.model.*
+import de.htwg.Uno.model.Enum.*
 import scala.io.StdIn.readLine
 import de.htwg.Uno.util.Observer
-import de.htwg.Uno.controller.ControllerInterface.*
+import de.htwg.Uno.controller.*
   import de.htwg.Uno.controller.DrawAction
   import de.htwg.Uno.controller.InvalidAction
 
@@ -15,7 +17,7 @@ import de.htwg.Uno.controller.ControllerInterface.*
 
 
     def creator(card: Card): List[String] =
-      val coulorInd = card.coulor match
+      val coulorInd = card.colour match
         case Coulor.red => "r"
         case Coulor.yellow => "y"
         case Coulor.blue => "b"
@@ -60,7 +62,7 @@ import de.htwg.Uno.controller.ControllerInterface.*
       val playerStr = game.player
       .map(p => s"${p.name}'s hand:\n${handrenderer(p.hand)}")
       .mkString("\n\n")
-      val tableStr = s"Table:\n${tablerenderer(game.table)}"
+      val tableStr = s"Table:\n${tablerenderer(game.table.get)}"
       s"$tableStr\n\n$playerStr"
       
 

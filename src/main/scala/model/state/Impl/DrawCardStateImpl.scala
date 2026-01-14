@@ -6,7 +6,7 @@ import de.htwg.Uno.model.builder.Impl.GameBuilder
 import de.htwg.Uno.model.Enum.*
 import de.htwg.Uno.model.Model.*
 
-private[state] case object DrawCardStateImpl extends DrawCardState {
+case object DrawCardStateImpl extends DrawCardState {
     override def drawCard(game: Game, playerIdx: Int): Game =
         val player = game.player(playerIdx)
         val (newPlayer, newDeck) = dealCardsToHand(player, game.deck, 1)
@@ -27,17 +27,17 @@ private[state] case object DrawCardStateImpl extends DrawCardState {
             mau}
     
 
-    override def start(p1: Player, p2: Player): Game = 
-        val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+    override def start(p1: Player, p2: Player, gameStates: GameStates): Game = 
+        val game = Game(Nil,0, Nil, Some(Card(Coulor.red, Symbol.One)), ActionState.None, TurnState.None)
         game
 
     override def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) =
-        val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+        val game = Game(Nil,0, Nil, Some(Card(Coulor.red, Symbol.One)), ActionState.None, TurnState.None)
         val card = Card(Coulor.red, Symbol.One)
         (card, game)
 
     override def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer) =
-        val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+        val game = Game(Nil,0, Nil, Some(Card(Coulor.red, Symbol.One)), ActionState.None, TurnState.None)
         (game, 2)
 
 

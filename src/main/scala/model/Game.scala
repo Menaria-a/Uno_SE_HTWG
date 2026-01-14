@@ -8,7 +8,7 @@ import de.htwg.Uno.model.builder.GameBuilder
         player : List[Player],
         index : Integer,
         deck: List[Card],
-        table: Card, 
+        table: Option[Card], 
         ActionState: ActionState,
         TurnState: TurnState
     ):

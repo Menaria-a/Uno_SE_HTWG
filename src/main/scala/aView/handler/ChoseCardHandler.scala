@@ -20,7 +20,7 @@ class ChooseCardHandler(val next: Option[InputHandler] = None) extends InputHand
 
                 if index >= 0 && index < player.hand.size then
                     val card = player.hand(index)
-                    val Action = PlayCardAction(card)
+                    val Action = PlayCardAction(0, 0, 0)
                     (Action, index)
 
                 else

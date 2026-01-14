@@ -8,7 +8,7 @@ class UndoRedoHandler(val next: Option[InputHandler] = None) extends InputHandle
 
     override def handleRequest(input: String, game: Game): (PlayerAction, Integer) =
         if ( input == "undo")
-            (UndoAction,20)
+            (UndoAction(game),20)
         else if (input == "redo")
             (RedoAction, 30)
         else

@@ -10,7 +10,7 @@ import de.htwg.Uno.model.Model.*
 
 
 
-private [state] case object InitStateImpl extends InitState {
+case object InitStateImpl extends InitState {
 
     override def start(p1: Player, p2: Player, gameStates: GameStates): Game = deckmaker(p1, p2, gameStates)
 
@@ -36,7 +36,7 @@ private [state] case object InitStateImpl extends InitState {
             .withPlayers(players)
             .withIndex(0)
             .withDeck(remainingDeck)
-            .withTable(tableCards)
+            .withTable(Some(tableCards))
             .withActionState(ActionState.ChooseCard)
             .withTurnState(TurnState.PlayerTurn(p1))
             .build()
@@ -48,12 +48,12 @@ private [state] case object InitStateImpl extends InitState {
 
 
     override def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) =
-        val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+        val game = Game(Nil,0, Nil, Some(Card(Coulor.red, Symbol.One)), ActionState.None, TurnState.None)
         val card = Card(Coulor.red, Symbol.One)
         (card, game)
 
     override def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer) =
-        val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+        val game = Game(Nil,0, Nil, Some(Card(Coulor.red, Symbol.One)), ActionState.None, TurnState.None)
         (game, 2)
 
     override def wisher(int: Integer)=

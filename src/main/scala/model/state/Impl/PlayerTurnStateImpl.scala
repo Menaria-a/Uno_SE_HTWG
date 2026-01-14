@@ -5,8 +5,7 @@ import de.htwg.Uno.model.*
 import de.htwg.Uno.model.builder.Impl.GameBuilder
 import de.htwg.Uno.model.Enum.*
 import de.htwg.Uno.model.Model.*
-
-private[state] case object PlayCardStateImpl extends PlayCardState:
+case object PlayCardStateImpl extends PlayCardState:
 
     override def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer) =
         handleTurn(game, playerIdx,cardIdx)
@@ -17,11 +16,11 @@ private[state] case object PlayCardStateImpl extends PlayCardState:
         chosenCardIndex: Int,
     ): (Game, Integer) =
         val currentPlayer: Player = game.player(currentPlayerIndex)
-        val tableCard: Card = game.table 
+        val tableCard: Option[Card] = game.table 
 
         chosenCardIndex match
         case 500 => (game, 3)
-        case _ => parseCardIndex(chosenCardIndex, currentPlayer, game, game.table, currentPlayerIndex)
+        case _ => parseCardIndex(chosenCardIndex, currentPlayer, game, game.table.get, currentPlayerIndex)
 
 
     def parseCardIndex(
@@ -70,7 +69,7 @@ private[state] case object PlayCardStateImpl extends PlayCardState:
             val winner = updatedPlayers(currentPlayerIndex)
             val winGame = baseGame.copy(
             TurnState = TurnState.GameWon(winner),
-            table = card
+            table = Some(card)
             )
             return (winGame,5)
 
@@ -79,22 +78,22 @@ private[state] case object PlayCardStateImpl extends PlayCardState:
             case Symbol.Plus_2 =>
                 val nextIndex = nextPlayerIndex(currentPlayerIndex, game.player.size, true)
                 val games = plusN(baseGame, (nextIndex + 1) % 2 , card, 2)
-                val indexy = games.copy(index = nextIndex, table = card)
+                val indexy = games.copy(index = nextIndex, table = Some(card))
                 val gameee = indexy
                 (gameee , 6)
             case Symbol.Plus_4 =>
                 val nextIndex = nextPlayerIndex(currentPlayerIndex, game.player.size, true)
                 val afterDraw = plusN(baseGame, (nextIndex + 1) % 2, card, 4)
-                val Indexy = afterDraw.copy(index = nextIndex, table = card)
+                val Indexy = afterDraw.copy(index = nextIndex, table = Some(card))
                 val games = Indexy
                 (games, 1)
             case Symbol.Block =>
                 val nextIndex = nextPlayerIndex(currentPlayerIndex, game.player.size, true)
-                val games  = baseGame.copy(table = card, index = nextIndex)
+                val games  = baseGame.copy(table = Some(card), index = nextIndex)
                 (games, 6)
             case Symbol.Reverse =>
                 val nextIndex = nextPlayerIndex(currentPlayerIndex, game.player.size, true)
-                val games = baseGame.copy(table = card, index = nextIndex)
+                val games = baseGame.copy(table = Some(card), index = nextIndex)
                 (games, 6)
             case Symbol.Wish =>
                 val nextIndex = nextPlayerIndex(currentPlayerIndex, game.player.size, false)
@@ -103,7 +102,7 @@ private[state] case object PlayCardStateImpl extends PlayCardState:
                 (games, 1)
             case _ =>
                 val nextIndex = nextPlayerIndex(currentPlayerIndex, game.player.size, false)
-                val games = baseGame.copy(table = card, index = nextIndex)
+                val games = baseGame.copy(table = Some(card), index = nextIndex)
                 (games, 0)
 
 
@@ -128,12 +127,12 @@ private[state] case object PlayCardStateImpl extends PlayCardState:
         (player.copy(hand = player.hand ::: dealtCards), remainingDeck)
 
 
-    override def start(p1: Player, p2: Player): Game = 
-        val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+    override def start(p1: Player, p2: Player, GameStates: GameStates): Game = 
+        val game = Game(Nil,0, Nil, Some(Card(Coulor.red, Symbol.One)), ActionState.None, TurnState.None)
         game
     
     override def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) =
-        val game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+        val game = Game(Nil,0, Nil, Some(Card(Coulor.red, Symbol.One)), ActionState.None, TurnState.None)
         val card = Card(Coulor.red, Symbol.One)
         (card, game)
 

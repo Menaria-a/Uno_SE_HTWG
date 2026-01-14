@@ -12,10 +12,10 @@ class ChooseColourHandler(val next: Option[InputHandler] = None) extends InputHa
             (nextHandler(input, game))
         else
             input match
-            case "r" => (ChooseColourAction (Coulor.red),2)    
-            case "g" => (ChooseColourAction (Coulor.green),3)
-            case "b" => (ChooseColourAction (Coulor.blue),4)
-            case "y" => (ChooseColourAction (Coulor.yellow),1)
+            case "r" => (PlayCardAction(0,0,0) ,2)    
+            case "g" => (PlayCardAction(0,0,0),3)
+            case "b" => (PlayCardAction(0,0,0),4)
+            case "y" => (PlayCardAction(0,0,0),1)
             case _   => (InvalidAction,0)
 
     override def setNext(handler: InputHandler): InputHandler =
