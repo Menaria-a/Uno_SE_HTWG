@@ -1,5 +1,7 @@
 package de.htwg.Uno.model.state
-import de.htwg.Uno.model.ModelInterface.*
+import de.htwg.Uno.model.*
+import de.htwg.Uno.model.Enum.*
+import de.htwg.Uno.model.Model.*
 
 
 trait GameState:
@@ -17,6 +19,15 @@ trait GameState:
     def handleInvalidInput(game: Game,tableCard: Card,message: ActionState): (Game, Integer) 
     def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int): Game
     def playCardIfValid(card: Card,game: Game,tableCard: Card,currentPlayerIndex: Int): (Game, Integer) 
+
+
+trait InitState extends GameState
+
+trait PlayCardState extends GameState
+
+trait WishCardState extends GameState
+
+trait DrawCardState extends GameState
 
 
 

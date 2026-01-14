@@ -1,6 +1,4 @@
 package de.htwg.Uno.controller.Impl
-import de.htwg.Uno.model.ModelInterface.*
-import de.htwg.Uno.model.ModelInterface.StateInterface.InitState
 import de.htwg.Uno.util.Observable
 import de.htwg.Uno.controller.Command.PlayCardCommand
 import de.htwg.Uno.controller.ControllerInterface.*
@@ -9,6 +7,10 @@ import javax.swing.Action
 import scala.collection.View.Updated
 import scala.annotation.tailrec
 import de.htwg.Uno.controller.Controller
+import de.htwg.Uno.model.*
+import de.htwg.Uno.model.Model.*
+import de.htwg.Uno.model.Enum.*
+import de.htwg.Uno.model.state.Impl.InitStateImpl
 
 
 private[controller] class ControllerImpl(
@@ -24,7 +26,7 @@ private[controller] class ControllerImpl(
         def initloop(input: PlayerInput) : Game =
             val p1 = Player(input.getInputs(), Nil, 0)
             val p2 = Player(input.getInputs(), Nil, 0)
-            val game = InitState.start(p1, p2)
+            val game = InitStateImpl.start(p1, p2)
             updateAll(game)
             game
 

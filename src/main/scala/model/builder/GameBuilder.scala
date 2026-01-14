@@ -24,8 +24,7 @@ trait  GameBuilder {
 
     def withTurnState(newTurnState: de.htwg.Uno.model.Enum.TurnState): GameBuilder 
 
-    def withGameFactory(factory: GameFactory): GameBuilder
-
     def build(): Try[Game]
 
 }
+

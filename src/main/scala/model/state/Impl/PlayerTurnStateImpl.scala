@@ -1,7 +1,12 @@
 package de.htwg.Uno.model.state.Impl
-import de.htwg.Uno.model.ModelInterface.*
 
-private[state] case object PlayCardStateImpl extends GameState:
+import de.htwg.Uno.model.state.*
+import de.htwg.Uno.model.*
+import de.htwg.Uno.model.builder.Impl.GameBuilder
+import de.htwg.Uno.model.Enum.*
+import de.htwg.Uno.model.Model.*
+
+private[state] case object PlayCardStateImpl extends PlayCardState:
 
     override def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer) =
         handleTurn(game, playerIdx,cardIdx)
@@ -103,7 +108,7 @@ private[state] case object PlayCardStateImpl extends GameState:
 
 
     def isPlayable(table: Card, hand: Card): Boolean =
-        hand.coulor == table.coulor || hand.symbol == table.symbol || hand.symbol == Symbol.Wish || hand.symbol == Symbol.Plus_4
+        hand.colour == table.colour || hand.symbol == table.symbol || hand.symbol == Symbol.Wish || hand.symbol == Symbol.Plus_4
 
     def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean): Int =
         if (skipNext) {

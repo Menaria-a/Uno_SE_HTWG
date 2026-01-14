@@ -4,32 +4,21 @@ import de.htwg.Uno.model.Card
 import de.htwg.Uno.model.Enum.*
 import de.htwg.Uno.model.builder.GameBuilder
 
-trait Game:
-    def player: List[Player]
-    def index: Integer
-    def deck: List[Card]
-    def table: Card
-    def ActionState: ActionState
-    def TurnState: TurnState
-    def toBuilder: GameBuilder
-
-    def copy(
-        player: List[Player] = this.player,
-        index: Integer = this.index,
-        deck: List[Card] = this.deck,
-        table: Card = this.table,
-        ActionState: ActionState = this.ActionState,
-        TurnState: TurnState = this.TurnState
-    ): Game 
-
-
-trait GameFactory:
-    def apply(
-        player: List[Player],
-        index: Integer,
+    case class Game(
+        player : List[Player],
+        index : Integer,
         deck: List[Card],
-        table: Card,
+        table: Card, 
         ActionState: ActionState,
-        TurnState: TurnState,
-        toBuilder: GameBuilder
-    ): Game
+        TurnState: TurnState
+    ):
+
+
+        def toBuilder (builder: GameBuilder): GameBuilder =
+            builder
+            .withPlayers(player)
+            .withIndex(index)
+            .withDeck(deck)
+            .withTable(table)
+            .withActionState(ActionState)
+            .withTurnState(TurnState)

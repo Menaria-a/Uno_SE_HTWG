@@ -1,16 +1,21 @@
 package de.htwg.Uno.model.state.Impl
 
-import de.htwg.Uno.model.state.GameState
-import de.htwg.Uno.model.ModelInterface.*
+import de.htwg.Uno.model.state.*
+import de.htwg.Uno.model.*
+import de.htwg.Uno.model.builder.Impl.GameBuilder
+import de.htwg.Uno.model.Enum.*
+import de.htwg.Uno.model.Model.*
 
 
 
-private [state] case object InitStateImpl extends GameState {
-
-    override def start(p1: Player, p2: Player): Game = deckmaker(p1, p2)
 
 
-    def deckmaker(p1: Player, p2: Player): Game =
+private [state] case object InitStateImpl extends InitState {
+
+    override def start(p1: Player, p2: Player, gameStates: GameStates): Game = deckmaker(p1, p2, gameStates)
+
+
+    def deckmaker(p1: Player, p2: Player, gameStates: GameStates): Game =
         val deck = for {
         coulor <- Coulor.values
         symbol <- Symbol.values
@@ -27,13 +32,18 @@ private [state] case object InitStateImpl extends GameState {
         p2.copy(hand =  zweiteHand, index = 1)
         )
         val tableCards = shuffledDeck(10)
-        val finalState = GameBuilder().withPlayers(players)
-        .withIndex(0)
-        .withDeck(remainingDeck)
-        .withTable(tableCards)
-        .withActionState(ActionState.ChooseCard)
-        .withTurnState(TurnState.PlayerTurn(p1)).build()
-        finalState
+            GameBuilder(gameStates)   
+            .withPlayers(players)
+            .withIndex(0)
+            .withDeck(remainingDeck)
+            .withTable(tableCards)
+            .withActionState(ActionState.ChooseCard)
+            .withTurnState(TurnState.PlayerTurn(p1))
+            .build()
+            .get
+
+
+
 
 
 
