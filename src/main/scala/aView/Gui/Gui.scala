@@ -78,10 +78,16 @@ class Gui @Inject()(controller: Controller, gameStates: GameStates):
       alignment = Pos.TopCenter
       spacing = 20
 
+    val saveBtn = new Button("Save") { prefWidth = 80 }
+    val loadBtn = new Button("Load") { prefWidth = 80 }
+
     val root = new VBox(20,
       new Label("Tisch:") { style = "-fx-font-size: 20px;" },
       tableBox,
-      playersBox
+      playersBox,
+      saveBtn,
+      loadBtn
+      
     ):
       padding = Insets(20)
 
@@ -121,6 +127,19 @@ class Gui @Inject()(controller: Controller, gameStates: GameStates):
     controller.add(new de.htwg.Uno.util.Observer:
       override def update: Unit = updateUI()
     )
+
+      saveBtn.onAction = _ =>
+        controller.saveGame() 
+
+      loadBtn.onAction = _ =>
+        val loadedGame = controller.loadGame()
+          loadedGame match
+            case game: Game =>
+              controller.updateAll(game)
+            case _ =>
+    // nichts tun
+
+
 
     updateUI()
     stage.show()
