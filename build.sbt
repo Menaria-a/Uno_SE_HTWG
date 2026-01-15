@@ -28,6 +28,8 @@ lazy val root = project
         "org.scalafx" %% "scalafx" % "23.0.1-R34",
         "com.google.inject" % "guice" % "7.0.0",
         "net.codingwell" %% "scala-guice" % "7.0.0",
+        "org.scala-lang.modules" %% "scala-xml" % "2.3.0",
+        "org.playframework" %% "play-json" % "3.0.4",
         "org.openjfx" % "javafx-base" % javafxVersion classifier classifier,
         "org.openjfx" % "javafx-controls" % javafxVersion classifier classifier,
         "org.openjfx" % "javafx-graphics" % javafxVersion classifier classifier,

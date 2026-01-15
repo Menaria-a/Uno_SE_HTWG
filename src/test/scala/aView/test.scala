@@ -4,9 +4,10 @@ package de.htwg.Uno.aView
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers._
-import de.htwg.Uno.model.ModelInterface.*
+import de.htwg.Uno.model.*
+import de.htwg.Uno.model.Model.*
 import de.htwg.Uno.aView.Tui
-import de.htwg.Uno.controller.ControllerInterface.*
+import de.htwg.Uno.controller.*
 
 import de.htwg.Uno.util.Undo.CommandManager
 
