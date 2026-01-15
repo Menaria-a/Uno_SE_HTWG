@@ -9,7 +9,7 @@ class IOHandler(val next: Option[InputHandler] = None) extends InputHandler:
     override def handleRequest(input: String, game: Game): (PlayerAction, Integer) =
         if ( input == "load")
             (IOAction,40)
-        else if (input == "save")
+        else if (input == "safe")
             (IOAction, 50)
         else
             (nextHandler(input, game))
