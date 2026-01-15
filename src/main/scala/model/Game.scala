@@ -6,7 +6,7 @@ import de.htwg.Uno.model.builder.GameBuilder
 
     case class Game(
         player : List[Player],
-        index : Integer,
+        index : Int,
         deck: List[Card],
         table: Option[Card], 
         ActionState: ActionState,
