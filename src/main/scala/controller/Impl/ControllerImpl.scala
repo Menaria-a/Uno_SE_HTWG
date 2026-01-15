@@ -13,10 +13,11 @@ import de.htwg.Uno.model.Model.*
 import de.htwg.Uno.model.Enum.*
 import de.htwg.Uno.model.state.Impl.InitStateImpl
 import de.htwg.Uno.model.state.GameStates
+import de.htwg.Uno.util.FileIOInterface
 
 
 class ControllerImpl @Inject()(
-    var game: Game, var cmdManager: CommandManager,  gameStates: GameStates
+    var game: Game, var cmdManager: CommandManager,  gameStates: GameStates, fileIO: FileIOInterface
     ) extends Controller {
 
 
@@ -87,5 +88,14 @@ class ControllerImpl @Inject()(
                 updateAll(game)
             case None =>
                     None
+
+        def saveGame(): Game =
+            fileIO.save(game).getOrElse(())
+            game
+
+        def loadGame(): Game =
+            game = fileIO.load().getOrElse(game)
+            updateAll(game)
+            game
 
 }

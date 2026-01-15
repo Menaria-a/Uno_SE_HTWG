@@ -126,6 +126,15 @@ import de.htwg.Uno.controller.*
             controller.gameloop(who)
             30
           }
+          else if (action._2 == 40){
+            controller.loadGame()
+            getInput(controller.game, who)
+            40
+          }
+          else if (action._2 == 50){
+            controller.saveGame()
+            getInput(controller.game, who)
+          }
 
           else {
             val ind = action._2
@@ -148,11 +157,13 @@ import de.htwg.Uno.controller.*
     val drawCardHandler = new DrawCardHandler().setNext(chooseColourHandler)
     val chooseCardHandler = new ChooseCardHandler().setNext(drawCardHandler)
     val UndoRedoHandler = new UndoRedoHandler().setNext(chooseCardHandler)
+    val IOHandler = new IOHandler().setNext(UndoRedoHandler)
 
 
 
 
-    private val rootHandler: InputHandler = UndoRedoHandler
+
+    private val rootHandler: InputHandler = IOHandler
 
 
     def processInput(input: String, game: Game): (PlayerAction, Integer) =

@@ -57,6 +57,10 @@ trait Controller extends Observable:
     */
   def redo(): Unit
 
+  def loadGame(): Game
+
+  def saveGame(): Game
+
   /** Returns the current game state.
     *
     * @return

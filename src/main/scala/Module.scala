@@ -11,6 +11,9 @@ import de.htwg.Uno.controller.Command.*
 import de.htwg.Uno.controller.Command.Impl.*
 import de.htwg.Uno.controller.Controller
 import de.htwg.Uno.util.Undo.CommandManager
+import de.htwg.Uno.util.FileIOInterface
+import de.htwg.Uno.util.Impl.FileIOJson
+import de.htwg.Uno.util.Impl.FileIOXml
 
 
 class Module extends AbstractModule with ScalaModule:
@@ -23,6 +26,14 @@ class Module extends AbstractModule with ScalaModule:
         bind[CommandFactory].to[CommandFactoryImpl].asEagerSingleton()
         bind[GameBuilderFactory].to[GameBuilderFactoryImpl]
         bind[Controller].to[controller.Impl.ControllerImpl]in(classOf[Singleton])
+
+
+
+    @Provides
+    @Singleton 
+    def provideFileIO(gameStates: GameStates): FileIOInterface =
+        new FileIOJson("game.json", gameStates)
+        //new FileIOXml("game.xml", gameStates)
 
     @Provides
     def provideGame(

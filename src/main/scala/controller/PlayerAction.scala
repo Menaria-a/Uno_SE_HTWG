@@ -10,3 +10,4 @@ case object InvalidAction extends PlayerAction
 case class UndoAction(game: Game) extends PlayerAction
 case object RedoAction extends PlayerAction
 case class ChooseColourAction(hand: Card, input: PlayerInput) extends PlayerAction
+case object IOAction extends PlayerAction
