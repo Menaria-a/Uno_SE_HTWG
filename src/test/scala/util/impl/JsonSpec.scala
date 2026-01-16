@@ -52,6 +52,36 @@ class FileIOJsonSpec extends AnyWordSpec with Matchers {
       loadedGame.ActionState shouldBe ActionState.ChooseCard
     }
 
+    "save and load a game with empty table (None)" in {
+      val gameWithNoTable = sampleGame.copy(table = None)
+      fileIO.save(gameWithNoTable)
+      val loadedGameTry: Try[Game] = fileIO.load()
+      loadedGameTry shouldBe a[Success[_]]
+      val loadedGame = loadedGameTry.get
+      loadedGame.table shouldBe None
+    }
+
+    "save and load a game with TurnState.GameWon" in {
+      val gameWithWinner = sampleGame.copy(TurnState = TurnState.GameWon(samplePlayer1))
+      fileIO.save(gameWithWinner)
+      val loadedGameTry: Try[Game] = fileIO.load()
+      loadedGameTry shouldBe a[Success[_]]
+      val loadedGame = loadedGameTry.get
+      loadedGame.TurnState match {
+        case TurnState.GameWon(player) => player.name shouldBe "Alice"
+        case _ => fail("Expected TurnState.GameWon")
+      }
+    }
+
+    "save and load a game with TurnState.None" in {
+      val gameWithNoneTurnState = sampleGame.copy(TurnState = TurnState.None)
+      fileIO.save(gameWithNoneTurnState)
+      val loadedGameTry: Try[Game] = fileIO.load()
+      loadedGameTry shouldBe a[Success[_]]
+      val loadedGame = loadedGameTry.get
+      loadedGame.TurnState shouldBe TurnState.None
+    }
+
     "throw an exception for invalid TurnState type" in {
       val invalidJson =
         """
@@ -69,14 +99,31 @@ class FileIOJsonSpec extends AnyWordSpec with Matchers {
       import java.nio.file.Files
       Files.write(tmpFile.toPath, invalidJson.getBytes)
 
-      val badLoad = Try(fileIO.load())
-      badLoad.isFailure shouldBe false
+      val tmpFileIO = new FileIOJson(tmpFile.getPath, gameStates)
+      val badLoad = tmpFileIO.load()
+      badLoad.isFailure shouldBe true
+      badLoad.failed.get shouldBe an[IllegalArgumentException]
 
       tmpFile.delete()
+    }
+
+    "handle save failure gracefully" in {
+      val invalidPath = "/invalid/path/that/does/not/exist/testGame.json"
+      val badFileIO = new FileIOJson(invalidPath, gameStates)
+      val result = badFileIO.save(sampleGame)
+      result.isFailure shouldBe true
+    }
+
+    "handle load failure gracefully for non-existent file" in {
+      val nonExistentPath = "nonExistentFile.json"
+      val badFileIO = new FileIOJson(nonExistentPath, gameStates)
+      val result = badFileIO.load()
+      result.isFailure shouldBe true
     }
   }
 
 
 }
+
 
 

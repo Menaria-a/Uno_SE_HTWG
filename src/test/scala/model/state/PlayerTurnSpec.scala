@@ -110,12 +110,13 @@ class PlayCardStateSpec extends AnyWordSpec with Matchers {
   "turn" should {
 
   "declare a winner when player has no more cards" in {
-    val oneCardPlayer = Player("Winner", List(), 0)
+    val oneCardPlayer = Player("Winner", List(Card(Coulor.red, Symbol.One)), 0)
     val otherPlayer = Player("Bob", List(Card(Coulor.blue, Symbol.Two)), 1)
     val g = game.copy(player = List(oneCardPlayer, otherPlayer))
     
     val cardToPlay = oneCardPlayer.hand.head
     val (newGame, code) = state.turn(cardToPlay, g, 0)
+
 
     newGame.TurnState shouldBe TurnState.GameWon(oneCardPlayer)
     code shouldBe 5
@@ -171,6 +172,11 @@ class PlayCardStateSpec extends AnyWordSpec with Matchers {
     code shouldBe 0
     newGame.table shouldBe Some(normalCard)
   }
+
+  "draw correct" in {
+      val (newgame) = state.drawCard(game, 0 )
+      newgame shouldBe game
+    }
 }
 
 }

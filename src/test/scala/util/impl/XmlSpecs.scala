@@ -58,6 +58,36 @@ class FileIOXmlSpec extends AnyWordSpec with Matchers {
       loadedGame.ActionState shouldBe ActionState.ChooseCard
     }
 
+    "save and load a game with empty table (None)" in {
+      val gameWithNoTable = sampleGame.copy(table = None)
+      fileIO.save(gameWithNoTable)
+      val loadedGameTry: Try[Game] = fileIO.load()
+      loadedGameTry shouldBe a[Success[_]]
+      val loadedGame = loadedGameTry.get
+      loadedGame.table shouldBe None
+    }
+
+    "save and load a game with TurnState.GameWon" in {
+      val gameWithWinner = sampleGame.copy(TurnState = TurnState.GameWon(samplePlayer1))
+      fileIO.save(gameWithWinner)
+      val loadedGameTry: Try[Game] = fileIO.load()
+      loadedGameTry shouldBe a[Success[_]]
+      val loadedGame = loadedGameTry.get
+      loadedGame.TurnState match {
+        case TurnState.GameWon(player) => player.name shouldBe "Alice"
+        case _ => fail("Expected TurnState.GameWon")
+      }
+    }
+
+    "save and load a game with TurnState.None" in {
+      val gameWithNoneTurnState = sampleGame.copy(TurnState = TurnState.None)
+      fileIO.save(gameWithNoneTurnState)
+      val loadedGameTry: Try[Game] = fileIO.load()
+      loadedGameTry shouldBe a[Success[_]]
+      val loadedGame = loadedGameTry.get
+      loadedGame.TurnState shouldBe TurnState.None
+    }
+
     "throw an exception for invalid ActionState" in {
       val invalidXml =
         <Game>
@@ -72,8 +102,90 @@ class FileIOXmlSpec extends AnyWordSpec with Matchers {
       val tmpFile = new File("invalidGame.xml")
       scala.xml.XML.save(tmpFile.getPath, invalidXml, "UTF-8", true, null)
 
-      val badLoad = Try(fileIO.load())
-      badLoad.isFailure shouldBe false
+      val tmpFileIO = new FileIOXml(tmpFile.getPath, gameStates)
+      val badLoad = tmpFileIO.load()
+      badLoad.isFailure shouldBe true
+      badLoad.failed.get shouldBe an[IllegalArgumentException]
+
+      tmpFile.delete()
+    }
+
+    "throw an exception for invalid TurnState type" in {
+      val invalidXml =
+        <Game>
+          <Players/>
+          <Index>0</Index>
+          <Deck/>
+          <Table><Empty/></Table>
+          <ActionState>ChooseCard</ActionState>
+          <TurnState><InvalidState/></TurnState>
+        </Game>
+
+      val tmpFile = new File("invalidTurnState.xml")
+      scala.xml.XML.save(tmpFile.getPath, invalidXml, "UTF-8", true, null)
+
+      val tmpFileIO = new FileIOXml(tmpFile.getPath, gameStates)
+      val badLoad = tmpFileIO.load()
+      badLoad.isFailure shouldBe true
+      badLoad.failed.get shouldBe an[IllegalArgumentException]
+
+      tmpFile.delete()
+    }
+
+    "handle save failure gracefully" in {
+      val invalidPath = "/invalid/path/that/does/not/exist/testGame.xml"
+      val badFileIO = new FileIOXml(invalidPath, gameStates)
+      val result = badFileIO.save(sampleGame)
+      result.isFailure shouldBe true
+    }
+
+    "handle load failure gracefully for non-existent file" in {
+      val nonExistentPath = "nonExistentFile.xml"
+      val badFileIO = new FileIOXml(nonExistentPath, gameStates)
+      val result = badFileIO.load()
+      result.isFailure shouldBe true
+    }
+
+    "handle TurnState node with only text content" in {
+      val xmlWithTextOnlyTurnState =
+        <Game>
+          <Players>
+            <Player>
+              <Name>Alice</Name>
+              <Hand>
+                <Card>
+                  <Coulor>red</Coulor>
+                  <Symbol>One</Symbol>
+                </Card>
+              </Hand>
+              <Index>0</Index>
+            </Player>
+          </Players>
+          <Index>0</Index>
+          <Deck>
+            <Card>
+              <Coulor>green</Coulor>
+              <Symbol>Three</Symbol>
+            </Card>
+          </Deck>
+          <Table>
+            <Card>
+              <Coulor>yellow</Coulor>
+              <Symbol>Four</Symbol>
+            </Card>
+          </Table>
+          <ActionState>ChooseCard</ActionState>
+          <TurnState>   </TurnState>
+        </Game>
+
+      val tmpFile = new File("textOnlyTurnState.xml")
+      scala.xml.XML.save(tmpFile.getPath, xmlWithTextOnlyTurnState, "UTF-8", true, null)
+
+      val tmpFileIO = new FileIOXml(tmpFile.getPath, gameStates)
+      val loadedGameTry: Try[Game] = tmpFileIO.load()
+      loadedGameTry shouldBe a[Success[_]]
+      val loadedGame = loadedGameTry.get
+      loadedGame.TurnState shouldBe TurnState.None
 
       tmpFile.delete()
     }

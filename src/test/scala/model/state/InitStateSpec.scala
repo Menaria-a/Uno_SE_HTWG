@@ -113,9 +113,13 @@ class InitStateSpec extends AnyWordSpec with Matchers {
       newGame shouldBe game
       idx shouldBe 0
     }
+
+    "draw correct" in {
+      val (newgame) = state.drawCard(game, 0 )
+      newgame shouldBe game
+    }
   }
 }
-
 
 
 
