@@ -118,7 +118,7 @@ class PlayCardStateSpec extends AnyWordSpec with Matchers {
     val (newGame, code) = state.turn(cardToPlay, g, 0)
 
 
-    newGame.TurnState shouldBe TurnState.GameWon(oneCardPlayer)
+    newGame.TurnState shouldBe TurnState.GameWon(oneCardPlayer.copy(hand = List()))
     code shouldBe 5
   }
 

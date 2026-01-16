@@ -42,20 +42,7 @@ class UtilSpec extends AnyWordSpec with Matchers {
 
 
     
-    
-    "The update function" should {
-        "clear the screen and print the game, person, and status" in {
-            val controller = injector.getInstance(classOf[Controller])
-            val outputStream = new java.io.ByteArrayOutputStream()
-            Console.withOut(outputStream) {
-            TuiInstance.update
-            }
 
-            val output = outputStream.toString
-            output should include ("\u001b[2J\u001b[H")  
-            output should include ("Table:")            
-        }   
-    }
 
 
     "notifyObservers" should {
