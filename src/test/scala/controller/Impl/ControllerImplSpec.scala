@@ -21,6 +21,9 @@ class ControllerImplSpec extends AnyWordSpec with Matchers {
     // stub all states
     object StubGameStates extends GameStatesImpl(
       new InitState {
+
+        def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
         def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) = (hand, game)
         def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) = (player, deck)
         def handleInvalidInput(game: Game, tableCard: Card, message: ActionState): (Game, Integer) = (game, 0)
@@ -37,6 +40,9 @@ class ControllerImplSpec extends AnyWordSpec with Matchers {
         def wisher(int: Integer): Coulor = Coulor.red
       },
       new PlayCardState {
+
+        def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
         def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) = (hand, game)
         def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) = (player, deck)
         def handleInvalidInput(game: Game, tableCard: Card, message: ActionState): (Game, Integer) = (game, 0)
@@ -52,6 +58,10 @@ class ControllerImplSpec extends AnyWordSpec with Matchers {
         def wisher(int: Integer): Coulor = Coulor.red
       },
       new DrawCardState {
+
+
+        def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
         def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) = (hand, game)
         def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) = (player, deck)
         def handleInvalidInput(game: Game, tableCard: Card, message: ActionState): (Game, Integer) = (game, 0)
@@ -67,6 +77,9 @@ class ControllerImplSpec extends AnyWordSpec with Matchers {
         def wisher(int: Integer): Coulor = Coulor.red
       },
       new WishCardState {
+
+        def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
         def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) = (hand, game)
         def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) = (player, deck)
         def handleInvalidInput(game: Game, tableCard: Card, message: ActionState): (Game, Integer) = (game, 0)

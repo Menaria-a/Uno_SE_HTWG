@@ -36,5 +36,5 @@ lazy val root = project
         "org.openjfx" % "javafx-media" % javafxVersion classifier classifier
       )
     },
-    coverageExcludedFiles := ".*main|.*Gui.*"
+    coverageExcludedFiles := ".*main|.*Gui.*|.*Tui*"
   )

@@ -17,6 +17,9 @@ class GameSpec extends AnyWordSpec with Matchers {
 
 object StubGameStates extends GameStatesImpl(
   new InitState {
+
+    def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
     def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) = (hand, game)
     def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) = (player, deck)
     def handleInvalidInput(game: Game, tableCard: Card, message: ActionState): (Game, Integer) = (game, 0)
@@ -32,6 +35,9 @@ object StubGameStates extends GameStatesImpl(
     def wisher(int: Integer): Coulor = Coulor.red
   },
   new PlayCardState {
+    
+    def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
     def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) = (hand, game)
     def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) = (player, deck)
     def handleInvalidInput(game: Game, tableCard: Card, message: ActionState): (Game, Integer) = (game, 0)
@@ -47,6 +53,10 @@ object StubGameStates extends GameStatesImpl(
     def wisher(int: Integer): Coulor = Coulor.red
   },
   new DrawCardState {
+
+    def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
+
     def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) = (hand, game)
     def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) = (player, deck)
     def handleInvalidInput(game: Game, tableCard: Card, message: ActionState): (Game, Integer) = (game, 0)
@@ -62,6 +72,9 @@ object StubGameStates extends GameStatesImpl(
     def wisher(int: Integer): Coulor = Coulor.red
   },
   new WishCardState {
+
+    def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
     def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) = (hand, game)
     def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) = (player, deck)
     def handleInvalidInput(game: Game, tableCard: Card, message: ActionState): (Game, Integer) = (game, 0)

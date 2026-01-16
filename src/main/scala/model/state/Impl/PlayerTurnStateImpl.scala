@@ -139,3 +139,6 @@ case object PlayCardStateImpl extends PlayCardState:
 
     override def wisher(int: Integer)=
         Coulor.blue
+
+    override def drawCard(game: Game, playerIdx: Int): Game =
+        (game)

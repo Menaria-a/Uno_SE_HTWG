@@ -25,6 +25,9 @@ class ChooseColourCommandSpec extends AnyWordSpec with Matchers {
       (hand, game)
     override def wisher(input: Integer): Coulor = Coulor.red
 
+        override def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
+
     // Methods required by GameState
     override def start(p1: Player, p2: Player, gameStates: GameStates): Game =
       Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)

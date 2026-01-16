@@ -95,5 +95,8 @@ case object InitStateImpl extends InitState {
     override def playCardIfValid(card: Card,game: Game,tableCard: Card,currentPlayerIndex: Int): (Game, Integer) =
         (game, currentPlayerIndex)
 
+    override def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
+
 
 }

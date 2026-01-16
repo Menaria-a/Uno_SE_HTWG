@@ -20,6 +20,9 @@ class CommandFactoryImplSpec extends AnyWordSpec with Matchers {
   // ==============================
   object StubGameStates extends GameStatesImpl(
     new InitState {
+
+    def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
       def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer) = (hand, game)
       def dealCardsToHand(player: Player, deck: List[Card], n: Int) = (player, deck)
       def handleInvalidInput(game: Game, tableCard: Card, message: ActionState) = (game, 0)
@@ -35,6 +38,9 @@ class CommandFactoryImplSpec extends AnyWordSpec with Matchers {
       def wisher(int: Integer) = Coulor.red
     },
     new PlayCardState {
+
+    def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
       def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer) = (hand, game)
       def dealCardsToHand(player: Player, deck: List[Card], n: Int) = (player, deck)
       def handleInvalidInput(game: Game, tableCard: Card, message: ActionState) = (game, 0)
@@ -50,6 +56,9 @@ class CommandFactoryImplSpec extends AnyWordSpec with Matchers {
       def wisher(int: Integer) = Coulor.red
     },
     new DrawCardState {
+
+    def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
       def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer) = (hand, game)
       def dealCardsToHand(player: Player, deck: List[Card], n: Int) = (player, deck)
       def handleInvalidInput(game: Game, tableCard: Card, message: ActionState) = (game, 0)
@@ -65,6 +74,10 @@ class CommandFactoryImplSpec extends AnyWordSpec with Matchers {
       def wisher(int: Integer) = Coulor.red
     },
     new WishCardState {
+
+
+    def drawCard(game: Game, playerIdx: Int): Game =
+        (game)
       def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer) = (hand, game)
       def dealCardsToHand(player: Player, deck: List[Card], n: Int) = (player, deck)
       def handleInvalidInput(game: Game, tableCard: Card, message: ActionState) = (game, 0)
