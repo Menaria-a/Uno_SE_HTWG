@@ -13,12 +13,14 @@ class CommandManagerSpec extends AnyWordSpec with Matchers {
     "execute a command and update game" in {
       val initialGame = Game(Nil, 0, Nil, null, null, null)
       val cmd = new Command {
-        override def execute(game: Game): (Game, Integer) = (game.copy(index = 1), 42)
+        override def execute(game: Game): (Game, Integer) =
+          (game.copy(index = 1), 42)
         override def undo(game: Game, oldGame: Game): Game = oldGame
       }
 
       val manager = CommandManager()
-      val (newManager, newGame, value) = manager.executeCommand(cmd, initialGame)
+      val (newManager, newGame, value) =
+        manager.executeCommand(cmd, initialGame)
 
       newGame.index shouldBe 1
       value shouldBe 42
@@ -28,12 +30,13 @@ class CommandManagerSpec extends AnyWordSpec with Matchers {
     "undo a command" in {
       val initialGame = Game(Nil, 0, Nil, null, null, null)
       val cmd = new Command {
-        override def execute(game: Game): (Game, Integer) = (game.copy(index = 1), 42)
+        override def execute(game: Game): (Game, Integer) =
+          (game.copy(index = 1), 42)
         override def undo(game: Game, oldGame: Game): Game = oldGame
       }
 
       val manager = CommandManager()
-      val (m1, g1,_ ) = manager.executeCommand(cmd, initialGame)
+      val (m1, g1, _) = manager.executeCommand(cmd, initialGame)
       val undoResult = m1.undo(g1)
       undoResult.isDefined shouldBe true
 
@@ -44,7 +47,8 @@ class CommandManagerSpec extends AnyWordSpec with Matchers {
     "redo a command" in {
       val initialGame = Game(Nil, 0, Nil, null, null, null)
       val cmd = new Command {
-        override def execute(game: Game): (Game, Integer) = (game.copy(index = 1), 42)
+        override def execute(game: Game): (Game, Integer) =
+          (game.copy(index = 1), 42)
         override def undo(game: Game, oldGame: Game): Game = oldGame
       }
 
@@ -59,38 +63,39 @@ class CommandManagerSpec extends AnyWordSpec with Matchers {
     }
 
     "return None when undo is called with empty undoStack" in {
-  val initialGame = Game(Nil, 0, Nil, null, null, null)
-  val manager = CommandManager()
+      val initialGame = Game(Nil, 0, Nil, null, null, null)
+      val manager = CommandManager()
 
-  val result = manager.undo(initialGame)
+      val result = manager.undo(initialGame)
 
-  result shouldBe None
-}
+      result shouldBe None
+    }
 
     "return None when redo is called with empty redoStack" in {
-  val initialGame = Game(Nil, 0, Nil, null, null, null)
-  val manager = CommandManager()
+      val initialGame = Game(Nil, 0, Nil, null, null, null)
+      val manager = CommandManager()
 
-  val result = manager.redo(initialGame)
+      val result = manager.redo(initialGame)
 
-  result shouldBe None
-}
+      result shouldBe None
+    }
 
     "return None for redo directly after execute (no undo happened)" in {
-  val initialGame = Game(Nil, 0, Nil, null, null, null)
+      val initialGame = Game(Nil, 0, Nil, null, null, null)
 
-  val cmd = new Command {
-    override def execute(game: Game): (Game, Integer) = (game.copy(index = 1), 42)
-    override def undo(game: Game, oldGame: Game): Game = oldGame
-  }
+      val cmd = new Command {
+        override def execute(game: Game): (Game, Integer) =
+          (game.copy(index = 1), 42)
+        override def undo(game: Game, oldGame: Game): Game = oldGame
+      }
 
-  val manager = CommandManager()
-  val (m1, g1, _) = manager.executeCommand(cmd, initialGame)
+      val manager = CommandManager()
+      val (m1, g1, _) = manager.executeCommand(cmd, initialGame)
 
-  val redoResult = m1.redo(g1)
+      val redoResult = m1.redo(g1)
 
-  redoResult shouldBe None
-}
+      redoResult shouldBe None
+    }
 
   }
 }

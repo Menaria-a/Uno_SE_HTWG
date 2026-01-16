@@ -48,11 +48,14 @@ class FileIOXmlSpec extends AnyWordSpec with Matchers {
     }
 
     "load a game from XML file successfully" in {
-      fileIO.save(sampleGame)  // ensure file exists
+      fileIO.save(sampleGame) // ensure file exists
       val loadedGameTry: Try[Game] = fileIO.load()
       loadedGameTry shouldBe a[Success[_]]
       val loadedGame = loadedGameTry.get
-      loadedGame.player.map(_.name) should contain allElementsOf List("Alice", "Bob")
+      loadedGame.player.map(_.name) should contain allElementsOf List(
+        "Alice",
+        "Bob"
+      )
       loadedGame.deck.size shouldBe 1
       loadedGame.table.get.colour shouldBe Coulor.yellow
       loadedGame.ActionState shouldBe ActionState.ChooseCard
@@ -68,14 +71,15 @@ class FileIOXmlSpec extends AnyWordSpec with Matchers {
     }
 
     "save and load a game with TurnState.GameWon" in {
-      val gameWithWinner = sampleGame.copy(TurnState = TurnState.GameWon(samplePlayer1))
+      val gameWithWinner =
+        sampleGame.copy(TurnState = TurnState.GameWon(samplePlayer1))
       fileIO.save(gameWithWinner)
       val loadedGameTry: Try[Game] = fileIO.load()
       loadedGameTry shouldBe a[Success[_]]
       val loadedGame = loadedGameTry.get
       loadedGame.TurnState match {
         case TurnState.GameWon(player) => player.name shouldBe "Alice"
-        case _ => fail("Expected TurnState.GameWon")
+        case _                         => fail("Expected TurnState.GameWon")
       }
     }
 
@@ -179,7 +183,13 @@ class FileIOXmlSpec extends AnyWordSpec with Matchers {
         </Game>
 
       val tmpFile = new File("textOnlyTurnState.xml")
-      scala.xml.XML.save(tmpFile.getPath, xmlWithTextOnlyTurnState, "UTF-8", true, null)
+      scala.xml.XML.save(
+        tmpFile.getPath,
+        xmlWithTextOnlyTurnState,
+        "UTF-8",
+        true,
+        null
+      )
 
       val tmpFileIO = new FileIOXml(tmpFile.getPath, gameStates)
       val loadedGameTry: Try[Game] = tmpFileIO.load()
@@ -192,9 +202,4 @@ class FileIOXmlSpec extends AnyWordSpec with Matchers {
 
   }
 
-
 }
-
-
-
-

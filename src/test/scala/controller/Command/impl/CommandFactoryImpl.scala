@@ -18,81 +18,201 @@ class CommandFactoryImplSpec extends AnyWordSpec with Matchers {
   // ==============================
   // FULL STUB STATES IMPLEMENTATION
   // ==============================
-  object StubGameStates extends GameStatesImpl(
-    new InitState {
+  object StubGameStates
+      extends GameStatesImpl(
+        new InitState {
 
-    def drawCard(game: Game, playerIdx: Int): Game =
-        (game)
-      def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer) = (hand, game)
-      def dealCardsToHand(player: Player, deck: List[Card], n: Int) = (player, deck)
-      def handleInvalidInput(game: Game, tableCard: Card, message: ActionState) = (game, 0)
-      def handleTurn(game: Game, currentPlayerIndex: Int, chosenCardIndex: Int) = (game, 0)
-      def isPlayable(table: Card, hand: Card) = true
-      def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean) = currentIndex
-      def parseCardIndex(index: Int, player: Player, game: Game, tableCard: Card, currentPlayerIndex: Int) = (game, 0)
-      def playCard(game: Game, playerIdx: Int, cardIdx: Int) = (game, 0)
-      def playCardIfValid(card: Card, game: Game, tableCard: Card, currentPlayerIndex: Int) = (game, 0)
-      def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int) = game
-      def start(p1: Player, p2: Player, gameStates: GameStates) = Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
-      def turn(card: Card, game: Game, currentPlayerIndex: Int) = (game, 0)
-      def wisher(int: Integer) = Coulor.red
-    },
-    new PlayCardState {
+          def drawCard(game: Game, playerIdx: Int): Game =
+            (game)
+          def chooseColour(
+              game: Game,
+              colour: Coulor,
+              hand: Card,
+              input: Integer
+          ) = (hand, game)
+          def dealCardsToHand(player: Player, deck: List[Card], n: Int) =
+            (player, deck)
+          def handleInvalidInput(
+              game: Game,
+              tableCard: Card,
+              message: ActionState
+          ) = (game, 0)
+          def handleTurn(
+              game: Game,
+              currentPlayerIndex: Int,
+              chosenCardIndex: Int
+          ) = (game, 0)
+          def isPlayable(table: Card, hand: Card) = true
+          def nextPlayerIndex(
+              currentIndex: Int,
+              playerCount: Int,
+              skipNext: Boolean
+          ) = currentIndex
+          def parseCardIndex(
+              index: Int,
+              player: Player,
+              game: Game,
+              tableCard: Card,
+              currentPlayerIndex: Int
+          ) = (game, 0)
+          def playCard(game: Game, playerIdx: Int, cardIdx: Int) = (game, 0)
+          def playCardIfValid(
+              card: Card,
+              game: Game,
+              tableCard: Card,
+              currentPlayerIndex: Int
+          ) = (game, 0)
+          def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int) = game
+          def start(p1: Player, p2: Player, gameStates: GameStates) =
+            Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
+          def turn(card: Card, game: Game, currentPlayerIndex: Int) = (game, 0)
+          def wisher(int: Integer) = Coulor.red
+        },
+        new PlayCardState {
 
-    def drawCard(game: Game, playerIdx: Int): Game =
-        (game)
-      def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer) = (hand, game)
-      def dealCardsToHand(player: Player, deck: List[Card], n: Int) = (player, deck)
-      def handleInvalidInput(game: Game, tableCard: Card, message: ActionState) = (game, 0)
-      def handleTurn(game: Game, currentPlayerIndex: Int, chosenCardIndex: Int) = (game, 0)
-      def isPlayable(table: Card, hand: Card) = true
-      def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean) = currentIndex
-      def parseCardIndex(index: Int, player: Player, game: Game, tableCard: Card, currentPlayerIndex: Int) = (game, 0)
-      def playCard(game: Game, playerIdx: Int, cardIdx: Int) = (game, 0)
-      def playCardIfValid(card: Card, game: Game, tableCard: Card, currentPlayerIndex: Int) = (game, 0)
-      def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int) = game
-      def start(p1: Player, p2: Player, gameStates: GameStates) = Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
-      def turn(card: Card, game: Game, currentPlayerIndex: Int) = (game, 0)
-      def wisher(int: Integer) = Coulor.red
-    },
-    new DrawCardState {
+          def drawCard(game: Game, playerIdx: Int): Game =
+            (game)
+          def chooseColour(
+              game: Game,
+              colour: Coulor,
+              hand: Card,
+              input: Integer
+          ) = (hand, game)
+          def dealCardsToHand(player: Player, deck: List[Card], n: Int) =
+            (player, deck)
+          def handleInvalidInput(
+              game: Game,
+              tableCard: Card,
+              message: ActionState
+          ) = (game, 0)
+          def handleTurn(
+              game: Game,
+              currentPlayerIndex: Int,
+              chosenCardIndex: Int
+          ) = (game, 0)
+          def isPlayable(table: Card, hand: Card) = true
+          def nextPlayerIndex(
+              currentIndex: Int,
+              playerCount: Int,
+              skipNext: Boolean
+          ) = currentIndex
+          def parseCardIndex(
+              index: Int,
+              player: Player,
+              game: Game,
+              tableCard: Card,
+              currentPlayerIndex: Int
+          ) = (game, 0)
+          def playCard(game: Game, playerIdx: Int, cardIdx: Int) = (game, 0)
+          def playCardIfValid(
+              card: Card,
+              game: Game,
+              tableCard: Card,
+              currentPlayerIndex: Int
+          ) = (game, 0)
+          def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int) = game
+          def start(p1: Player, p2: Player, gameStates: GameStates) =
+            Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
+          def turn(card: Card, game: Game, currentPlayerIndex: Int) = (game, 0)
+          def wisher(int: Integer) = Coulor.red
+        },
+        new DrawCardState {
 
-    def drawCard(game: Game, playerIdx: Int): Game =
-        (game)
-      def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer) = (hand, game)
-      def dealCardsToHand(player: Player, deck: List[Card], n: Int) = (player, deck)
-      def handleInvalidInput(game: Game, tableCard: Card, message: ActionState) = (game, 0)
-      def handleTurn(game: Game, currentPlayerIndex: Int, chosenCardIndex: Int) = (game, 0)
-      def isPlayable(table: Card, hand: Card) = true
-      def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean) = currentIndex
-      def parseCardIndex(index: Int, player: Player, game: Game, tableCard: Card, currentPlayerIndex: Int) = (game, 0)
-      def playCard(game: Game, playerIdx: Int, cardIdx: Int) = (game, 0)
-      def playCardIfValid(card: Card, game: Game, tableCard: Card, currentPlayerIndex: Int) = (game, 0)
-      def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int) = game
-      def start(p1: Player, p2: Player, gameStates: GameStates) = Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
-      def turn(card: Card, game: Game, currentPlayerIndex: Int) = (game, 0)
-      def wisher(int: Integer) = Coulor.red
-    },
-    new WishCardState {
+          def drawCard(game: Game, playerIdx: Int): Game =
+            (game)
+          def chooseColour(
+              game: Game,
+              colour: Coulor,
+              hand: Card,
+              input: Integer
+          ) = (hand, game)
+          def dealCardsToHand(player: Player, deck: List[Card], n: Int) =
+            (player, deck)
+          def handleInvalidInput(
+              game: Game,
+              tableCard: Card,
+              message: ActionState
+          ) = (game, 0)
+          def handleTurn(
+              game: Game,
+              currentPlayerIndex: Int,
+              chosenCardIndex: Int
+          ) = (game, 0)
+          def isPlayable(table: Card, hand: Card) = true
+          def nextPlayerIndex(
+              currentIndex: Int,
+              playerCount: Int,
+              skipNext: Boolean
+          ) = currentIndex
+          def parseCardIndex(
+              index: Int,
+              player: Player,
+              game: Game,
+              tableCard: Card,
+              currentPlayerIndex: Int
+          ) = (game, 0)
+          def playCard(game: Game, playerIdx: Int, cardIdx: Int) = (game, 0)
+          def playCardIfValid(
+              card: Card,
+              game: Game,
+              tableCard: Card,
+              currentPlayerIndex: Int
+          ) = (game, 0)
+          def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int) = game
+          def start(p1: Player, p2: Player, gameStates: GameStates) =
+            Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
+          def turn(card: Card, game: Game, currentPlayerIndex: Int) = (game, 0)
+          def wisher(int: Integer) = Coulor.red
+        },
+        new WishCardState {
 
-
-    def drawCard(game: Game, playerIdx: Int): Game =
-        (game)
-      def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer) = (hand, game)
-      def dealCardsToHand(player: Player, deck: List[Card], n: Int) = (player, deck)
-      def handleInvalidInput(game: Game, tableCard: Card, message: ActionState) = (game, 0)
-      def handleTurn(game: Game, currentPlayerIndex: Int, chosenCardIndex: Int) = (game, 0)
-      def isPlayable(table: Card, hand: Card) = true
-      def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean) = currentIndex
-      def parseCardIndex(index: Int, player: Player, game: Game, tableCard: Card, currentPlayerIndex: Int) = (game, 0)
-      def playCard(game: Game, playerIdx: Int, cardIdx: Int) = (game, 0)
-      def playCardIfValid(card: Card, game: Game, tableCard: Card, currentPlayerIndex: Int) = (game, 0)
-      def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int) = game
-      def start(p1: Player, p2: Player, gameStates: GameStates) = Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
-      def turn(card: Card, game: Game, currentPlayerIndex: Int) = (game, 0)
-      def wisher(int: Integer) = Coulor.red
-    }
-  )
+          def drawCard(game: Game, playerIdx: Int): Game =
+            (game)
+          def chooseColour(
+              game: Game,
+              colour: Coulor,
+              hand: Card,
+              input: Integer
+          ) = (hand, game)
+          def dealCardsToHand(player: Player, deck: List[Card], n: Int) =
+            (player, deck)
+          def handleInvalidInput(
+              game: Game,
+              tableCard: Card,
+              message: ActionState
+          ) = (game, 0)
+          def handleTurn(
+              game: Game,
+              currentPlayerIndex: Int,
+              chosenCardIndex: Int
+          ) = (game, 0)
+          def isPlayable(table: Card, hand: Card) = true
+          def nextPlayerIndex(
+              currentIndex: Int,
+              playerCount: Int,
+              skipNext: Boolean
+          ) = currentIndex
+          def parseCardIndex(
+              index: Int,
+              player: Player,
+              game: Game,
+              tableCard: Card,
+              currentPlayerIndex: Int
+          ) = (game, 0)
+          def playCard(game: Game, playerIdx: Int, cardIdx: Int) = (game, 0)
+          def playCardIfValid(
+              card: Card,
+              game: Game,
+              tableCard: Card,
+              currentPlayerIndex: Int
+          ) = (game, 0)
+          def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int) = game
+          def start(p1: Player, p2: Player, gameStates: GameStates) =
+            Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
+          def turn(card: Card, game: Game, currentPlayerIndex: Int) = (game, 0)
+          def wisher(int: Integer) = Coulor.red
+        }
+      )
 
   val factory = new CommandFactoryImpl(StubGameStates)
 
@@ -126,10 +246,3 @@ class CommandFactoryImplSpec extends AnyWordSpec with Matchers {
 
   }
 }
-
-
-
-
-
-
-

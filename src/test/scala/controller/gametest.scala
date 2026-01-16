@@ -14,21 +14,4 @@ import de.htwg.Uno.model.Enum.ActionState
 import de.htwg.Uno.model.Enum.TurnState
 import de.htwg.Uno.aView.Tui
 
-
-
-
-class UnoSpecAll extends AnyWordSpec with Matchers {
-
-
-
-
-    
-
-
-
-
-
-
-
-
-}
+class UnoSpecAll extends AnyWordSpec with Matchers {}

@@ -11,14 +11,16 @@ import scala.xml.PrettyPrinter
 import scala.xml.{Elem, Node}
 import de.htwg.Uno.model.Model.*
 
-class FileIOXml @Inject() (Path: String, gameStates: GameStates) extends FileIOInterface:
+class FileIOXml @Inject() (Path: String, gameStates: GameStates)
+    extends FileIOInterface:
 
   override def save(game: Game): Try[Unit] = Try {
     val xml = gameToXml(game)
     val prettyPrinter = new PrettyPrinter(80, 2)
     val prettyXml = prettyPrinter.format(xml)
     val pw = new PrintWriter(new File(Path))
-    try pw.write(prettyXml) finally pw.close()
+    try pw.write(prettyXml)
+    finally pw.close()
   }
 
   override def load(): Try[Game] = Try {
@@ -26,46 +28,45 @@ class FileIOXml @Inject() (Path: String, gameStates: GameStates) extends FileIOI
     xmlToGame(xml)
   }
 
-
   private def gameToXml(game: Game): Elem =
     val playerXml = game.player.map(playerToXml)
-    val deckXml   = game.deck.map(cardToXml)
+    val deckXml = game.deck.map(cardToXml)
 
     <Game>
-      <Players>{ playerXml }</Players>
-      <Index>{ game.index }</Index>
-      <Deck>{ deckXml }</Deck>
-      <Table>{ game.table.map(cardToXml).getOrElse(<Empty/>) }</Table>
-      <ActionState>{ game.ActionState.toString }</ActionState>
-      <TurnState>{ turnStateToXml(game.TurnState) }</TurnState>
+      <Players>{playerXml}</Players>
+      <Index>{game.index}</Index>
+      <Deck>{deckXml}</Deck>
+      <Table>{game.table.map(cardToXml).getOrElse(<Empty/>)}</Table>
+      <ActionState>{game.ActionState.toString}</ActionState>
+      <TurnState>{turnStateToXml(game.TurnState)}</TurnState>
     </Game>
 
   private def playerToXml(player: Player): Elem =
     <Player>
-      <Name>{ player.name }</Name>
-      <Hand>{ player.hand.map(cardToXml) }</Hand>
-      <Index>{ player.index }</Index>
+      <Name>{player.name}</Name>
+      <Hand>{player.hand.map(cardToXml)}</Hand>
+      <Index>{player.index}</Index>
     </Player>
 
   private def cardToXml(card: Card): Elem =
     <Card>
-      <Coulor>{ card.colour.toString }</Coulor>
-      <Symbol>{ card.symbol.toString }</Symbol>
+      <Coulor>{card.colour.toString}</Coulor>
+      <Symbol>{card.symbol.toString}</Symbol>
     </Card>
 
   private def turnStateToXml(state: TurnState): Elem = state match
     case TurnState.PlayerTurn(player) =>
-      <PlayerTurn>{ playerToXml(player) }</PlayerTurn>
+      <PlayerTurn>{playerToXml(player)}</PlayerTurn>
     case TurnState.GameWon(player) =>
-      <GameWon>{ playerToXml(player) }</GameWon>
+      <GameWon>{playerToXml(player)}</GameWon>
     case TurnState.None =>
       <None/>
 
   private def xmlToGame(node: Node): Game =
     val players = (node \ "Players" \ "Player").map(xmlToPlayer).toList
-    val index   = (node \ "Index").text.toInt
-    val deck    = (node \ "Deck" \ "Card").map(xmlToCard).toList
-    val table   = (node \ "Table").headOption.flatMap { t =>
+    val index = (node \ "Index").text.toInt
+    val deck = (node \ "Deck" \ "Card").map(xmlToCard).toList
+    val table = (node \ "Table").headOption.flatMap { t =>
       (t \ "Card").headOption.map(xmlToCard)
     }
 
@@ -75,7 +76,9 @@ class FileIOXml @Inject() (Path: String, gameStates: GameStates) extends FileIOI
       case other =>
         throw new IllegalArgumentException(s"Unknown ActionState: $other")
 
-    val turnState = (node \ "TurnState").headOption.map(xmlToTurnState).getOrElse(TurnState.None)
+    val turnState = (node \ "TurnState").headOption
+      .map(xmlToTurnState)
+      .getOrElse(TurnState.None)
 
     Game(players, index, deck, table, actionState, turnState)
 
@@ -93,9 +96,12 @@ class FileIOXml @Inject() (Path: String, gameStates: GameStates) extends FileIOI
     )
 
   private def xmlToTurnState(node: Node): TurnState =
-    val child = node.child.filter(_.label != "#PCDATA").headOption.getOrElse(<None/>)
+    val child =
+      node.child.filter(_.label != "#PCDATA").headOption.getOrElse(<None/>)
     child.label match
-      case "PlayerTurn" => TurnState.PlayerTurn(xmlToPlayer((child \ "Player").head))
-      case "GameWon"    => TurnState.GameWon(xmlToPlayer((child \ "Player").head))
-      case "None"       => TurnState.None
-      case other        => throw new IllegalArgumentException(s"Unknown TurnState: $other")
+      case "PlayerTurn" =>
+        TurnState.PlayerTurn(xmlToPlayer((child \ "Player").head))
+      case "GameWon" => TurnState.GameWon(xmlToPlayer((child \ "Player").head))
+      case "None"    => TurnState.None
+      case other =>
+        throw new IllegalArgumentException(s"Unknown TurnState: $other")

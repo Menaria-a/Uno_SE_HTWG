@@ -1,4 +1,3 @@
-
 package de.htwg.Uno.aView
 
 import org.scalatest.wordspec.AnyWordSpec
@@ -14,31 +13,27 @@ import de.htwg.Uno.Module
 
 import de.htwg.Uno.util.Undo.CommandManager
 
-
-
-
-class UnoSpec extends AnyWordSpec with Matchers{
+class UnoSpec extends AnyWordSpec with Matchers {
   val manager = CommandManager()
   val injector = Guice.createInjector(new Module)
   val controller = injector.getInstance(classOf[Controller])
 
   val TuiInstance = new Tui(controller: Controller)
 
-
   "The creator function" should {
     "render a red One card correctly" in {
       val card = Card(Coulor.red, Symbol.One)
       val lines = TuiInstance.creator(card)
       lines.head shouldBe "+------+"
-      lines(1) should include ("r")
-      lines(2) should include ("1")
+      lines(1) should include("r")
+      lines(2) should include("1")
       lines.last shouldBe "+------+"
     }
 
     "render a green Plus_2 card correctly" in {
       val card = Card(Coulor.green, Symbol.Plus_2)
       val lines = TuiInstance.creator(card)
-      lines.mkString("\n") should include ("+2")
+      lines.mkString("\n") should include("+2")
     }
   }
 
@@ -63,27 +58,23 @@ class UnoSpec extends AnyWordSpec with Matchers{
         Card(Coulor.yellow, Symbol.Seven),
         Card(Coulor.yellow, Symbol.Reverse),
         Card(Coulor.yellow, Symbol.Five)
-        
-
       )
       val output = TuiInstance.handrenderer(hand)
-      output should include ("r")
-      output should include ("b")
-      output should include ("1")
-      output should include ("2")
+      output should include("r")
+      output should include("b")
+      output should include("1")
+      output should include("2")
     }
   }
-
-
 
   "The tablerenderer function" should {
     "render a card as a multi-line string" in {
       val card = Card(Coulor.red, Symbol.One)
       val result = TuiInstance.tablerenderer(card)
 
-      result should include ("+")
-      result should include ("r")
-      result should include ("1")
+      result should include("+")
+      result should include("r")
+      result should include("1")
       result.linesIterator.size should be > 1
     }
   }
@@ -92,15 +83,22 @@ class UnoSpec extends AnyWordSpec with Matchers{
     "render the table and player hands" in {
       val p1 = Player("Alice", List(Card(Coulor.green, Symbol.Five)), 0)
       val p2 = Player("Bob", List(Card(Coulor.blue, Symbol.Two)), 1)
-      val game = Game(List(p1, p2),0, Nil, Some(Card(Coulor.red, Symbol.One)), ActionState.None, TurnState.None)
+      val game = Game(
+        List(p1, p2),
+        0,
+        Nil,
+        Some(Card(Coulor.red, Symbol.One)),
+        ActionState.None,
+        TurnState.None
+      )
 
       val result = TuiInstance.gamerenderer(game)
 
-      result should include ("Table:")
-      result should include ("Alice")
-      result should include ("Bob")
-      result should include ("r")
-      result should include ("b")
+      result should include("Table:")
+      result should include("Alice")
+      result should include("Bob")
+      result should include("r")
+      result should include("b")
     }
   }
 
@@ -111,11 +109,8 @@ class UnoSpec extends AnyWordSpec with Matchers{
         val result = TuiInstance.fake("Hello Test")
         result shouldBe "s"
       }
-      printed.toString should include ("Hello Test")
+      printed.toString should include("Hello Test")
     }
   }
-  
 
-  
 }
-

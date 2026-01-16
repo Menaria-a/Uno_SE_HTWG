@@ -76,5 +76,3 @@ class DrawCardHandlerSpec extends AnyWordSpec with Matchers {
     }
   }
 }
-
-

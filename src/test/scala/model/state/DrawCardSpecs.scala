@@ -55,7 +55,8 @@ class DrawCardStateSpec extends AnyWordSpec with Matchers {
     }
 
     "chooseColour returns a card and a game" in {
-      val (card, newGame) = state.chooseColour(game, Coulor.red, Card(Coulor.yellow, Symbol.One), 2)
+      val (card, newGame) =
+        state.chooseColour(game, Coulor.red, Card(Coulor.yellow, Symbol.One), 2)
       card shouldBe a[Card]
       newGame shouldBe a[Game]
     }
@@ -93,7 +94,8 @@ class DrawCardStateSpec extends AnyWordSpec with Matchers {
     }
 
     "handleInvalidInput returns correct tuple" in {
-      val (newGame, code) = state.handleInvalidInput(game, tableCard, ActionState.None)
+      val (newGame, code) =
+        state.handleInvalidInput(game, tableCard, ActionState.None)
       newGame shouldBe game
       code shouldBe 1
     }
@@ -104,11 +106,10 @@ class DrawCardStateSpec extends AnyWordSpec with Matchers {
     }
 
     "playCardIfValid returns correct tuple" in {
-      val (newGame, idx) = state.playCardIfValid(Card(Coulor.red, Symbol.One), game, tableCard, 0)
+      val (newGame, idx) =
+        state.playCardIfValid(Card(Coulor.red, Symbol.One), game, tableCard, 0)
       newGame shouldBe game
       idx shouldBe 0
     }
   }
 }
-
-

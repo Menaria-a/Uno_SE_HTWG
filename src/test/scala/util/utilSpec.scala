@@ -16,57 +16,50 @@ import com.google.inject.Guice
 
 class UtilSpec extends AnyWordSpec with Matchers {
 
+  val manager = CommandManager()
+  val injector = Guice.createInjector(new Module)
+  val controller = injector.getInstance(classOf[Controller])
 
-    val manager = CommandManager()
-    val injector = Guice.createInjector(new Module)
-    val controller = injector.getInstance(classOf[Controller])
+  val TuiInstance = new Tui(controller: Controller)
 
-    val TuiInstance = new Tui(controller: Controller)
+  "The remove function" should {
+    "remove the observer from the subscribers list" in {
+      val obs1 = new Observer { override def update: Unit = () }
+      val obs2 = new Observer { override def update: Unit = () }
 
-    "The remove function" should {
-        "remove the observer from the subscribers list" in {
-            val obs1 = new Observer { override def update: Unit = () }
-            val obs2 = new Observer { override def update: Unit = () }
+      val observable = new Observable()
+      observable.add(obs1)
+      observable.add(obs2)
+      observable.subscribers should contain allOf (obs1, obs2)
+      observable.remove(obs1)
 
-            val observable = new Observable()
-            observable.add(obs1)
-            observable.add(obs2)
-            observable.subscribers should contain allOf (obs1, obs2)
-            observable.remove(obs1)
+      observable.subscribers should not contain obs1
+      observable.subscribers should contain(obs2)
+    }
+  }
 
-            observable.subscribers should not contain obs1
-            observable.subscribers should contain (obs2)
-        }
+  "notifyObservers" should {
+    "call update on all subscribers" in {
+      var obs1Updated = false
+      var obs2Updated = false
+
+      val obs1 = new Observer { def update: Unit = obs1Updated = true }
+      val obs2 = new Observer { def update: Unit = obs2Updated = true }
+
+      val observable = new Observable()
+      observable.add(obs1)
+      observable.add(obs2)
+
+      observable.notifyObservers
+
+      obs1Updated shouldBe true
+      obs2Updated shouldBe true
     }
 
-
-
-    
-
-
-
-    "notifyObservers" should {
-        "call update on all subscribers" in {
-            var obs1Updated = false
-            var obs2Updated = false
-
-            val obs1 = new Observer { def update: Unit = obs1Updated = true }
-            val obs2 = new Observer { def update: Unit = obs2Updated = true }
-
-            val observable = new Observable()
-            observable.add(obs1)
-            observable.add(obs2)
-
-            observable.notifyObservers
-
-            obs1Updated shouldBe true
-            obs2Updated shouldBe true
-        }
-
-        "do nothing if there are no subscribers" in {
-            val observable = new Observable()
-            noException should be thrownBy observable.notifyObservers
-        }
+    "do nothing if there are no subscribers" in {
+      val observable = new Observable()
+      noException should be thrownBy observable.notifyObservers
     }
+  }
 
 }

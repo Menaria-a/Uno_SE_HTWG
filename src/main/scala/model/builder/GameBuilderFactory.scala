@@ -1,6 +1,5 @@
 package de.htwg.Uno.model.builder
 
-
-trait GameBuilderFactory{
-    def create(): GameBuilder
+trait GameBuilderFactory {
+  def create(): GameBuilder
 }

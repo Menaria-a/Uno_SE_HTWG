@@ -15,87 +15,92 @@ import de.htwg.Uno.model.state.Impl.InitStateImpl
 import de.htwg.Uno.model.state.GameStates
 import de.htwg.Uno.util.FileIOInterface
 
+class ControllerImpl @Inject() (
+    var game: Game,
+    var cmdManager: CommandManager,
+    gameStates: GameStates,
+    fileIO: FileIOInterface
+) extends Controller {
 
-class ControllerImpl @Inject()(
-    var game: Game, var cmdManager: CommandManager,  gameStates: GameStates, fileIO: FileIOInterface
-    ) extends Controller {
+  def updateAll(g: Game): Game =
+    game = g
+    notifyObservers
+    game
 
+  def initloop(input: PlayerInput): Game =
+    val p1 = Player(input.getInputs(), Nil, 0)
+    val p2 = Player(input.getInputs(), Nil, 0)
+    val game = gameStates.InitState.start(p1, p2, gameStates)
+    updateAll(game)
+    game
 
+  @scala.annotation.tailrec
+  final def gameloop(input: PlayerInput): Unit =
+    val index = game.index
+    val inputs = input.getInput(game, input)
 
-        def updateAll(g: Game): Game =
-            game = g
-            notifyObservers
-            game
+    val Cmd =
+      PlayCardCommand(playerIdx = index, cardIdx = 0, inputs, gameStates)
+    val (newManager, newGame, value) = cmdManager.executeCommand(Cmd, game)
+    cmdManager = newManager
+    val Hint = value
+    print(Hint)
+    if (Hint == 1) {
+      val com = ChooseColourCommand(hand = newGame.table.get, input, gameStates)
+      val new2Game = newGame.copy(
+        ActionState = ActionState.ChooseColour,
+        TurnState = TurnState.PlayerTurn(game.player(index))
+      )
+      updateAll(new2Game)
+      val (newerManager, newerGame, value) =
+        newManager.executeCommand(com, new2Game)
+      val newestGame = newerGame.copy(ActionState = ActionState.ChooseCard)
+      cmdManager = newerManager
+      updateAll(newestGame)
+    } else if (Hint == 5) {
+      System.exit(0)
+    } else if (Hint == 6) {
+      val newgame = newGame.copy(TurnState =
+        TurnState.PlayerTurn(newGame.player((index + 1) % 2))
+      )
+      updateAll(newgame)
+    } else if (Hint == 3) {
+      val con = DrawCardCommand(index, gameStates.drawCardState)
+      val (newerManager, newerGame, value) =
+        cmdManager.executeCommand(con, newGame)
+      updateAll(newerGame)
+    } else {
+      val newerGame = newGame.copy(ActionState = ActionState.ChooseCard)
+      updateAll(newerGame)
+    }
 
-        def initloop(input: PlayerInput) : Game =
-            val p1 = Player(input.getInputs(), Nil, 0)
-            val p2 = Player(input.getInputs(), Nil, 0)
-            val game = gameStates.InitState.start(p1, p2, gameStates)
-            updateAll(game)
-            game
+    gameloop(input: PlayerInput)
 
-        @scala.annotation.tailrec
-        final def gameloop(input: PlayerInput) : Unit = 
-            val index = game.index
-            val inputs = input.getInput(game, input)
+  def undo(): Unit =
+    cmdManager.undo(game) match
+      case Some((newManager, prevGame)) =>
+        cmdManager = newManager
+        game = prevGame
+        updateAll(game)
+      case None =>
+        None
 
-            val Cmd = PlayCardCommand(playerIdx = index, cardIdx = 0, inputs,gameStates)
-            val (newManager, newGame, value) = cmdManager.executeCommand(Cmd,game)
-            cmdManager = newManager
-            val Hint = value
-            print(Hint)
-            if (Hint == 1){
-                val com = ChooseColourCommand(hand = newGame.table.get, input, gameStates)
-                val new2Game = newGame.copy(ActionState = ActionState.ChooseColour, TurnState = TurnState.PlayerTurn(game.player(index)))
-                updateAll(new2Game)
-                val (newerManager, newerGame, value) = newManager.executeCommand(com,new2Game)
-                val newestGame = newerGame.copy(ActionState = ActionState.ChooseCard)
-                cmdManager = newerManager
-                updateAll(newestGame)}
-            else if (Hint == 5) {
-                System.exit(0)
-            }
-            else if (Hint == 6) {
-                val newgame = newGame.copy(TurnState = TurnState.PlayerTurn(newGame.player((index + 1) % 2)))
-                updateAll(newgame)
-            }
-            else if (Hint == 3){
-                val con = DrawCardCommand(index, gameStates.drawCardState)
-                val (newerManager , newerGame, value) = cmdManager.executeCommand(con,newGame)
-                updateAll(newerGame)
-            }
-            else {
-                val newerGame = newGame.copy(ActionState = ActionState.ChooseCard)
-                updateAll(newerGame)
-            }
-                
-                gameloop(input: PlayerInput)
+  def redo(): Unit =
+    cmdManager.redo(game) match
+      case Some((newManager, nextGame)) =>
+        cmdManager = newManager
+        game = nextGame
+        updateAll(game)
+      case None =>
+        None
 
-        def undo(): Unit =
-            cmdManager.undo(game) match
-            case Some((newManager, prevGame)) =>
-                cmdManager = newManager
-                game = prevGame
-                updateAll(game)
-            case None =>
-                    None
+  def saveGame(): Game =
+    fileIO.save(game).getOrElse(())
+    game
 
-        def redo(): Unit =
-            cmdManager.redo(game) match
-            case Some((newManager, nextGame)) =>
-                cmdManager = newManager
-                game = nextGame
-                updateAll(game)
-            case None =>
-                    None
-
-        def saveGame(): Game =
-            fileIO.save(game).getOrElse(())
-            game
-
-        def loadGame(): Game =
-            game = fileIO.load().getOrElse(game)
-            updateAll(game)
-            game
+  def loadGame(): Game =
+    game = fileIO.load().getOrElse(game)
+    updateAll(game)
+    game
 
 }

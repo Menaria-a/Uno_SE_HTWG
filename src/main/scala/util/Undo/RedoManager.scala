@@ -7,39 +7,40 @@ case class CommandManager(
     redoStack: List[(Command, Game)] = Nil
 ):
 
-    def executeCommand(cmd: Command, game: Game): (CommandManager, Game, Integer) =
-        val newGame = cmd.execute(game)
-        val (games, int) = newGame
+  def executeCommand(
+      cmd: Command,
+      game: Game
+  ): (CommandManager, Game, Integer) =
+    val newGame = cmd.execute(game)
+    val (games, int) = newGame
+    val newManager = this.copy(
+      undoStack = (cmd, game) :: undoStack,
+      redoStack = Nil
+    )
+    println(redoStack)
+
+    (newManager, games, int)
+
+  def undo(game: Game): Option[(CommandManager, Game)] =
+    undoStack match
+      case (cmd, oldGame) :: rest =>
+        val reverted = cmd.undo(game, oldGame)
         val newManager = this.copy(
-        undoStack = (cmd, game) :: undoStack,
-        redoStack = Nil
+          undoStack = rest,
+          redoStack = (cmd, game) :: redoStack
         )
-        println(redoStack)
+        Some(newManager, reverted)
 
-        (newManager, games, int)
+      case Nil => None
 
-    def undo(game: Game): Option[(CommandManager, Game)] =
-        undoStack match
-        case (cmd, oldGame) :: rest =>
-            val reverted = cmd.undo(game, oldGame)
-            val newManager = this.copy(
-            undoStack = rest,
-            redoStack = (cmd, game) :: redoStack
-            )
-            Some(newManager, reverted)
-
-        case Nil => None
-
-    def redo(game: Game): Option[(CommandManager, Game)] =
-        redoStack match
-        case (cmd, lastGame) :: rest =>
-            val redone = cmd.execute(lastGame)
-            val (games, int) = redone
-            val newManager = this.copy(
-            redoStack = rest,
-            undoStack = (cmd, game) :: undoStack
-            )
-            Some(newManager, games)
-        case Nil => None
-
-
+  def redo(game: Game): Option[(CommandManager, Game)] =
+    redoStack match
+      case (cmd, lastGame) :: rest =>
+        val redone = cmd.execute(lastGame)
+        val (games, int) = redone
+        val newManager = this.copy(
+          redoStack = rest,
+          undoStack = (cmd, game) :: undoStack
+        )
+        Some(newManager, games)
+      case Nil => None

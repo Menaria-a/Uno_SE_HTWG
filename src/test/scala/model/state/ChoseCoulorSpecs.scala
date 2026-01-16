@@ -34,7 +34,7 @@ class WishCardStateSpec extends AnyWordSpec with Matchers {
       val (card, newGame) = state.chooseColour(game, Coulor.red, hand, 2)
 
       card shouldBe a[Card]
-      card.colour shouldBe Coulor.red  // because input 2 => red
+      card.colour shouldBe Coulor.red // because input 2 => red
       newGame.table shouldBe Some(card)
       newGame.ActionState shouldBe ActionState.ChooseColour
     }
@@ -42,7 +42,7 @@ class WishCardStateSpec extends AnyWordSpec with Matchers {
     "chooseColourForCard helper updates table and action state" in {
       val hand = Card(Coulor.blue, Symbol.Seven)
       val (card, newGame) = WishCardStateImpl.chooseColourForCard(hand, game, 3)
-      card.colour shouldBe Coulor.green  // input 3 => green
+      card.colour shouldBe Coulor.green // input 3 => green
       newGame.table shouldBe Some(card)
       newGame.ActionState shouldBe ActionState.ChooseColour
     }
@@ -100,7 +100,8 @@ class WishCardStateSpec extends AnyWordSpec with Matchers {
     }
 
     "handleInvalidInput returns game and code 1" in {
-      val (newGame, code) = state.handleInvalidInput(game, tableCard, ActionState.None)
+      val (newGame, code) =
+        state.handleInvalidInput(game, tableCard, ActionState.None)
       newGame shouldBe game
       code shouldBe 1
     }
@@ -111,28 +112,15 @@ class WishCardStateSpec extends AnyWordSpec with Matchers {
     }
 
     "playCardIfValid returns game and currentPlayerIndex" in {
-      val (newGame, idx) = state.playCardIfValid(Card(Coulor.red, Symbol.One), game, tableCard, 0)
+      val (newGame, idx) =
+        state.playCardIfValid(Card(Coulor.red, Symbol.One), game, tableCard, 0)
       newGame shouldBe game
       idx shouldBe 0
     }
 
     "draw correct" in {
-      val (newgame) = state.drawCard(game, 0 )
+      val (newgame) = state.drawCard(game, 0)
       newgame shouldBe game
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

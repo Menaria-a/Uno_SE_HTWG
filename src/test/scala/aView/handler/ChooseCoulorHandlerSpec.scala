@@ -13,8 +13,9 @@ class ChooseColourHandlerSpec extends AnyWordSpec with Matchers {
   // Hilfswerte für Game
   val dummyPlayerList = List.empty[Player]
   val dummyDeck = List.empty[Card]
-  val dummyTableCard = Card(Coulor.red,Symbol.One)          // an deine Card-Klasse anpassen
-  val dummyTurnState = TurnState.None               // oder irgendein gültiger Wert
+  val dummyTableCard =
+    Card(Coulor.red, Symbol.One) // an deine Card-Klasse anpassen
+  val dummyTurnState = TurnState.None // oder irgendein gültiger Wert
 
   def mkGame(actionState: ActionState): Game =
     Game(
@@ -32,10 +33,10 @@ class ChooseColourHandlerSpec extends AnyWordSpec with Matchers {
       val game = mkGame(ActionState.ChooseColour)
       val handler = new ChooseColourHandler()
 
-      handler.handleRequest("r", game) shouldBe (PlayCardAction(0,0,0), 2)
-      handler.handleRequest("g", game) shouldBe (PlayCardAction(0,0,0), 3)
-      handler.handleRequest("b", game) shouldBe (PlayCardAction(0,0,0), 4)
-      handler.handleRequest("y", game) shouldBe (PlayCardAction(0,0,0), 1)
+      handler.handleRequest("r", game) shouldBe (PlayCardAction(0, 0, 0), 2)
+      handler.handleRequest("g", game) shouldBe (PlayCardAction(0, 0, 0), 3)
+      handler.handleRequest("b", game) shouldBe (PlayCardAction(0, 0, 0), 4)
+      handler.handleRequest("y", game) shouldBe (PlayCardAction(0, 0, 0), 1)
     }
 
     "return InvalidAction for unknown input in ChooseColour state" in {

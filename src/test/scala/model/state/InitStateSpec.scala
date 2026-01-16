@@ -37,7 +37,7 @@ class InitStateSpec extends AnyWordSpec with Matchers {
       newGame.player.size shouldBe 2
       newGame.player.head.hand.size shouldBe 5
       newGame.player(1).hand.size shouldBe 5
-      newGame.deck.size shouldBe 50// 52 cards - 10 hands - 1 table = 41?
+      newGame.deck.size shouldBe 50 // 52 cards - 10 hands - 1 table = 41?
       newGame.table should not be None
       newGame.ActionState shouldBe ActionState.ChooseCard
     }
@@ -49,7 +49,8 @@ class InitStateSpec extends AnyWordSpec with Matchers {
     }
 
     "chooseColour returns a tuple (Card, Game)" in {
-      val (card, newGame) = state.chooseColour(game, Coulor.red, Card(Coulor.yellow, Symbol.One), 2)
+      val (card, newGame) =
+        state.chooseColour(game, Coulor.red, Card(Coulor.yellow, Symbol.One), 2)
       card shouldBe a[Card]
       newGame shouldBe a[Game]
     }
@@ -98,7 +99,8 @@ class InitStateSpec extends AnyWordSpec with Matchers {
     }
 
     "handleInvalidInput returns game and code 1" in {
-      val (newGame, code) = state.handleInvalidInput(game, tableCard, ActionState.None)
+      val (newGame, code) =
+        state.handleInvalidInput(game, tableCard, ActionState.None)
       newGame shouldBe game
       code shouldBe 1
     }
@@ -109,18 +111,15 @@ class InitStateSpec extends AnyWordSpec with Matchers {
     }
 
     "playCardIfValid returns game and currentPlayerIndex" in {
-      val (newGame, idx) = state.playCardIfValid(Card(Coulor.red, Symbol.One), game, tableCard, 0)
+      val (newGame, idx) =
+        state.playCardIfValid(Card(Coulor.red, Symbol.One), game, tableCard, 0)
       newGame shouldBe game
       idx shouldBe 0
     }
 
     "draw correct" in {
-      val (newgame) = state.drawCard(game, 0 )
+      val (newgame) = state.drawCard(game, 0)
       newgame shouldBe game
     }
   }
 }
-
-
-
-

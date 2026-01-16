@@ -17,17 +17,13 @@ import de.htwg.Uno.controller.*
 import de.htwg.Uno.model.state.GameStates
 import com.google.inject.Inject
 
-
-class Gui @Inject()(controller: Controller, gameStates: GameStates):
-
+class Gui @Inject() (controller: Controller, gameStates: GameStates):
 
   private val turnCallbackRef = new AtomicReference[Int => Unit](_ => ())
   private val promiseRef = new AtomicReference[Promise[Int]]()
 
-
   def setTurnCallback(cb: Int => Unit): Unit =
     turnCallbackRef.set(cb)
-
 
   def start(): Unit = showPlayerNameInput()
 
@@ -36,12 +32,7 @@ class Gui @Inject()(controller: Controller, gameStates: GameStates):
     val name2 = new TextField { promptText = "Spieler 2" }
     val startBtn = new Button("Start")
 
-    val root = new VBox(10,
-      new Label("Spielernamen:"),
-      name1,
-      name2,
-      startBtn
-    ):
+    val root = new VBox(10, new Label("Spielernamen:"), name1, name2, startBtn):
       alignment = Pos.Center
       padding = Insets(20)
 
@@ -67,7 +58,6 @@ class Gui @Inject()(controller: Controller, gameStates: GameStates):
 
     stage.show()
 
-
   private var colorChooserOpen = false
   private def showMainGameGUI(players: Array[Player]): Unit =
     val tableBox = new HBox:
@@ -81,13 +71,13 @@ class Gui @Inject()(controller: Controller, gameStates: GameStates):
     val saveBtn = new Button("Save") { prefWidth = 80 }
     val loadBtn = new Button("Load") { prefWidth = 80 }
 
-    val root = new VBox(20,
+    val root = new VBox(
+      20,
       new Label("Tisch:") { style = "-fx-font-size: 20px;" },
       tableBox,
       playersBox,
       saveBtn,
       loadBtn
-      
     ):
       padding = Insets(20)
 
@@ -102,17 +92,27 @@ class Gui @Inject()(controller: Controller, gameStates: GameStates):
           showColorChooser()
         }
 
-        tableBox.children.setAll(renderCard(controller.game.table.get, clickable = false))
+        tableBox.children.setAll(
+          renderCard(controller.game.table.get, clickable = false)
+        )
 
         playersBox.children.clear()
         controller.game.player.zipWithIndex.foreach { (pl, idx) =>
-          val label = new Label(s"${pl.name}'s Hand:") { style = "-fx-font-size: 16px;" }
+          val label = new Label(s"${pl.name}'s Hand:") {
+            style = "-fx-font-size: 16px;"
+          }
           val handBox = new HBox(10) { alignment = Pos.Center }
 
           pl.hand.zipWithIndex.foreach { (card, cIdx) =>
-            handBox.children.add(renderCard(card, clickable = true, playerIdx = idx, cardIdx = cIdx))
+            handBox.children.add(
+              renderCard(
+                card,
+                clickable = true,
+                playerIdx = idx,
+                cardIdx = cIdx
+              )
+            )
           }
-
 
           if idx == controller.game.index then
             handBox.children.add(
@@ -123,23 +123,20 @@ class Gui @Inject()(controller: Controller, gameStates: GameStates):
         }
       }
 
-
-    controller.add(new de.htwg.Uno.util.Observer:
-      override def update: Unit = updateUI()
+    controller.add(
+      new de.htwg.Uno.util.Observer:
+        override def update: Unit = updateUI()
     )
 
-      saveBtn.onAction = _ =>
-        controller.saveGame() 
+    saveBtn.onAction = _ => controller.saveGame()
 
-      loadBtn.onAction = _ =>
-        val loadedGame = controller.loadGame()
-          loadedGame match
-            case game: Game =>
-              controller.updateAll(game)
-            case _ =>
+    loadBtn.onAction = _ =>
+      val loadedGame = controller.loadGame()
+      loadedGame match
+        case game: Game =>
+          controller.updateAll(game)
+        case _ =>
     // nichts tun
-
-
 
     updateUI()
     stage.show()
@@ -147,8 +144,12 @@ class Gui @Inject()(controller: Controller, gameStates: GameStates):
   private def handleDrawButton(): Unit =
     turnCallbackRef.get().apply(500)
 
-  private def renderCard(card: Card, clickable: Boolean,
-                        playerIdx: Int = 0, cardIdx: Int = 0): Button =
+  private def renderCard(
+      card: Card,
+      clickable: Boolean,
+      playerIdx: Int = 0,
+      cardIdx: Int = 0
+  ): Button =
 
     val colorStr = card.colour match
       case Coulor.red    => "red"

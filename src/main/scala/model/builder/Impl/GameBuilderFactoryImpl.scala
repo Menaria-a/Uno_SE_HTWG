@@ -5,10 +5,9 @@ import de.htwg.Uno.model.*
 import com.google.inject.Inject
 import de.htwg.Uno.model.state.*
 
-
 class GameBuilderFactoryImpl @Inject() (
-    gameStates : GameStates
+    gameStates: GameStates
 ) extends GameBuilderFactory {
-    def create(): GameBuilder =
-        GameBuilder(gameStates)
+  def create(): GameBuilder =
+    GameBuilder(gameStates)
 }

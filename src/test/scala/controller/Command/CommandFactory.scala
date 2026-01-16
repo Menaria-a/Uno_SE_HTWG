@@ -28,9 +28,11 @@ class CommandFactorySpec extends AnyWordSpec with Matchers {
 
   // Anonymous implementation of CommandFactory for testing
   val factory = new CommandFactory {
-    override def playCard(playerIdx: Int, cardIdx: Int, input: Int) = new StubPlayCardCommandT
+    override def playCard(playerIdx: Int, cardIdx: Int, input: Int) =
+      new StubPlayCardCommandT
     override def draw(playerIdx: Int) = new StubDrawCardCommandT
-    override def chooseColour(hand: Card, input: PlayerInput) = new StubChooseColourCommandT
+    override def chooseColour(hand: Card, input: PlayerInput) =
+      new StubChooseColourCommandT
     override def undo(game: Game) = new StubUndoCommandT
   }
 
@@ -38,15 +40,23 @@ class CommandFactorySpec extends AnyWordSpec with Matchers {
 
     "create PlayCardCommand via createCommand" in {
       val action = PlayCardAction(0, 1, 2)
-      val result = factory.createCommand(action, Game(Nil, 0, Nil, None, ActionState.None, TurnState.None))
+      val result = factory.createCommand(
+        action,
+        Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
+      )
       result shouldBe a[PlayCardCommandT]
-      val (g, value) = result.execute(Game(Nil, 0, Nil, None, ActionState.None, TurnState.None))
+      val (g, value) = result.execute(
+        Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
+      )
       value shouldBe 0
     }
 
     "create DrawCardCommand via createCommand" in {
       val action = DrawAction(0)
-      val result = factory.createCommand(action, Game(Nil, 0, Nil, None, ActionState.None, TurnState.None))
+      val result = factory.createCommand(
+        action,
+        Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
+      )
       result shouldBe a[DrawCardCommandT]
     }
 
@@ -57,7 +67,10 @@ class CommandFactorySpec extends AnyWordSpec with Matchers {
         def getInputs() = "Alice"
       }
       val action = ChooseColourAction(card, input)
-      val result = factory.createCommand(action, Game(Nil, 0, Nil, None, ActionState.None, TurnState.None))
+      val result = factory.createCommand(
+        action,
+        Game(Nil, 0, Nil, None, ActionState.None, TurnState.None)
+      )
       result shouldBe a[ChooseColourCommandT]
     }
 
@@ -71,7 +84,3 @@ class CommandFactorySpec extends AnyWordSpec with Matchers {
   }
 
 }
-
-
-
-

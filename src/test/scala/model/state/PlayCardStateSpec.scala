@@ -12,7 +12,11 @@ class PlayCardStateSpec extends AnyWordSpec with Matchers {
   val state: PlayCardStateImpl.type = PlayCardStateImpl
 
   // Dummy players
-  val player1 = Player("Alice", List(Card(Coulor.red, Symbol.One), Card(Coulor.green, Symbol.Plus_2)), 0)
+  val player1 = Player(
+    "Alice",
+    List(Card(Coulor.red, Symbol.One), Card(Coulor.green, Symbol.Plus_2)),
+    0
+  )
   val player2 = Player("Bob", List(Card(Coulor.blue, Symbol.Two)), 1)
 
   val tableCard = Card(Coulor.red, Symbol.One)
@@ -20,7 +24,8 @@ class PlayCardStateSpec extends AnyWordSpec with Matchers {
   val game = Game(
     player = List(player1, player2),
     index = 0,
-    deck = List(Card(Coulor.yellow, Symbol.Three), Card(Coulor.blue, Symbol.Four)),
+    deck =
+      List(Card(Coulor.yellow, Symbol.Three), Card(Coulor.blue, Symbol.Four)),
     table = Some(tableCard),
     ActionState = ActionState.None,
     TurnState = TurnState.None
@@ -40,7 +45,8 @@ class PlayCardStateSpec extends AnyWordSpec with Matchers {
     }
 
     "parseCardIndex calls handleInvalidInput for invalid index" in {
-      val (newGame, code) = state.parseCardIndex(-1, player1, game, tableCard, 0)
+      val (newGame, code) =
+        state.parseCardIndex(-1, player1, game, tableCard, 0)
       newGame.ActionState shouldBe ActionState.OutOfRange
       code shouldBe 0
     }
@@ -86,7 +92,8 @@ class PlayCardStateSpec extends AnyWordSpec with Matchers {
     }
 
     "handleInvalidInput sets correct ActionState" in {
-      val (newGame, code) = state.handleInvalidInput(game, tableCard, ActionState.CardNotPlayable)
+      val (newGame, code) =
+        state.handleInvalidInput(game, tableCard, ActionState.CardNotPlayable)
       newGame.ActionState shouldBe ActionState.CardNotPlayable
       code shouldBe 0
     }
@@ -97,7 +104,8 @@ class PlayCardStateSpec extends AnyWordSpec with Matchers {
     }
 
     "chooseColour returns a dummy card and game" in {
-      val (card, newGame) = state.chooseColour(game, Coulor.red, player1.hand.head, 1)
+      val (card, newGame) =
+        state.chooseColour(game, Coulor.red, player1.hand.head, 1)
       card shouldBe a[Card]
       newGame shouldBe a[Game]
     }
@@ -109,78 +117,76 @@ class PlayCardStateSpec extends AnyWordSpec with Matchers {
 
   "turn" should {
 
-  "declare a winner when player has no more cards" in {
-    val oneCardPlayer = Player("Winner", List(Card(Coulor.red, Symbol.One)), 0)
-    val otherPlayer = Player("Bob", List(Card(Coulor.blue, Symbol.Two)), 1)
-    val g = game.copy(player = List(oneCardPlayer, otherPlayer))
-    
-    val cardToPlay = oneCardPlayer.hand.head
-    val (newGame, code) = state.turn(cardToPlay, g, 0)
+    "declare a winner when player has no more cards" in {
+      val oneCardPlayer =
+        Player("Winner", List(Card(Coulor.red, Symbol.One)), 0)
+      val otherPlayer = Player("Bob", List(Card(Coulor.blue, Symbol.Two)), 1)
+      val g = game.copy(player = List(oneCardPlayer, otherPlayer))
 
+      val cardToPlay = oneCardPlayer.hand.head
+      val (newGame, code) = state.turn(cardToPlay, g, 0)
 
-    newGame.TurnState shouldBe TurnState.GameWon(oneCardPlayer.copy(hand = List()))
-    code shouldBe 5
-  }
+      newGame.TurnState shouldBe TurnState.GameWon(
+        oneCardPlayer.copy(hand = List())
+      )
+      code shouldBe 5
+    }
 
-  "handle Plus_2 card correctly" in {
-    val plus2Card = Card(Coulor.red, Symbol.Plus_2)
-    val g = game.copy(player = List(player1, player2))
-    
-    val (newGame, code) = state.turn(plus2Card, g, 0)
-    code shouldBe 6
-    newGame.player(1).hand.size shouldBe player2.hand.size + 2
-  }
+    "handle Plus_2 card correctly" in {
+      val plus2Card = Card(Coulor.red, Symbol.Plus_2)
+      val g = game.copy(player = List(player1, player2))
 
-  "handle Plus_4 card correctly" in {
-    val plus4Card = Card(Coulor.red, Symbol.Plus_4)
-    val g = game.copy(player = List(player1, player2))
-    
-    val (newGame, code) = state.turn(plus4Card, g, 0)
-    code shouldBe 1
-    newGame.player(1).hand.size shouldBe player2.hand.size + 2
-  }
+      val (newGame, code) = state.turn(plus2Card, g, 0)
+      code shouldBe 6
+      newGame.player(1).hand.size shouldBe player2.hand.size + 2
+    }
 
-  "handle Block card correctly" in {
-    val blockCard = Card(Coulor.red, Symbol.Block)
-    val g = game.copy(player = List(player1, player2))
-    
-    val (newGame, code) = state.turn(blockCard, g, 0)
-    code shouldBe 6
-  }
+    "handle Plus_4 card correctly" in {
+      val plus4Card = Card(Coulor.red, Symbol.Plus_4)
+      val g = game.copy(player = List(player1, player2))
 
-  "handle Reverse card correctly" in {
-    val reverseCard = Card(Coulor.red, Symbol.Reverse)
-    val g = game.copy(player = List(player1, player2))
-    
-    val (newGame, code) = state.turn(reverseCard, g, 0)
-    code shouldBe 6
-  }
+      val (newGame, code) = state.turn(plus4Card, g, 0)
+      code shouldBe 1
+      newGame.player(1).hand.size shouldBe player2.hand.size + 2
+    }
 
-  "handle Wish card correctly" in {
-    val wishCard = Card(Coulor.red, Symbol.Wish)
-    val g = game.copy(player = List(player1, player2))
-    
-    val (newGame, code) = state.turn(wishCard, g, 0)
-    code shouldBe 1
-  }
+    "handle Block card correctly" in {
+      val blockCard = Card(Coulor.red, Symbol.Block)
+      val g = game.copy(player = List(player1, player2))
 
-  "handle normal card correctly" in {
-    val normalCard = Card(Coulor.red, Symbol.Two)
-    val g = game.copy(player = List(player1, player2))
-    
-    val (newGame, code) = state.turn(normalCard, g, 0)
-    code shouldBe 0
-    newGame.table shouldBe Some(normalCard)
-  }
+      val (newGame, code) = state.turn(blockCard, g, 0)
+      code shouldBe 6
+    }
 
-  "draw correct" in {
-      val (newgame) = state.drawCard(game, 0 )
+    "handle Reverse card correctly" in {
+      val reverseCard = Card(Coulor.red, Symbol.Reverse)
+      val g = game.copy(player = List(player1, player2))
+
+      val (newGame, code) = state.turn(reverseCard, g, 0)
+      code shouldBe 6
+    }
+
+    "handle Wish card correctly" in {
+      val wishCard = Card(Coulor.red, Symbol.Wish)
+      val g = game.copy(player = List(player1, player2))
+
+      val (newGame, code) = state.turn(wishCard, g, 0)
+      code shouldBe 1
+    }
+
+    "handle normal card correctly" in {
+      val normalCard = Card(Coulor.red, Symbol.Two)
+      val g = game.copy(player = List(player1, player2))
+
+      val (newGame, code) = state.turn(normalCard, g, 0)
+      code shouldBe 0
+      newGame.table shouldBe Some(normalCard)
+    }
+
+    "draw correct" in {
+      val (newgame) = state.drawCard(game, 0)
       newgame shouldBe game
     }
-}
+  }
 
 }
-
-
-
-

@@ -56,9 +56,7 @@ class FallbackHandlerSpec extends AnyWordSpec with Matchers {
       val updated = handler.setNext(next)
 
       updated shouldBe handler
-      updated.next shouldBe None  // next wird ignoriert
+      updated.next shouldBe None // next wird ignoriert
     }
   }
 }
-
-

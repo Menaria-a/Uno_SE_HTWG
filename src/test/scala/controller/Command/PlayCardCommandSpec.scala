@@ -14,31 +14,77 @@ class PlayCardCommandSpec extends AnyWordSpec with Matchers {
   object DummyPlayerTurnState extends GameState {
 
     // Required by WishCardState
-    override def chooseColour(game: Game, colour: Coulor, hand: Card, input: Integer): (Card, Game) =
+    override def chooseColour(
+        game: Game,
+        colour: Coulor,
+        hand: Card,
+        input: Integer
+    ): (Card, Game) =
       (hand, game)
 
     override def wisher(input: Integer): Coulor =
       Coulor.red
 
     // Implement playCard for PlayCardCommand
-    override def playCard(game: Game, playerIdx: Int, cardIdx: Int): (Game, Integer) =
-      (game.copy(index = game.index + 1), 1)  // increment index as dummy effect
+    override def playCard(
+        game: Game,
+        playerIdx: Int,
+        cardIdx: Int
+    ): (Game, Integer) =
+      (game.copy(index = game.index + 1), 1) // increment index as dummy effect
 
     // Stub implementations for all other abstract methods
     override def drawCard(game: Game, playerIdx: Int): Game = game
-    override def start(p1: Player, p2: Player, gameStates: GameStates): Game = game
-    override def dealCardsToHand(player: Player, deck: List[Card], n: Int): (Player, List[Card]) = (player, deck)
-    override def nextPlayerIndex(currentIndex: Int, playerCount: Int, skipNext: Boolean): Int = currentIndex
-    override def parseCardIndex(index: Int, player: Player, game: Game, tableCard: Card, currentPlayerIndex: Int): (Game, Integer) =
+    override def start(p1: Player, p2: Player, gameStates: GameStates): Game =
+      game
+    override def dealCardsToHand(
+        player: Player,
+        deck: List[Card],
+        n: Int
+    ): (Player, List[Card]) = (player, deck)
+    override def nextPlayerIndex(
+        currentIndex: Int,
+        playerCount: Int,
+        skipNext: Boolean
+    ): Int = currentIndex
+    override def parseCardIndex(
+        index: Int,
+        player: Player,
+        game: Game,
+        tableCard: Card,
+        currentPlayerIndex: Int
+    ): (Game, Integer) =
       (game, currentPlayerIndex)
-    override def turn(card: Card, game: Game, currentPlayerIndex: Int): (Game, Integer) = (game, currentPlayerIndex)
+    override def turn(
+        card: Card,
+        game: Game,
+        currentPlayerIndex: Int
+    ): (Game, Integer) = (game, currentPlayerIndex)
     override def isPlayable(table: Card, hand: Card): Boolean = true
-    override def handleTurn(game: Game, currentPlayerIndex: Int, chosenCardIndex: Int): (Game, Integer) =
+    override def handleTurn(
+        game: Game,
+        currentPlayerIndex: Int,
+        chosenCardIndex: Int
+    ): (Game, Integer) =
       (game, chosenCardIndex)
-    override def handleInvalidInput(game: Game, tableCard: Card, message: ActionState): (Game, Integer) =
+    override def handleInvalidInput(
+        game: Game,
+        tableCard: Card,
+        message: ActionState
+    ): (Game, Integer) =
       (game, 1)
-    override def plusN(game: Game, nextPlayerIndex: Int, card: Card, n: Int): Game = game
-    override def playCardIfValid(card: Card, game: Game, tableCard: Card, currentPlayerIndex: Int): (Game, Integer) =
+    override def plusN(
+        game: Game,
+        nextPlayerIndex: Int,
+        card: Card,
+        n: Int
+    ): Game = game
+    override def playCardIfValid(
+        card: Card,
+        game: Game,
+        tableCard: Card,
+        currentPlayerIndex: Int
+    ): (Game, Integer) =
       (game, currentPlayerIndex)
   }
 
@@ -64,7 +110,12 @@ class PlayCardCommandSpec extends AnyWordSpec with Matchers {
   "A PlayCardCommand" should {
 
     "execute and modify the game via PlayerTurnState" in {
-      val command = PlayCardCommand(playerIdx = 0, cardIdx = 0, input = 0, gameStates = testGameStates)
+      val command = PlayCardCommand(
+        playerIdx = 0,
+        cardIdx = 0,
+        input = 0,
+        gameStates = testGameStates
+      )
       val (newGame, actionCode) = command.execute(game)
 
       // Dummy effect: index increments by 1
@@ -78,7 +129,12 @@ class PlayCardCommandSpec extends AnyWordSpec with Matchers {
     }
 
     "undo should return the current game unchanged" in {
-      val command = PlayCardCommand(playerIdx = 0, cardIdx = 0, input = 0, gameStates = testGameStates)
+      val command = PlayCardCommand(
+        playerIdx = 0,
+        cardIdx = 0,
+        input = 0,
+        gameStates = testGameStates
+      )
       val undoneGame = command.undo(game, game)
 
       // Undo does not modify the game
@@ -86,5 +142,3 @@ class PlayCardCommandSpec extends AnyWordSpec with Matchers {
     }
   }
 }
-
-

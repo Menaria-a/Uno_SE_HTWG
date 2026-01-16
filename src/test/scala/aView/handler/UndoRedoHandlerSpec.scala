@@ -11,7 +11,7 @@ import de.htwg.Uno.model.Model.*
 class UndoRedoHandlerSpec extends AnyWordSpec with Matchers {
 
   val dummyCard = Card(Coulor.red, Symbol.One)
-  val dummyPlayer = Player("P", List(dummyCard),0)
+  val dummyPlayer = Player("P", List(dummyCard), 0)
 
   def mkGame(): Game =
     Game(
@@ -29,7 +29,16 @@ class UndoRedoHandlerSpec extends AnyWordSpec with Matchers {
       val handler = new UndoRedoHandler()
       val game = mkGame()
 
-      handler.handleRequest("undo", game) shouldBe (UndoAction(Game(List(Player("P", List(Card(Coulor.red, Symbol.One)), 0)), 0, List(), Some(Card(Coulor.red, Symbol.One)), ActionState.None, TurnState.None)), 20)
+      handler.handleRequest("undo", game) shouldBe (UndoAction(
+        Game(
+          List(Player("P", List(Card(Coulor.red, Symbol.One)), 0)),
+          0,
+          List(),
+          Some(Card(Coulor.red, Symbol.One)),
+          ActionState.None,
+          TurnState.None
+        )
+      ), 20)
     }
 
     "return RedoAction when input is 'redo'" in {
@@ -63,5 +72,3 @@ class UndoRedoHandlerSpec extends AnyWordSpec with Matchers {
     }
   }
 }
-
-

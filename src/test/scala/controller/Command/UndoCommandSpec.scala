@@ -37,7 +37,7 @@ class UndoCommandSpec extends AnyWordSpec with Matchers {
 
     "not change the game when execute is called" in {
       val result = undoCommand.execute(game1)
-      result shouldBe (game1,0)
+      result shouldBe (game1, 0)
     }
   }
 }

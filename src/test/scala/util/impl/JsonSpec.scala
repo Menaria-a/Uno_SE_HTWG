@@ -46,7 +46,10 @@ class FileIOJsonSpec extends AnyWordSpec with Matchers {
       val loadedGameTry: Try[Game] = fileIO.load()
       loadedGameTry shouldBe a[Success[_]]
       val loadedGame = loadedGameTry.get
-      loadedGame.player.map(_.name) should contain allElementsOf List("Alice", "Bob")
+      loadedGame.player.map(_.name) should contain allElementsOf List(
+        "Alice",
+        "Bob"
+      )
       loadedGame.deck.size shouldBe 1
       loadedGame.table.get.colour shouldBe Coulor.yellow
       loadedGame.ActionState shouldBe ActionState.ChooseCard
@@ -62,14 +65,15 @@ class FileIOJsonSpec extends AnyWordSpec with Matchers {
     }
 
     "save and load a game with TurnState.GameWon" in {
-      val gameWithWinner = sampleGame.copy(TurnState = TurnState.GameWon(samplePlayer1))
+      val gameWithWinner =
+        sampleGame.copy(TurnState = TurnState.GameWon(samplePlayer1))
       fileIO.save(gameWithWinner)
       val loadedGameTry: Try[Game] = fileIO.load()
       loadedGameTry shouldBe a[Success[_]]
       val loadedGame = loadedGameTry.get
       loadedGame.TurnState match {
         case TurnState.GameWon(player) => player.name shouldBe "Alice"
-        case _ => fail("Expected TurnState.GameWon")
+        case _                         => fail("Expected TurnState.GameWon")
       }
     }
 
@@ -122,8 +126,4 @@ class FileIOJsonSpec extends AnyWordSpec with Matchers {
     }
   }
 
-
 }
-
-
-

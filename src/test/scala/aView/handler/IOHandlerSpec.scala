@@ -30,7 +30,10 @@ class IOHandlerSpec extends AnyWordSpec with Matchers {
       // Create a dummy next handler
       val nextHandler = new InputHandler {
         override def next: Option[InputHandler] = None
-        override def handleRequest(input: String, game: Game): (PlayerAction, Integer) =
+        override def handleRequest(
+            input: String,
+            game: Game
+        ): (PlayerAction, Integer) =
           (IOAction, 99) // dummy return
         override def setNext(handler: InputHandler): InputHandler = this
       }
@@ -45,4 +48,3 @@ class IOHandlerSpec extends AnyWordSpec with Matchers {
   }
 
 }
-

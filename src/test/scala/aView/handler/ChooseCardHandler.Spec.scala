@@ -37,7 +37,7 @@ class ChooseCardHandlerSpec extends AnyWordSpec with Matchers {
 
       val result = handler.handleRequest("1", game)
 
-      result._1 shouldBe PlayCardAction(0,0,0)
+      result._1 shouldBe PlayCardAction(0, 0, 0)
       result._2 shouldBe 1
     }
 
@@ -89,5 +89,3 @@ class ChooseCardHandlerSpec extends AnyWordSpec with Matchers {
     }
   }
 }
-
-
