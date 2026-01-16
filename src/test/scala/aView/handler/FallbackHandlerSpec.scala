@@ -18,7 +18,7 @@ class FallbackHandlerSpec extends AnyWordSpec with Matchers {
       player = List(dummyPlayer),
       index = 0,
       deck = List.empty,
-      table = dummyCard,
+      table = Some(dummyCard),
       ActionState = ActionState.None,
       TurnState = TurnState.None
     )

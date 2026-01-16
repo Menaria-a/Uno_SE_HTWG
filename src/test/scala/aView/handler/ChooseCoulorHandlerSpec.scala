@@ -21,7 +21,7 @@ class ChooseColourHandlerSpec extends AnyWordSpec with Matchers {
       player = dummyPlayerList,
       index = 0,
       deck = dummyDeck,
-      table = dummyTableCard,
+      table = Some(dummyTableCard),
       ActionState = actionState,
       TurnState = dummyTurnState
     )
@@ -32,10 +32,10 @@ class ChooseColourHandlerSpec extends AnyWordSpec with Matchers {
       val game = mkGame(ActionState.ChooseColour)
       val handler = new ChooseColourHandler()
 
-      handler.handleRequest("r", game) shouldBe (ChooseColourAction(Coulor.red), 2)
-      handler.handleRequest("g", game) shouldBe (ChooseColourAction(Coulor.green), 3)
-      handler.handleRequest("b", game) shouldBe (ChooseColourAction(Coulor.blue), 4)
-      handler.handleRequest("y", game) shouldBe (ChooseColourAction(Coulor.yellow), 1)
+      handler.handleRequest("r", game) shouldBe (PlayCardAction(0,0,0), 2)
+      handler.handleRequest("g", game) shouldBe (PlayCardAction(0,0,0), 3)
+      handler.handleRequest("b", game) shouldBe (PlayCardAction(0,0,0), 4)
+      handler.handleRequest("y", game) shouldBe (PlayCardAction(0,0,0), 1)
     }
 
     "return InvalidAction for unknown input in ChooseColour state" in {

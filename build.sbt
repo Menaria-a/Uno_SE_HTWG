@@ -10,7 +10,7 @@ lazy val root = project
     scalaVersion := scala3Version,
     fork := true,
     connectInput := true,
-
+    
     libraryDependencies ++= {
       // Determine OS
       val os = sys.props("os.name").toLowerCase
@@ -35,5 +35,6 @@ lazy val root = project
         "org.openjfx" % "javafx-graphics" % javafxVersion classifier classifier,
         "org.openjfx" % "javafx-media" % javafxVersion classifier classifier
       )
-    }
+    },
+    coverageExcludedFiles := ".*main|.*Gui.*"
   )

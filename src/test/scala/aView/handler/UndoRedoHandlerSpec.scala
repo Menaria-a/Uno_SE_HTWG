@@ -18,7 +18,7 @@ class UndoRedoHandlerSpec extends AnyWordSpec with Matchers {
       player = List(dummyPlayer),
       index = 0,
       deck = List.empty,
-      table = dummyCard,
+      table = Some(dummyCard),
       ActionState = ActionState.None,
       TurnState = TurnState.None
     )
@@ -29,7 +29,7 @@ class UndoRedoHandlerSpec extends AnyWordSpec with Matchers {
       val handler = new UndoRedoHandler()
       val game = mkGame()
 
-      handler.handleRequest("undo", game) shouldBe (UndoAction, 20)
+      handler.handleRequest("undo", game) shouldBe (UndoAction(Game(List(Player("P", List(Card(Coulor.red, Symbol.One)), 0)), 0, List(), Some(Card(Coulor.red, Symbol.One)), ActionState.None, TurnState.None)), 20)
     }
 
     "return RedoAction when input is 'redo'" in {

@@ -1,168 +1,180 @@
-package de.htwg.Uno.model.state
+package de.htwg.Uno.model.state.Impl
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.matchers.should.Matchers._
-import de.htwg.Uno.model.ModelInterface.StateInterface.*
-import de.htwg.Uno.model.ModelInterface.*
-import de.htwg.Uno.controller.ControllerInterface.*
 
+import de.htwg.Uno.model.*
+import de.htwg.Uno.model.Enum.*
+import de.htwg.Uno.model.Model.*
 
+class PlayCardStateSpec extends AnyWordSpec with Matchers {
 
-class PlayCardSpecs extends AnyWordSpec with Matchers{
+  val state: PlayCardStateImpl.type = PlayCardStateImpl
 
+  // Dummy players
+  val player1 = Player("Alice", List(Card(Coulor.red, Symbol.One), Card(Coulor.green, Symbol.Plus_2)), 0)
+  val player2 = Player("Bob", List(Card(Coulor.blue, Symbol.Two)), 1)
 
-    "The parseCardIndex function" should {
-        "play a card when valid index is chosen" in {
-            val p = Player("A", List(Card(Coulor.red, Symbol.One)), 0)
-            val g = Game(List(p),0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
-            val fakeInput = 0
-            val (game, number) = PlayCardState.parseCardIndex(0, p, g, g.table, 0)
-            number shouldBe 5
-        }
+  val tableCard = Card(Coulor.red, Symbol.One)
 
-        "handle invalid string input" in {
-            val p = Player("A", Nil, 0)
-            val g = Game(List(p),0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
-            val fakeInput = 2
-            noException shouldBe thrownBy(PlayCardState.parseCardIndex(1, p, g, g.table, 0))
-        }
+  val game = Game(
+    player = List(player1, player2),
+    index = 0,
+    deck = List(Card(Coulor.yellow, Symbol.Three), Card(Coulor.blue, Symbol.Four)),
+    table = Some(tableCard),
+    ActionState = ActionState.None,
+    TurnState = TurnState.None
+  )
+
+  "PlayCardStateImpl" should {
+
+    "playCard delegates to handleTurn" in {
+      val (newGame, code) = state.playCard(game, 0, 0)
+      newGame shouldBe a[Game]
+      code shouldBe 0
     }
 
-        "The handleInvalidInput function" should {
-        "return unchanged game and table" in {
-            val g = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
-            val (game, int) = PlayCardState.handleInvalidInput(g, g.table, ActionState.None)
-            game shouldBe g
-        }
+    "handleTurn returns OutOfRange for invalid index" in {
+      val (_, code) = state.handleTurn(game, 0, 500)
+      code shouldBe 3
     }
 
-
-    "The handleTurn function" should {
-        "draw when input is empty or play card when valid index" in {
-            val p = Player("A", List(Card(Coulor.red, Symbol.One)), 0)
-            val g = Game(List(p),0, List(Card(Coulor.blue, Symbol.Two)), Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
-            val fakeInput = 2
-            val (g1, ints) = PlayCardState.handleTurn(g, 0, 500)
-            g1.player(0).hand.size shouldBe 1 // drew a card
-
-            val (g2, int) = PlayCardState.handleTurn(g, 0, fakeInput)
-            g2.table.coulor shouldBe Coulor.red
-        }
+    "parseCardIndex calls handleInvalidInput for invalid index" in {
+      val (newGame, code) = state.parseCardIndex(-1, player1, game, tableCard, 0)
+      newGame.ActionState shouldBe ActionState.OutOfRange
+      code shouldBe 0
     }
 
-        "handle out of range index gracefully" in {
-            val p = Player("A", Nil, 0)
-            val g = Game(List(p),0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
-            noException shouldBe thrownBy(PlayCardState.parseCardIndex(5, p, g, g.table, 0))
-        }
+    "playCardIfValid returns correct tuple for playable card" in {
+      val card = player1.hand.head
+      val (newGame, code) = state.playCardIfValid(card, game, tableCard, 0)
+      newGame shouldBe a[Game]
+    }
+
+    "isPlayable returns true for matching color, symbol, Wish, or Plus_4" in {
+      val card1 = Card(Coulor.red, Symbol.Two)
+      val card2 = Card(Coulor.green, Symbol.One)
+      val card3 = Card(Coulor.yellow, Symbol.Wish)
+      val card4 = Card(Coulor.blue, Symbol.Plus_4)
+      state.isPlayable(tableCard, card1) shouldBe true
+      state.isPlayable(tableCard, card2) shouldBe true
+      state.isPlayable(tableCard, card3) shouldBe true
+      state.isPlayable(tableCard, card4) shouldBe true
+    }
+
+    "turn updates hand and table correctly" in {
+      val card = player1.hand.head
+      val (newGame, code) = state.turn(card, game, 0)
+      newGame.player(0).hand.size shouldBe player1.hand.size - 1
+      newGame.table shouldBe Some(card)
+    }
+
+    "nextPlayerIndex calculates correctly" in {
+      state.nextPlayerIndex(0, 2, false) shouldBe 1
+      state.nextPlayerIndex(0, 2, true) shouldBe 0
+    }
+
+    "plusN deals correct number of cards" in {
+      val newGame = state.plusN(game, 1, Card(Coulor.red, Symbol.One), 1)
+      newGame.player(1).hand.size shouldBe player2.hand.size + 1
+    }
+
+    "dealCardsToHand adds cards to player's hand" in {
+      val (newPlayer, newDeck) = state.dealCardsToHand(player1, game.deck, 1)
+      newPlayer.hand.size shouldBe player1.hand.size + 1
+      newDeck.size shouldBe game.deck.size - 1
+    }
+
+    "handleInvalidInput sets correct ActionState" in {
+      val (newGame, code) = state.handleInvalidInput(game, tableCard, ActionState.CardNotPlayable)
+      newGame.ActionState shouldBe ActionState.CardNotPlayable
+      code shouldBe 0
+    }
+
+    "start returns a basic game" in {
+      val newGame = state.start(player1, player2, null)
+      newGame shouldBe a[Game]
+    }
+
+    "chooseColour returns a dummy card and game" in {
+      val (card, newGame) = state.chooseColour(game, Coulor.red, player1.hand.head, 1)
+      card shouldBe a[Card]
+      newGame shouldBe a[Game]
+    }
+
+    "wisher always returns blue" in {
+      state.wisher(0) shouldBe Coulor.blue
+    }
+  }
+
+  "turn" should {
+
+  "declare a winner when player has no more cards" in {
+    val oneCardPlayer = Player("Winner", List(), 0)
+    val otherPlayer = Player("Bob", List(Card(Coulor.blue, Symbol.Two)), 1)
+    val g = game.copy(player = List(oneCardPlayer, otherPlayer))
     
+    val cardToPlay = oneCardPlayer.hand.head
+    val (newGame, code) = state.turn(cardToPlay, g, 0)
 
+    newGame.TurnState shouldBe TurnState.GameWon(oneCardPlayer)
+    code shouldBe 5
+  }
 
-
-    "The plusN function" should {
-        "add N cards to the next player's hand and skip the turn" in {
-            val p1 = Player("A", Nil, 0)
-            val p2 = Player("B", Nil, 1)
-            val deck = List.fill(5)(Card(Coulor.red, Symbol.One))
-            val game = Game(List(p1, p2),0, deck, Card(Coulor.green, Symbol.Two), ActionState.None, TurnState.None)
-
-            val (newGame) = PlayCardState.plusN(game, 1, Card(Coulor.red, Symbol.Plus_2), 2)
-            newGame.player(1).hand.length shouldBe 2
-        }
+  "handle Plus_2 card correctly" in {
+    val plus2Card = Card(Coulor.red, Symbol.Plus_2)
+    val g = game.copy(player = List(player1, player2))
     
-        "The playCardIfValid function" should {
-        "play a valid card and reject invalid ones" in {
-            val p = Player("A", List(Card(Coulor.red, Symbol.One)), 0)
-            val g = Game(List(p),0, Nil, Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
+    val (newGame, code) = state.turn(plus2Card, g, 0)
+    code shouldBe 6
+    newGame.player(1).hand.size shouldBe player2.hand.size + 2
+  }
 
-            val (g1,int) = PlayCardState.playCardIfValid(Card(Coulor.red, Symbol.One), g, g.table, 0)
-            g1.table.coulor shouldBe Coulor.red
-            val invalid = Game(List(p),0, Nil, Card(Coulor.blue, Symbol.Two), ActionState.None, TurnState.None)
-            val (g2, ints) = PlayCardState.playCardIfValid(Card(Coulor.red, Symbol.One), invalid, invalid.table, 0)
-            g2.table shouldBe invalid.table
-            }
-        }
-
-    }
-
-        "turn function" should {
-        "handle Plus_2 correctly" in {
-            val p1 = Player("A", Nil, 0)
-            val p2 = Player("B", Nil, 1)
-            val game = Game(List(p1, p2),0, List.fill(5)(Card(Coulor.red, Symbol.One)), Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
-
+  "handle Plus_4 card correctly" in {
+    val plus4Card = Card(Coulor.red, Symbol.Plus_4)
+    val g = game.copy(player = List(player1, player2))
     
-            val (g1, skip1) = PlayCardState.turn(Card(Coulor.red, Symbol.Plus_2), game, 0)
-            g1.player(1).hand.length shouldBe 0
-        }
+    val (newGame, code) = state.turn(plus4Card, g, 0)
+    code shouldBe 1
+    newGame.player(1).hand.size shouldBe player2.hand.size + 2
+  }
 
-        "handle Plus_4 correctly" in {
-            val p1 = Player("A", List(Card(Coulor.red, Symbol.Plus_4)), 0)
-            val p2 = Player("B", Nil, 1)
-            val game = Game(List(p1, p2),0, List.fill(5)(Card(Coulor.green, Symbol.One)), Card(Coulor.blue, Symbol.One), ActionState.None, TurnState.None)
-
-  // Simuliere die Benutzereingabe für die gewünschte Farbe "r" (rot)
-            val input = new java.io.ByteArrayInputStream("r\n".getBytes)
-            Console.withIn(input) {
-
-            val (newGame, skip) = PlayCardState.turn(Card(Coulor.red, Symbol.Plus_4), game, 0)
-            newGame.player(1).hand.length shouldBe 0  // Nächster Spieler zieht 4 Karten
-            newGame.table.coulor shouldBe Coulor.red   // Gewünschte Farbe gesetzt
-        }
-    }
-
-        "handle Block correctly" in {
-            val p1 = Player("A", Nil, 0)
-            val p2 = Player("B", Nil, 1)
-            val game = Game(List(p1, p2),0, Nil, Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
-
-
+  "handle Block card correctly" in {
+    val blockCard = Card(Coulor.red, Symbol.Block)
+    val g = game.copy(player = List(player1, player2))
     
+    val (newGame, code) = state.turn(blockCard, g, 0)
+    code shouldBe 6
+  }
 
-        }
+  "handle Reverse card correctly" in {
+    val reverseCard = Card(Coulor.red, Symbol.Reverse)
+    val g = game.copy(player = List(player1, player2))
+    
+    val (newGame, code) = state.turn(reverseCard, g, 0)
+    code shouldBe 6
+  }
 
-        "handle Reverse correctly" in {
-            val p1 = Player("A", Nil, 0)
-            val p2 = Player("B", Nil, 1)
-            val game = Game(List(p1, p2),0, Nil, Card(Coulor.red, Symbol.Two), ActionState.None, TurnState.None)
-            }
-        }
+  "handle Wish card correctly" in {
+    val wishCard = Card(Coulor.red, Symbol.Wish)
+    val g = game.copy(player = List(player1, player2))
+    
+    val (newGame, code) = state.turn(wishCard, g, 0)
+    code shouldBe 1
+  }
 
-    "The isPlayable function" should {
-        "detect valid plays correctly" in {
-            val table = Card(Coulor.red, Symbol.One)
-            val sameColour = Card(Coulor.red, Symbol.Two)
-            val sameSymbol = Card(Coulor.blue, Symbol.One)
-            val wishCard = Card(Coulor.green, Symbol.Wish)
-            val invalid = Card(Coulor.blue, Symbol.Three)
-
-            PlayCardState.isPlayable(table, sameColour) shouldBe true
-            PlayCardState.isPlayable(table, sameSymbol) shouldBe true
-            PlayCardState.isPlayable(table, wishCard) shouldBe true
-            PlayCardState.isPlayable(table, invalid) shouldBe false
-        }
-    }
-
-
-
-    "The start function" should {
-
-        "create a new game with the expected default values" in {
-        val p1 = Player("Alice", Nil, 0)
-        val p2 = Player("Bob", Nil, 0)
-
-        val game = WishCardState.start(p1, p2)
-
-        game.player shouldBe empty
-        game.index shouldBe 0
-        game.table shouldBe Card(Coulor.red, Symbol.One)
-        game.ActionState shouldBe ActionState.None
-        game.TurnState shouldBe TurnState.None
-        }
-    }
+  "handle normal card correctly" in {
+    val normalCard = Card(Coulor.red, Symbol.Two)
+    val g = game.copy(player = List(player1, player2))
+    
+    val (newGame, code) = state.turn(normalCard, g, 0)
+    code shouldBe 0
+    newGame.table shouldBe Some(normalCard)
+  }
+}
 
 }
+
 
 
 

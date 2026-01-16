@@ -1,76 +1,114 @@
-package de.htwg.Uno.model.state
+package de.htwg.Uno.model.state.Impl
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import de.htwg.Uno.model.ModelInterface.StateInterface.DrawCardState.*
-import de.htwg.Uno.model.ModelInterface.*
+
+import de.htwg.Uno.model.*
+import de.htwg.Uno.model.Enum.*
+import de.htwg.Uno.model.Model.*
 
 class DrawCardStateSpec extends AnyWordSpec with Matchers {
 
-  "DrawCardState" should {
+  // ---------- Use GameState type to access all methods ----------
+  val state: de.htwg.Uno.model.state.GameState = DrawCardStateImpl
 
-    "draw a card and update the player hand and deck" in {
-      val player1 = Player("Alice", hand = List.empty,0)
-      val player2 = Player("Bob", hand = List.empty,1)
-      val deck = List(Card(Coulor.red, Symbol.One), Card(Coulor.blue, Symbol.Two))
-      val game = Game(List(player1, player2), index = 0, deck = deck, table = deck.head, ActionState.None, TurnState.None)
+  // Dummy game and players for testing
+  val player1 = Player("Alice", Nil, 0)
+  val player2 = Player("Bob", Nil, 0)
+  val deck = List(Card(Coulor.red, Symbol.One), Card(Coulor.blue, Symbol.Two))
+  val tableCard = Card(Coulor.green, Symbol.Three)
+  val game = Game(
+    player = List(player1, player2),
+    index = 0,
+    deck = deck,
+    table = Some(tableCard),
+    ActionState = ActionState.None,
+    TurnState = TurnState.None
+  )
 
-      val newGame = DrawCardState.drawCard(game, playerIdx = 0)
+  "DrawCardStateImpl" should {
 
-      // Spieler 1 bekommt eine Karte
-      newGame.player(0).hand.size shouldBe 1
-      newGame.player(0).hand.head shouldBe deck.head
-
-      // Deck wird um die gezogene Karte verkleinert
-      newGame.deck shouldBe List(deck(1))
-
-      // Index wechselt zum nächsten Spieler
+    "draw a card and update the player's hand, deck, and index" in {
+      val newGame = state.drawCard(game, 0)
+      newGame.player.head.hand.size shouldBe 1
+      newGame.deck.size shouldBe 1
       newGame.index shouldBe 1
     }
 
-    "draw a card with skipNext = true" in {
-      val player1 = Player("Alice", hand = List.empty,0)
-      val player2 = Player("Bob", hand = List.empty,1)
-      val deck = List(Card(Coulor.red, Symbol.One))
-      val game = Game(List(player1, player2), index = 0, deck = deck, table = deck.head, ActionState.None, TurnState.None)
-
-      val nextIndex = DrawCardState.nextPlayerIndex(currentIndex = 0, playerCount = 2, skipNext = true)
-      nextIndex shouldBe 0  // (0 + 2) % 2 == 0
+    "dealCardsToHand adds n cards to player's hand and removes them from deck" in {
+      val (newPlayer, newDeck) = state.dealCardsToHand(player1, deck, 2)
+      newPlayer.hand shouldBe deck
+      newDeck shouldBe Nil
     }
 
-    "dealCardsToHand correctly deals n cards and updates deck" in {
-      val player = Player("Alice", hand = List(Card(Coulor.red, Symbol.One)),0)
-      val deck = List(Card(Coulor.green, Symbol.Two), Card(Coulor.blue, Symbol.Three))
-
-      val (newPlayer, newDeck) = DrawCardState.dealCardsToHand(player, deck, 2)
-
-      newPlayer.hand.size shouldBe 3
-      newPlayer.hand.last shouldBe Card(Coulor.blue, Symbol.Three)
-      newDeck shouldBe empty
+    "nextPlayerIndex increments correctly with and without skip" in {
+      state.nextPlayerIndex(0, 2, skipNext = false) shouldBe 1
+      state.nextPlayerIndex(1, 2, skipNext = false) shouldBe 0
+      state.nextPlayerIndex(0, 2, skipNext = true) shouldBe 0
+      state.nextPlayerIndex(1, 2, skipNext = true) shouldBe 1
     }
 
-    "start returns dummy game" in {
-      val game = DrawCardState.start(Player("P1", hand = Nil, 0), Player("P2", hand = Nil, 1))
-      game.player shouldBe Nil
-      game.index shouldBe 0
+    "start returns a new Game object" in {
+      val startedGame = state.start(player1, player2, null)
+      startedGame shouldBe a[Game]
+      startedGame.table should not be None
     }
 
-    "chooseColour returns dummy card and game" in {
-      val card = Card(Coulor.red, Symbol.One)
-      val dummyGame = Game(Nil,0, Nil, card, ActionState.None, TurnState.None)
-      val (resultCard, resultGame) = DrawCardState.chooseColour(dummyGame, Coulor.blue, card, 1)
-
-      resultCard shouldBe card
-      resultGame.player shouldBe Nil
+    "chooseColour returns a card and a game" in {
+      val (card, newGame) = state.chooseColour(game, Coulor.red, Card(Coulor.yellow, Symbol.One), 2)
+      card shouldBe a[Card]
+      newGame shouldBe a[Game]
     }
 
-    "playCard returns dummy game and index 2" in {
-      val card = Card(Coulor.red, Symbol.One)
-      val dummyGame = Game(Nil,0, Nil, card, ActionState.None, TurnState.None)
-      val (resultGame, index) = DrawCardState.playCard(dummyGame, 0, 0)
+    "wisher returns a Coulor" in {
+      state.wisher(0) shouldBe Coulor.blue
+    }
 
-      resultGame.player shouldBe Nil
-      index shouldBe 2
+    "playCard returns a tuple (Game, Integer)" in {
+      val (newGame, code) = state.playCard(game, 0, 0)
+      newGame shouldBe a[Game]
+      code shouldBe 2
+    }
+
+    "parseCardIndex returns correct tuple" in {
+      val (newGame, idx) = state.parseCardIndex(0, player1, game, tableCard, 0)
+      newGame shouldBe game
+      idx shouldBe 0
+    }
+
+    "turn returns correct tuple" in {
+      val (newGame, idx) = state.turn(tableCard, game, 0)
+      newGame shouldBe game
+      idx shouldBe 0
+    }
+
+    "isPlayable always returns true" in {
+      state.isPlayable(tableCard, Card(Coulor.red, Symbol.One)) shouldBe true
+    }
+
+    "handleTurn returns correct tuple" in {
+      val (newGame, idx) = state.handleTurn(game, 0, 1)
+      newGame shouldBe game
+      idx shouldBe 1
+    }
+
+    "handleInvalidInput returns correct tuple" in {
+      val (newGame, code) = state.handleInvalidInput(game, tableCard, ActionState.None)
+      newGame shouldBe game
+      code shouldBe 1
+    }
+
+    "plusN returns the game unchanged" in {
+      val newGame = state.plusN(game, 0, Card(Coulor.red, Symbol.One), 2)
+      newGame shouldBe game
+    }
+
+    "playCardIfValid returns correct tuple" in {
+      val (newGame, idx) = state.playCardIfValid(Card(Coulor.red, Symbol.One), game, tableCard, 0)
+      newGame shouldBe game
+      idx shouldBe 0
     }
   }
 }
+
+

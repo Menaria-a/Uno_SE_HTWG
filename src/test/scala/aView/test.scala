@@ -5,9 +5,12 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers._
 import de.htwg.Uno.model.*
+import de.htwg.Uno.model.Enum.*
 import de.htwg.Uno.model.Model.*
 import de.htwg.Uno.aView.Tui
 import de.htwg.Uno.controller.*
+import com.google.inject.Guice
+import de.htwg.Uno.Module
 
 import de.htwg.Uno.util.Undo.CommandManager
 
@@ -16,8 +19,8 @@ import de.htwg.Uno.util.Undo.CommandManager
 
 class UnoSpec extends AnyWordSpec with Matchers{
   val manager = CommandManager()
-
-  val controller = (Controller( game = Game(Nil,0, Nil,Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None), manager))
+  val injector = Guice.createInjector(new Module)
+  val controller = injector.getInstance(classOf[Controller])
 
   val TuiInstance = new Tui(controller: Controller)
 
@@ -89,7 +92,7 @@ class UnoSpec extends AnyWordSpec with Matchers{
     "render the table and player hands" in {
       val p1 = Player("Alice", List(Card(Coulor.green, Symbol.Five)), 0)
       val p2 = Player("Bob", List(Card(Coulor.blue, Symbol.Two)), 1)
-      val game = Game(List(p1, p2),0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None)
+      val game = Game(List(p1, p2),0, Nil, Some(Card(Coulor.red, Symbol.One)), ActionState.None, TurnState.None)
 
       val result = TuiInstance.gamerenderer(game)
 

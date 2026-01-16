@@ -24,7 +24,7 @@ class ChooseCardHandlerSpec extends AnyWordSpec with Matchers {
       player = List(player),
       index = index,
       deck = List(),
-      table = card1,
+      table = Some(card1),
       ActionState = actionState,
       TurnState = TurnState.None
     )
@@ -37,7 +37,7 @@ class ChooseCardHandlerSpec extends AnyWordSpec with Matchers {
 
       val result = handler.handleRequest("1", game)
 
-      result._1 shouldBe PlayCardAction(card2)
+      result._1 shouldBe PlayCardAction(0,0,0)
       result._2 shouldBe 1
     }
 

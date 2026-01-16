@@ -14,7 +14,7 @@ class CardSpec extends AnyWordSpec with Matchers{
     "A Card" should {
         "be created correctly with a color and symbol" in {
             val card = Card(Coulor.red, Symbol.One)
-            card.coulor shouldBe Coulor.red
+            card.colour shouldBe Coulor.red
             card.symbol shouldBe Symbol.One
         }
     }

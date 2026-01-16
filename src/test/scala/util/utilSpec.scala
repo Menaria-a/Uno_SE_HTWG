@@ -10,15 +10,17 @@ import de.htwg.Uno.model.Game
 import de.htwg.Uno.model.Enum.ActionState
 import de.htwg.Uno.model.Enum.TurnState
 import de.htwg.Uno.aView.Tui
+import de.htwg.Uno.Module
 import de.htwg.Uno.util.Undo.CommandManager
+import com.google.inject.Guice
 
 class UtilSpec extends AnyWordSpec with Matchers {
 
 
     val manager = CommandManager()
+    val injector = Guice.createInjector(new Module)
+    val controller = injector.getInstance(classOf[Controller])
 
-
-    val controller = Controller(game = Game(Nil,0, Nil, Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None), manager)
     val TuiInstance = new Tui(controller: Controller)
 
     "The remove function" should {
@@ -43,7 +45,7 @@ class UtilSpec extends AnyWordSpec with Matchers {
     
     "The update function" should {
         "clear the screen and print the game, person, and status" in {
-            val controller = (Controller( game = Game(Nil,0, Nil,Card(Coulor.red, Symbol.One), ActionState.None, TurnState.None), manager))
+            val controller = injector.getInstance(classOf[Controller])
             val outputStream = new java.io.ByteArrayOutputStream()
             Console.withOut(outputStream) {
             TuiInstance.update

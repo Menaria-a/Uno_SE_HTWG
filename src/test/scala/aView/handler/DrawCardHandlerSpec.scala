@@ -21,7 +21,7 @@ class DrawCardHandlerSpec extends AnyWordSpec with Matchers {
       player = List(dummyPlayer),
       index = 0,
       deck = List.empty,
-      table = dummyCard,
+      table = Some(dummyCard),
       ActionState = actionState,
       TurnState = TurnState.None
     )
@@ -32,8 +32,8 @@ class DrawCardHandlerSpec extends AnyWordSpec with Matchers {
       val game = mkGame(ActionState.ChooseCard)
       val handler = new DrawCardHandler()
 
-      handler.handleRequest("", game) shouldBe (DrawAction, 500)
-      handler.handleRequest("   ", game) shouldBe (DrawAction, 500)
+      handler.handleRequest("", game) shouldBe (DrawAction(0), 500)
+      handler.handleRequest("   ", game) shouldBe (DrawAction(0), 500)
     }
 
     "delegate to next handler when input is NOT empty" in {
