@@ -19,10 +19,15 @@ object main:
     val tui = new Tui(con)
     con.add(tui)
 
+    try {
+
     Platform.startup(() => {
       val gui = injector.getInstance(classOf[Gui])
       gui.start()
     })
+    } catch {
+      case _: Exception => println("GUI nicht verfügbar")
+    }
 
     tui.fake("Ersten und Zweiten Namen eingeben: ")
     con.initloop(tui)
